@@ -1,66 +1,65 @@
-import { Text, View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { ScrollView } from "react-native";
 import { Link } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import ScreenBackground from "../components/ScreenBackground";
 
 export default function About() {
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.container}>
+    <ScreenBackground>
       <StatusBar style="light" />
+      <ScrollView contentContainerStyle={styles.container}>
+        {/* Header Badge */}
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>💱 CurrenSea</Text>
+        </View>
 
-      {/* Header Badge */}
-      <View style={styles.badge}>
-        <Text style={styles.badgeText}>💱 CurrenSea</Text>
-      </View>
-
-      {/* Title */}
-      <Text style={styles.title}>About</Text>
-      <Text style={styles.subtitle}>
-        Your smart currency companion for seamless conversions on the go.
-      </Text>
-
-      {/* Cards */}
-      <View style={styles.card}>
-        <Text style={styles.cardIcon}>🌍</Text>
-        <Text style={styles.cardTitle}>150+ Currencies</Text>
-        <Text style={styles.cardDesc}>
-          Real-time exchange rates from around the world, always up to date.
+        {/* Title */}
+        <Text style={styles.title}>About</Text>
+        <Text style={styles.subtitle}>
+          Your smart currency companion for seamless conversions on the go.
         </Text>
-      </View>
 
-      <View style={styles.card}>
-        <Text style={styles.cardIcon}>⚡</Text>
-        <Text style={styles.cardTitle}>Instant Conversions</Text>
-        <Text style={styles.cardDesc}>
-          Blazing fast calculations with live market data at your fingertips.
-        </Text>
-      </View>
+        {/* Cards */}
+        <View style={styles.card}>
+          <Text style={styles.cardIcon}>🌍</Text>
+          <Text style={styles.cardTitle}>150+ Currencies</Text>
+          <Text style={styles.cardDesc}>
+            Real-time exchange rates from around the world, always up to date.
+          </Text>
+        </View>
 
-      <View style={styles.card}>
-        <Text style={styles.cardIcon}>📊</Text>
-        <Text style={styles.cardTitle}>Rate History</Text>
-        <Text style={styles.cardDesc}>
-          Track how currencies have moved over time with beautiful charts.
-        </Text>
-      </View>
+        <View style={styles.card}>
+          <Text style={styles.cardIcon}>⚡</Text>
+          <Text style={styles.cardTitle}>Instant Conversions</Text>
+          <Text style={styles.cardDesc}>
+            Blazing fast calculations with live market data at your fingertips.
+          </Text>
+        </View>
 
-      {/* Version Info */}
-      <Text style={styles.version}>Version 1.0.0 • Made with ❤️</Text>
+        <View style={styles.card}>
+          <Text style={styles.cardIcon}>📊</Text>
+          <Text style={styles.cardTitle}>Rate History</Text>
+          <Text style={styles.cardDesc}>
+            Track how currencies have moved over time with beautiful charts.
+          </Text>
+        </View>
 
-      {/* Back Link */}
-      <Link href="/" asChild>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>← Back to Home</Text>
-        </TouchableOpacity>
-      </Link>
-    </ScrollView>
+        {/* Version Info */}
+        <Text style={styles.version}>Version 1.0.0 • Made with ❤️</Text>
+
+        {/* Back Link */}
+        <Link href="/" asChild>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>← Back to Home</Text>
+          </TouchableOpacity>
+        </Link>
+      </ScrollView>
+    </ScreenBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  scroll: {
-    flex: 1,
-    backgroundColor: "#25292e",
-  },
   container: {
     alignItems: "center",
     justifyContent: "center",
@@ -68,14 +67,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   badge: {
-    backgroundColor: "#2e7d5e",
+    backgroundColor: "rgba(10,87,255,0.2)",
+    borderWidth: 1,
+    borderColor: "rgba(10,87,255,0.4)",
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 20,
     marginBottom: 24,
   },
   badgeText: {
-    color: "#a8f0d4",
+    color: "#7eb8ff",
     fontSize: 13,
     fontWeight: "600",
     letterSpacing: 0.5,
@@ -97,12 +98,12 @@ const styles = StyleSheet.create({
   },
   card: {
     width: "100%",
-    backgroundColor: "#1e2227",
+    backgroundColor: "rgba(255,255,255,0.05)",
     borderRadius: 16,
     padding: 20,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: "#2e333a",
+    borderColor: "rgba(255,255,255,0.08)",
     alignItems: "flex-start",
   },
   cardIcon: {
@@ -127,7 +128,9 @@ const styles = StyleSheet.create({
     marginBottom: 28,
   },
   button: {
-    backgroundColor: "#2e7d5e",
+    backgroundColor: "rgba(10,87,255,0.3)",
+    borderWidth: 1,
+    borderColor: "rgba(10,87,255,0.5)",
     paddingHorizontal: 28,
     paddingVertical: 14,
     borderRadius: 12,
