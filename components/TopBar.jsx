@@ -1,11 +1,10 @@
-import { View, Text, Animated } from "react-native";
+import { View, Animated, Image } from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useScrollY } from "../context/ScrollContext";
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
-const AnimatedText = Animated.createAnimatedComponent(Text);
 
 /**
  * TopBar — Sticky header with a premium blurred background using the
@@ -104,18 +103,19 @@ export default function TopBar({ title = "CURRENSEA", right }) {
 
       {/* Row content positioned below the safe area / status bar */}
       <View className="flex-1 flex-row items-center justify-between px-5">
-        <AnimatedText
-          className="text-xl font-bold text-white tracking-[1px]"
+        <Animated.Image
+          source={require("../assets/logo/currensea-logo.png")}
           style={{
+            width: 44,
+            height: 44,
+            resizeMode: "contain",
             transform: [
               { scale: titleScale },
               { translateX: titleTranslateX },
               { translateY: titleTranslateY },
             ],
           }}
-        >
-          {title}
-        </AnimatedText>
+        />
 
         {right ? (
           <Animated.View
