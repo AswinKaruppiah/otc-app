@@ -1,5 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
-import { Animated } from "react-native";
+import { View, Text, Animated } from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -12,8 +11,7 @@ const AnimatedText = Animated.createAnimatedComponent(Text);
  * TopBar — Sticky header with a premium blurred background using the
  * theme's navy blue palette to blend with the ScreenBackground glows.
  *
- * Includes smooth scroll-driven scaling and translation animations on the title
- * and actions for a premium "docking" header feel.
+ * Built using NativeWind classes and scroll-driven scaling/translation animations.
  */
 export default function TopBar({ title = "CURRENSEA", right }) {
   const scrollY = useScrollY();
@@ -75,68 +73,59 @@ export default function TopBar({ title = "CURRENSEA", right }) {
 
   return (
     <Animated.View
-      style={[
-        styles.container,
-        { height: headerHeight, paddingTop: insets.top },
-      ]}
+      className="absolute top-0 left-0 right-0 z-10 rounded-b-3xl overflow-hidden"
+      style={{ height: headerHeight, paddingTop: insets.top }}
     >
       {/* Frosted Glass Blur Background */}
       <AnimatedBlurView
-        intensity={80}
+        intensity={40}
         tint="dark"
         experimentalBlurMethod="dimezisBlurView"
-        style={[StyleSheet.absoluteFillObject, { opacity: scrimOpacity }]}
+        className="absolute inset-0"
+        style={{ opacity: scrimOpacity }}
       />
 
       {/* Top-to-bottom theme-matched navy gradient overlay */}
       <Animated.View
-        style={[
-          StyleSheet.absoluteFillObject,
-          {
-            opacity: scrimOpacity,
-          },
-        ]}
+        className="absolute inset-0"
         pointerEvents="none"
+        style={{ opacity: scrimOpacity }}
       >
         <LinearGradient
           colors={[
             "rgba(11, 16, 24, 1)", // semi-transparent black at the top
-            "rgba(11, 29, 64, 0.7)", // completely transparent at the bottom
+            "rgba(11, 29, 64, 0.1)", // completely transparent at the bottom
           ]}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
-          style={StyleSheet.absoluteFillObject}
+          className="absolute inset-0"
         />
       </Animated.View>
 
       {/* Row content positioned below the safe area / status bar */}
-      <View style={styles.content}>
+      <View className="flex-1 flex-row items-center justify-between px-5">
         <AnimatedText
-          style={[
-            styles.title,
-            {
-              transform: [
-                { scale: titleScale },
-                { translateX: titleTranslateX },
-                { translateY: titleTranslateY },
-              ],
-            },
-          ]}
+          className="text-xl font-bold text-white tracking-[1px]"
+          style={{
+            transform: [
+              { scale: titleScale },
+              { translateX: titleTranslateX },
+              { translateY: titleTranslateY },
+            ],
+          }}
         >
           {title}
         </AnimatedText>
 
         {right ? (
           <Animated.View
-            style={[
-              styles.right,
-              {
-                transform: [
-                  { scale: rightScale },
-                  { translateY: rightTranslateY },
-                ],
-              },
-            ]}
+            className="flex-row items-center"
+            style={{
+              transform: [
+                { scale: rightScale },
+                { translateY: rightTranslateY },
+              ],
+            }}
           >
             {right}
           </Animated.View>
@@ -145,33 +134,3 @@ export default function TopBar({ title = "CURRENSEA", right }) {
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    overflow: "hidden",
-  },
-  content: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#ffffff",
-    letterSpacing: 1,
-  },
-  right: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-});

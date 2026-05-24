@@ -1,10 +1,14 @@
 import { View, Animated } from "react-native";
-import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Slot } from "expo-router";
 import ScreenBackground from "../../components/ScreenBackground";
 import TopBar from "../../components/TopBar";
 import { ScrollProvider, useScrollY } from "../../context/ScrollContext";
+import BottomTabBar from "../../components/BottomTabBar";
 
 /**
  * Layout for all (user) screens.
@@ -37,18 +41,19 @@ function UserLayoutContent() {
       <Animated.ScrollView
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: false }
+          { useNativeDriver: false },
         )}
         scrollEventThrottle={16}
         contentContainerStyle={{
           paddingHorizontal: 20,
-          paddingBottom: 20 + insets.bottom,
+          paddingBottom: 84 + insets.bottom,
           paddingTop,
           gap: 20,
         }}
       >
         <Slot />
       </Animated.ScrollView>
+      <BottomTabBar />
     </View>
   );
 }
