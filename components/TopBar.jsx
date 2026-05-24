@@ -92,8 +92,8 @@ export default function TopBar({ title = "CURRENSEA", right }) {
       >
         <LinearGradient
           colors={[
-            "rgba(11, 16, 24, 1)", // semi-transparent black at the top
-            "rgba(11, 29, 64, 0.1)", // completely transparent at the bottom
+            "rgba(17, 20, 24, 1)", // semi-transparent obsidian black at the top
+            "rgba(17, 20, 24, 0)", // completely transparent at the bottom
           ]}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}

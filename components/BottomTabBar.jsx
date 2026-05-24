@@ -91,12 +91,12 @@ export default function BottomTabBar() {
         className="absolute inset-0"
       />
 
-      {/* Top-to-bottom theme-matched navy gradient overlay */}
+      {/* Top-to-bottom theme-matched obsidian gradient overlay */}
       <View className="absolute inset-0" pointerEvents="none">
         <LinearGradient
           colors={[
-            "rgba(11, 16, 24, 1)", // semi-transparent black at the top
-            "rgba(11, 29, 64, 0.1)", // completely transparent at the bottom
+            "rgba(17, 20, 24, 1)", // semi-transparent obsidian black at the top
+            "rgba(17, 20, 24, 0.1)", // completely transparent at the bottom
           ]}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
@@ -120,7 +120,7 @@ export default function BottomTabBar() {
             }}
             pointerEvents="none"
           >
-            <View className="absolute top-0 left-[32%] right-[32%] h-[3px] bg-[#0a57ff] rounded-full" />
+            <View className="absolute top-0 left-[32%] right-[32%] h-[3px] bg-noirMint/60 rounded-full" />
           </Animated.View>
         )}
 
@@ -181,9 +181,9 @@ function TabButton({ tab, isActive, onPress }) {
         <Svg height={104} width={104}>
           <Defs>
             <RadialGradient id={radialId} cx="50%" cy="50%" r="50%">
-              <Stop offset="0%" stopColor="#0a57ff" stopOpacity="0.28" />
-              <Stop offset="50%" stopColor="#0a57ff" stopOpacity="0.1" />
-              <Stop offset="100%" stopColor="#0a57ff" stopOpacity="0" />
+              <Stop offset="0%" stopColor="#baffd8" stopOpacity="0.06" />
+              <Stop offset="50%" stopColor="#baffd8" stopOpacity="0.02" />
+              <Stop offset="100%" stopColor="#baffd8" stopOpacity="0" />
             </RadialGradient>
           </Defs>
           <Rect width={104} height={104} fill={`url(#${radialId})`} />
@@ -194,7 +194,7 @@ function TabButton({ tab, isActive, onPress }) {
         <Feather
           name={tab.icon}
           size={24}
-          color={isActive ? "#ffffff" : "rgba(255, 255, 255, 0.45)"}
+          color={isActive ? "rgba(186, 255, 216, 0.75)" : "rgba(255, 255, 255, 0.45)"}
         />
       </Animated.View>
     </HapticTouchableOpacity>

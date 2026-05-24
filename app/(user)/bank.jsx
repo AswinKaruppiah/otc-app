@@ -1,12 +1,14 @@
 import React from "react";
-import { Text, View, ScrollView } from "react-native";
+import { Text, View } from "react-native";
 import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
 import { useRouter } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
 
 /**
- * Bank Screen — Rendered inside the main layout wrapper.
- * Displays list of linked bank accounts, details, and transfer limits.
+ * Bank Screen — Linked bank accounts, details, and transfer limits.
+ * Rebuilt using the premium Noir theme:
+ *   - Base font: font-noir / font-noir-medium
+ *   - Colors: bg-noirCard, bg-noirMint, bg-noirCyan
  */
 export default function Bank() {
   const router = useRouter();
@@ -20,7 +22,7 @@ export default function Bank() {
       routingNum: "021000021",
       status: "Primary",
       icon: "home",
-      iconColor: "#0a57ff",
+      iconColor: "#baffd8",
     },
     {
       id: "2",
@@ -30,7 +32,7 @@ export default function Bank() {
       routingNum: "121000248",
       status: "Secondary",
       icon: "briefcase",
-      iconColor: "#eab308",
+      iconColor: "#96dded",
     },
   ];
 
@@ -38,27 +40,27 @@ export default function Bank() {
     <View className="w-full pb-8">
       {/* Header Badge */}
       <View className="items-center mb-6">
-        <View className="bg-[#0a57ff]/20 border border-[#0a57ff]/40 px-4 py-1.5 rounded-full mb-3 flex-row items-center gap-1.5">
-          <Feather name="shield" size={14} color="#7eb8ff" />
-          <Text className="text-[#7eb8ff] text-[13px] font-semibold tracking-[0.5px]">
+        <View className="bg-noirMint/10 border border-noirMint/25 px-4 py-1.5 rounded-full mb-3 flex-row items-center gap-1.5">
+          <Feather name="shield" size={13} color="#baffd8" />
+          <Text className="text-noirMint text-[12px] font-noir-medium tracking-[0.5px]">
             Linked Funding Sources
           </Text>
         </View>
-        <Text className="text-[32px] font-extrabold text-white mb-2 text-center tracking-[-0.5px]">
+        <Text className="text-[32px] font-noir-medium text-noirText mb-2 text-center tracking-[-0.5px]">
           Bank Accounts
         </Text>
-        <Text className="text-[14px] text-[#9ba3af] text-center max-w-[280px] leading-[20px]">
+        <Text className="text-[14px] text-gray-400 font-noir text-center max-w-[280px] leading-[20px]">
           Manage your external bank connections and transfer limits.
         </Text>
       </View>
 
       {/* Linked Banks List */}
-      <Text className="text-[17px] font-bold text-white mb-3 tracking-[0.2px]">Linked Accounts</Text>
+      <Text className="text-[17px] font-noir-medium text-noirText mb-3 tracking-[0.2px]">Linked Accounts</Text>
       <View className="w-full gap-4 mb-6">
         {linkedBanks.map((bank) => (
           <View
             key={bank.id}
-            className="w-full bg-white/5 rounded-2xl p-5 border border-white/[0.08] relative overflow-hidden"
+            className="w-full bg-noirCard rounded-2xl p-5 border border-white/[0.04] relative overflow-hidden"
           >
             {/* Header: Bank Name & Status */}
             <View className="flex-row justify-between items-center mb-4">
@@ -70,26 +72,26 @@ export default function Bank() {
                   <Feather name={bank.icon} size={18} color={bank.iconColor} />
                 </View>
                 <View>
-                  <Text className="text-white text-[16px] font-bold">{bank.bankName}</Text>
-                  <Text className="text-[#9ba3af] text-[12px]">{bank.type}</Text>
+                  <Text className="text-noirText text-[16px] font-noir-medium">{bank.bankName}</Text>
+                  <Text className="text-gray-400 text-[12px] font-noir">{bank.type}</Text>
                 </View>
               </View>
               <View
-                className="px-2.5 py-0.5 rounded-full border border-white/10 bg-white/5"
+                className="px-2.5 py-0.5 rounded-full border border-white/5 bg-white/5"
               >
-                <Text className="text-white text-[11px] font-semibold">{bank.status}</Text>
+                <Text className="text-noirText text-[11px] font-noir-medium">{bank.status}</Text>
               </View>
             </View>
 
             {/* Account Details */}
-            <View className="border-t border-white/[0.05] pt-4 gap-2.5">
+            <View className="border-t border-white/[0.04] pt-4 gap-2.5">
               <View className="flex-row justify-between items-center">
-                <Text className="text-[#9ba3af] text-[13px]">Account Number</Text>
-                <Text className="text-white text-[14px] font-medium">{bank.accountNum}</Text>
+                <Text className="text-gray-400 text-[13px] font-noir">Account Number</Text>
+                <Text className="text-noirText text-[14px] font-noir-medium">{bank.accountNum}</Text>
               </View>
               <View className="flex-row justify-between items-center">
-                <Text className="text-[#9ba3af] text-[13px]">Routing Number</Text>
-                <Text className="text-white text-[14px] font-medium">{bank.routingNum}</Text>
+                <Text className="text-gray-400 text-[13px] font-noir">Routing Number</Text>
+                <Text className="text-noirText text-[14px] font-noir-medium">{bank.routingNum}</Text>
               </View>
             </View>
           </View>
@@ -97,32 +99,32 @@ export default function Bank() {
       </View>
 
       {/* Transfer Limits Section */}
-      <Text className="text-[17px] font-bold text-white mb-3 tracking-[0.2px]">Transfer Limits</Text>
-      <View className="w-full bg-white/5 rounded-2xl p-4 border border-white/[0.08] gap-3.5 mb-8">
+      <Text className="text-[17px] font-noir-medium text-noirText mb-3 tracking-[0.2px]">Transfer Limits</Text>
+      <View className="w-full bg-noirCard rounded-2xl p-4 border border-white/[0.04] gap-3.5 mb-8">
         <View className="flex-row justify-between items-center">
           <View>
-            <Text className="text-white text-[14px] font-bold">Daily Withdrawal Limit</Text>
-            <Text className="text-[#9ba3af] text-[12px]">$5,000.00 max</Text>
+            <Text className="text-noirText text-[14px] font-noir-medium">Daily Withdrawal Limit</Text>
+            <Text className="text-gray-400 text-[12px] font-noir">$5,000.00 max</Text>
           </View>
-          <Text className="text-[#7eb8ff] text-[15px] font-semibold">$1,200.00 left</Text>
+          <Text className="text-noirCyan text-[15px] font-noir-medium">$1,200.00 left</Text>
         </View>
-        <View className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-          <View className="h-full bg-[#0a57ff] w-[76%]" />
+        <View className="w-full h-1.5 bg-black/35 rounded-full overflow-hidden">
+          <View className="h-full bg-noirMint w-[76%]" />
         </View>
       </View>
 
       {/* Actions */}
       <View className="w-full gap-3">
-        <HapticTouchableOpacity className="w-full bg-[#0a57ff] py-4 rounded-xl flex-row items-center justify-center gap-2">
-          <Feather name="plus" size={16} color="white" />
-          <Text className="text-white text-[15px] font-bold">Link Another Bank</Text>
+        <HapticTouchableOpacity className="w-full bg-noirMint py-4 rounded-xl flex-row items-center justify-center gap-2">
+          <Feather name="plus" size={16} color="#111418" />
+          <Text className="text-noirBg text-[15px] font-noir-medium">Link Another Bank</Text>
         </HapticTouchableOpacity>
 
         <HapticTouchableOpacity
           onPress={() => router.back()}
-          className="w-full bg-white/10 border border-white/[0.08] py-4 rounded-xl flex-row items-center justify-center gap-2"
+          className="w-full bg-white/5 border border-white/[0.04] py-4 rounded-xl flex-row items-center justify-center gap-2"
         >
-          <Text className="text-white text-[15px] font-semibold">Back</Text>
+          <Text className="text-noirText text-[15px] font-noir-medium">Back</Text>
         </HapticTouchableOpacity>
       </View>
     </View>
