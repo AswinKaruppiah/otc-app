@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Text, View, TextInput, TouchableOpacity, Alert } from "react-native";
+import { Text, View, TextInput, Alert } from "react-native";
+import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
 import { useRouter } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
 
@@ -81,7 +82,7 @@ export default function Withdraw() {
         {/* Quick Percent Selectors */}
         <View className="flex-row gap-2.5">
           {[0.25, 0.50, 1.0].map((val, idx) => (
-            <TouchableOpacity
+            <HapticTouchableOpacity
               key={idx}
               onPress={() => handleQuickPercent(val)}
               className="px-4 py-2 bg-white/10 border border-white/[0.08] rounded-xl"
@@ -89,7 +90,7 @@ export default function Withdraw() {
               <Text className="text-white text-[12px] font-bold">
                 {val === 1.0 ? "MAX" : `${val * 100}%`}
               </Text>
-            </TouchableOpacity>
+            </HapticTouchableOpacity>
           ))}
         </View>
       </View>
@@ -113,7 +114,7 @@ export default function Withdraw() {
       <Text className="text-[17px] font-bold text-white mb-3 tracking-[0.2px]">Transfer Method</Text>
       <View className="flex-row gap-3 mb-8">
         {/* Standard Speed */}
-        <TouchableOpacity
+        <HapticTouchableOpacity
           onPress={() => setIsInstant(false)}
           className={`flex-1 p-4 rounded-2xl border ${
             !isInstant
@@ -124,10 +125,10 @@ export default function Withdraw() {
           <Feather name="clock" size={20} color={!isInstant ? "#7eb8ff" : "#9ba3af"} className="mb-2" />
           <Text className="text-white text-[14px] font-bold mb-0.5">Standard</Text>
           <Text className="text-[#9ba3af] text-[11px]">Free • 1-3 Business Days</Text>
-        </TouchableOpacity>
+        </HapticTouchableOpacity>
 
         {/* Instant Speed */}
-        <TouchableOpacity
+        <HapticTouchableOpacity
           onPress={() => setIsInstant(true)}
           className={`flex-1 p-4 rounded-2xl border ${
             isInstant
@@ -138,25 +139,26 @@ export default function Withdraw() {
           <Feather name="zap" size={20} color={isInstant ? "#7eb8ff" : "#9ba3af"} className="mb-2" />
           <Text className="text-white text-[14px] font-bold mb-0.5">Instant</Text>
           <Text className="text-[#9ba3af] text-[11px]">$1.50 Fee • In minutes</Text>
-        </TouchableOpacity>
+        </HapticTouchableOpacity>
       </View>
 
       {/* Action Buttons */}
       <View className="w-full gap-3">
-        <TouchableOpacity
+        <HapticTouchableOpacity
           onPress={handleWithdraw}
+          hapticType="medium"
           className="w-full bg-[#0a57ff] py-4 rounded-xl flex-row items-center justify-center gap-2"
         >
           <Feather name="arrow-down-right" size={16} color="white" />
           <Text className="text-white text-[15px] font-bold">Confirm Withdrawal</Text>
-        </TouchableOpacity>
+        </HapticTouchableOpacity>
 
-        <TouchableOpacity
+        <HapticTouchableOpacity
           onPress={() => router.back()}
           className="w-full bg-white/10 border border-white/[0.08] py-4 rounded-xl flex-row items-center justify-center gap-2"
         >
           <Text className="text-white text-[15px] font-semibold">Cancel</Text>
-        </TouchableOpacity>
+        </HapticTouchableOpacity>
       </View>
     </View>
   );

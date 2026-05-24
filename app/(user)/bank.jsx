@@ -1,5 +1,6 @@
 import React from "react";
-import { Text, View, TouchableOpacity, ScrollView } from "react-native";
+import { Text, View, ScrollView } from "react-native";
+import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
 import { useRouter } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
 
@@ -112,17 +113,17 @@ export default function Bank() {
 
       {/* Actions */}
       <View className="w-full gap-3">
-        <TouchableOpacity className="w-full bg-[#0a57ff] py-4 rounded-xl flex-row items-center justify-center gap-2">
+        <HapticTouchableOpacity className="w-full bg-[#0a57ff] py-4 rounded-xl flex-row items-center justify-center gap-2">
           <Feather name="plus" size={16} color="white" />
           <Text className="text-white text-[15px] font-bold">Link Another Bank</Text>
-        </TouchableOpacity>
+        </HapticTouchableOpacity>
 
-        <TouchableOpacity
+        <HapticTouchableOpacity
           onPress={() => router.back()}
           className="w-full bg-white/10 border border-white/[0.08] py-4 rounded-xl flex-row items-center justify-center gap-2"
         >
           <Text className="text-white text-[15px] font-semibold">Back</Text>
-        </TouchableOpacity>
+        </HapticTouchableOpacity>
       </View>
     </View>
   );

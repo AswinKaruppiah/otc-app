@@ -1,5 +1,6 @@
 import React from "react";
-import { Text, View, TouchableOpacity, ScrollView } from "react-native";
+import { Text, View, ScrollView } from "react-native";
+import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
 import { Link } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
 
@@ -127,9 +128,9 @@ export default function Transactions() {
 
       {/* Back Link */}
       <Link href="/" asChild>
-        <TouchableOpacity className="bg-[#0a57ff]/30 border border-[#0a57ff]/50 px-7 py-3.5 rounded-xl">
+        <HapticTouchableOpacity className="bg-[#0a57ff]/30 border border-[#0a57ff]/50 px-7 py-3.5 rounded-xl">
           <Text className="text-white text-[15px] font-semibold">← Back to Home</Text>
-        </TouchableOpacity>
+        </HapticTouchableOpacity>
       </Link>
     </View>
   );

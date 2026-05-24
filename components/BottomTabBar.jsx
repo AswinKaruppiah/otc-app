@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, TouchableOpacity, Animated } from "react-native";
+import { View, Animated } from "react-native";
+import HapticTouchableOpacity from "./HapticTouchableOpacity";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -163,9 +164,10 @@ function TabButton({ tab, isActive, onPress }) {
   const radialId = `activeTabRadial-${tab.name}`;
 
   return (
-    <TouchableOpacity
+    <HapticTouchableOpacity
       activeOpacity={0.7}
       onPress={onPress}
+      hapticType="selection"
       className="flex-1 h-full justify-center items-center w-full"
     >
       {/* Static Radial Glow: fades smoothly on the active tab */}
@@ -195,6 +197,6 @@ function TabButton({ tab, isActive, onPress }) {
           color={isActive ? "#ffffff" : "rgba(255, 255, 255, 0.45)"}
         />
       </Animated.View>
-    </TouchableOpacity>
+    </HapticTouchableOpacity>
   );
 }
