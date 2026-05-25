@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, Dimensions } from "react-native";
-import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
+import { Text, View, Dimensions, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
 import Svg, {
@@ -129,7 +128,7 @@ export default function Index() {
       {/* 3. Quick Action Buttons */}
       <View className="flex-row justify-between items-center mb-8 gap-3">
         {quickActions.map((action, idx) => (
-          <HapticTouchableOpacity
+          <TouchableOpacity
             key={idx}
             onPress={() => router.push(action.route)}
             className="flex-1 py-4 bg-noirCard border border-white/[0.04] rounded-2xl items-center justify-center gap-1.5"
@@ -143,7 +142,7 @@ export default function Index() {
             <Text className="text-[12px] font-noir-medium text-gray-300">
               {action.name}
             </Text>
-          </HapticTouchableOpacity>
+          </TouchableOpacity>
         ))}
       </View>
     </View>
