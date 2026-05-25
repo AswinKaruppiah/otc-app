@@ -45,7 +45,7 @@ export default function Button({
         style={style}
       >
         <Text className="text-noirBg font-noir-medium text-xl">{children}</Text>
-        <View className="absolute right-1 w-fit p-6 aspect-square rounded-full bg-noirBg items-center justify-center">
+        <View className="absolute top-1 bottom-1 right-1 aspect-square rounded-full bg-noirBg items-center justify-center">
           <MaterialIcons
             name="arrow-forward-ios"
             size={20}
