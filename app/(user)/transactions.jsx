@@ -6,7 +6,7 @@ import Feather from "@expo/vector-icons/Feather";
 /**
  * Transactions Screen — activity log showing recent transactions.
  * Rebuilt using the premium Noir theme:
- *   - Base font: font-noir / font-noir-medium
+ *   - Base font:  /
  *   - Colors: bg-noirCard, bg-noirMint, bg-noirCyan
  */
 export default function Transactions() {
@@ -65,11 +65,15 @@ export default function Transactions() {
     <View className="items-center justify-center py-[10px] w-full">
       {/* Header Badge */}
       <View className="bg-noirMint/10 border border-noirMint/25 px-4 py-1.5 rounded-full mb-6">
-        <Text className="text-noirMint text-[12px] font-noir-medium tracking-[0.5px]">📊 Activity Log</Text>
+        <Text className="text-noirMint font-noir text-[12px] tracking-[0.5px]">
+          📊 Activity Log
+        </Text>
       </View>
 
       {/* Title */}
-      <Text className="text-[38px] font-noir-medium text-noirText mb-3 tracking-[-0.5px]">Transactions</Text>
+      <Text className="text-[38px] text-noirText font-noir mb-3 tracking-[-0.5px]">
+        Transactions
+      </Text>
       <Text className="text-[15px] text-gray-400 font-noir text-center leading-[22px] mb-9 max-w-[300px]">
         Keep track of your recent conversions and transfers.
       </Text>
@@ -90,34 +94,31 @@ export default function Transactions() {
                 <Feather name={tx.icon} size={18} color={tx.iconColor} />
               </View>
               <View className="flex-1">
-                <Text className="text-[15px] font-noir-medium text-noirText mb-0.5">
+                <Text className="text-[15px] text-noirText font-noir mb-0.5">
                   {tx.type}
                 </Text>
                 <Text className="text-[12px] text-gray-400 font-noir mb-1">
                   {tx.pair}
                 </Text>
-                <Text className="text-[11px] text-gray-500 font-noir">
-                  {tx.date}
-                </Text>
+                <Text className="text-[11px] text-gray-500 font-noir">{tx.date}</Text>
               </View>
             </View>
 
             {/* Right Section: Amounts & Status */}
             <View className="items-end gap-1.5">
-              <Text className="text-[15px] font-noir-medium text-noirText">
-                {tx.amount}
-              </Text>
-              <Text className="text-[13px] text-noirCyan font-noir-medium">
-                {tx.converted}
-              </Text>
+              <Text className="text-[15px] text-noirText font-noir">{tx.amount}</Text>
+              <Text className="text-[13px] text-noirCyan font-noir">{tx.converted}</Text>
               <View
                 className="px-2.5 py-0.5 rounded-full border border-white/5"
                 style={{
-                  backgroundColor: tx.status === "Completed" ? "rgba(186, 255, 216, 0.08)" : "rgba(150, 221, 237, 0.08)",
+                  backgroundColor:
+                    tx.status === "Completed"
+                      ? "rgba(186, 255, 216, 0.08)"
+                      : "rgba(150, 221, 237, 0.08)",
                 }}
               >
                 <Text
-                  className="text-[10px] font-noir-medium"
+                  className="text-[10px] font-noir"
                   style={{
                     color: tx.status === "Completed" ? "#baffd8" : "#96dded",
                   }}
@@ -133,7 +134,7 @@ export default function Transactions() {
       {/* Back Link */}
       <Link href="/" asChild>
         <TouchableOpacity className="bg-noirMint/10 border border-noirMint/25 px-7 py-3.5 rounded-xl">
-          <Text className="text-noirMint text-[15px] font-noir-medium">← Back to Home</Text>
+          <Text className="text-noirMint font-noir text-[15px] ">← Back to Home</Text>
         </TouchableOpacity>
       </Link>
     </View>

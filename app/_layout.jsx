@@ -9,8 +9,8 @@ import { useFonts } from "expo-font";
  */
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    "Noir-Regular": require("../assets/NOIR_Font/Noir_regular.otf"),
-    "Noir-Medium": require("../assets/NOIR_Font/Noir_medium.otf"),
+    "Noir-Regular": require("../assets/NOIR_Font/NoirPro-Regular.ttf"),
+    "Noir-Medium": require("../assets/NOIR_Font/NoirPro-Medium.ttf"),
   });
 
   useEffect(() => {
@@ -25,4 +25,3 @@ export default function RootLayout() {
 
   return <Slot />;
 }
-

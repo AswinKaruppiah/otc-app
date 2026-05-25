@@ -1,0 +1,76 @@
+import React from "react";
+import { Text, View } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { cssInterop } from "nativewind";
+import HapticTouchableOpacity from "./HapticTouchableOpacity";
+
+cssInterop(MaterialIcons, {
+  className: {
+    target: "style",
+    nativeStyleToProp: {
+      color: true,
+    },
+  },
+});
+
+/**
+ * Reusable Button Component for Currensea
+ *
+ * Props:
+ * - title (string): Button label text.
+ * - onPress (function): Click/Press handler.
+ * - primary (boolean): True for premium mint pill with arrow; false for translucent dark outline.
+ * - disabled (boolean): If true, reduces opacity and disables touch events.
+ * - className (string): Additional tailwind utility styles.
+ * - style (object): Custom stylesheet styles.
+ */
+export default function Button({
+  children,
+  onPress,
+  primary = true,
+  disabled = false,
+  className = "",
+  style,
+}) {
+  if (primary) {
+    return (
+      <HapticTouchableOpacity
+        activeOpacity={0.9}
+        onPress={onPress}
+        disabled={disabled}
+        hapticType="medium"
+        className={`w-full bg-noirMint py-6 rounded-full flex-row items-center justify-center relative ${
+          disabled ? "opacity-50" : ""
+        } ${className}`}
+        style={style}
+      >
+        <Text className="text-noirBg font-noir-medium text-xl">{children}</Text>
+        <View className="absolute right-1 w-fit p-6 aspect-square rounded-full bg-noirBg items-center justify-center">
+          <MaterialIcons
+            name="arrow-forward-ios"
+            size={20}
+            className="text-noirMint"
+          />
+        </View>
+      </HapticTouchableOpacity>
+    );
+  }
+
+  // Secondary/Outline Variant
+  return (
+    <HapticTouchableOpacity
+      activeOpacity={0.8}
+      onPress={onPress}
+      disabled={disabled}
+      hapticType="light"
+      className={`w-full bg-white/5 border border-white/[0.04] h-14 rounded-full flex-row items-center justify-center ${
+        disabled ? "opacity-50" : ""
+      } ${className}`}
+      style={style}
+    >
+      <Text className="text-gray-400 font-noir text-[16px] font-semibold">
+        {children}
+      </Text>
+    </HapticTouchableOpacity>
+  );
+}
