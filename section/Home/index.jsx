@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { ExchangeCard } from "./Exchange";
 
 /**
- * Home/Index Screen — Main dashboard of the CurrenSea application.
+ * Home/Index Screen — Main dashboard of the Quotex application.
  * Rebuilt using the premium Noir theme colors and typography:
  *   - Base Font:  (Noir-Regular) /  (Noir-Medium)
  *   - Cards Color: bg-noirCard (#1d282d)

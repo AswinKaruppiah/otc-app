@@ -14,7 +14,7 @@ cssInterop(MaterialIcons, {
 });
 
 /**
- * Reusable Button Component for Currensea
+ * Reusable Button Component for Quotex
  *
  * Props:
  * - title (string): Button label text.

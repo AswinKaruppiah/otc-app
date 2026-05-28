@@ -38,7 +38,7 @@ export default function Profile() {
         </View>
         <Text className="text-[22px] text-noirText font-noir mb-1">Alex Mercer</Text>
         <Text className="text-[14px] text-gray-400 font-noir">
-          alex.mercer@currensea.com
+          alex.mercer@quotex.com
         </Text>
       </View>
 
@@ -46,7 +46,7 @@ export default function Profile() {
       <View className="bg-noirMint/10 border border-noirMint/25 px-4 py-1.5 rounded-full mb-8 flex-row items-center gap-1.5">
         <Feather name="award" size={14} color="#baffd8" />
         <Text className="text-noirMint font-noir text-[12px] tracking-[0.5px]">
-          CurrenSea Pro Member
+          Quotex Pro Member
         </Text>
       </View>
 

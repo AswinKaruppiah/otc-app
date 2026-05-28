@@ -12,7 +12,7 @@ const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
  *
  * Built using NativeWind classes and scroll-driven scaling/translation animations.
  */
-export default function TopBar({ title = "CURRENSEA", right }) {
+export default function TopBar({ title = "QUOTEX", right }) {
   const scrollY = useScrollY();
   const insets = useSafeAreaInsets();
 
@@ -104,7 +104,7 @@ export default function TopBar({ title = "CURRENSEA", right }) {
       {/* Row content positioned below the safe area / status bar */}
       <View className="flex-1 flex-row items-center justify-between px-5">
         <Animated.Image
-          source={require("../assets/logo/currensea-logo.png")}
+          source={require("../assets/logo/quotex-logo.png")}
           style={{
             width: 44,
             height: 44,

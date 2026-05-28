@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "currensea",
-    "slug": "currensea",
-    "scheme": "currensea",
+    "name": "Quotex",
+    "slug": "quotex",
+    "scheme": "quotex",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo/currensea-logo.png",
+    "icon": "./assets/logo/quotex-logo.png",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/logo/currensea-logo.png",
+      "image": "./assets/logo/quotex-logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#111418"
     },
@@ -18,18 +18,15 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logo/currensea-logo.png",
+        "foregroundImage": "./assets/logo/quotex-logo.png",
         "backgroundColor": "#111418"
       },
       "edgeToEdgeEnabled": true
     },
     "web": {
-      "favicon": "./assets/logo/currensea-logo.png",
+      "favicon": "./assets/logo/quotex-logo.png",
       "bundler": "metro"
     },
-    "plugins": [
-      "expo-router",
-      "expo-font"
-    ]
+    "plugins": ["expo-router", "expo-font"]
   }
 }
