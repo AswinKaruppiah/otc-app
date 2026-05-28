@@ -14,19 +14,36 @@
       "backgroundColor": "#111418"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aswinth.quotex"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo/quotex-logo.png",
         "backgroundColor": "#111418"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.aswinth.quotex"
     },
     "web": {
       "favicon": "./assets/logo/quotex-logo.png",
       "bundler": "metro"
     },
-    "plugins": ["expo-router", "expo-font"]
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.290463701365-h8g1tahmi1sh6ghplufj5ch9mcq15pdo"
+        }
+      ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a4f99258-7352-4028-8f45-f1751208ec7a"
+      }
+    }
   }
 }

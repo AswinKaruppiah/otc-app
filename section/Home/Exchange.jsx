@@ -6,6 +6,7 @@ import Button from "../../components/Button";
 import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
 import { sanitizeAmount, formatNumber } from "../../utils/helper";
 import GoogleAuth from "./GoogleAuth";
+// import GoogleAuth from "./GoogleAuth";
 
 export const ExchangeCard = () => {
   const [inrAmount, setInrAmount] = useState("85000");
