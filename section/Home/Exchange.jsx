@@ -5,12 +5,12 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import Button from "../../components/Button";
 import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
 import { sanitizeAmount, formatNumber } from "../../utils/helper";
+import GoogleAuth from "./GoogleAuth";
 
 export const ExchangeCard = () => {
   const [inrAmount, setInrAmount] = useState("85000");
   const [usdtAmount, setUsdtAmount] = useState("1000");
   const [isBaseInr, setIsBaseInr] = useState(true);
-
   const EXCHANGE_RATE = 85;
 
   const handleInrChange = (val) => {
@@ -187,6 +187,9 @@ export const ExchangeCard = () => {
       <Button onPress={() => {}} className="mt-8">
         Buy USDT
       </Button>
+
+      {/* Google Authentication Component */}
+      <GoogleAuth />
     </View>
   );
 };
