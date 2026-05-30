@@ -7,4 +7,8 @@ const config = getDefaultConfig(__dirname);
 config.resolver.assetExts.push("otf");
 config.resolver.assetExts.push("ttf");
 
+// Enable package exports for Apollo Client and other modern packages
+config.resolver.unstable_enablePackageExports = true;
+
 module.exports = withNativeWind(config, { input: "./styles/global.css" });
+

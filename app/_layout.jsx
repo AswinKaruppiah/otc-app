@@ -2,6 +2,7 @@ import "../styles/global.css";
 import { useEffect } from "react";
 import { Slot } from "expo-router";
 import { useFonts } from "expo-font";
+import ApolloProviderWrapper from "../components/provider/ApolloProvider";
 
 /**
  * Root layout — wraps the entire app.
@@ -23,5 +24,9 @@ export default function RootLayout() {
     return null;
   }
 
-  return <Slot />;
+  return (
+    <ApolloProviderWrapper>
+      <Slot />
+    </ApolloProviderWrapper>
+  );
 }
