@@ -10,10 +10,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
 
 GoogleSignin.configure({
-  webClientId:
-    "290463701365-f300r07lqqbnjp287unbh2p1e6hnb6hn.apps.googleusercontent.com",
-  iosClientId:
-    "290463701365-h8g1tahmi1sh6ghplufj5ch9mcq15pdo.apps.googleusercontent.com",
+  webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+  iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
   profileImageSize: 120,
 });
 
