@@ -1,5 +1,5 @@
 const { getDefaultConfig } = require("expo/metro-config");
-const { withNativeWind } = require("nativewind/metro");
+const { withUniwindConfig } = require("uniwind/metro");
 
 const config = getDefaultConfig(__dirname);
 
@@ -10,5 +10,6 @@ config.resolver.assetExts.push("ttf");
 // Enable package exports for Apollo Client and other modern packages
 config.resolver.unstable_enablePackageExports = true;
 
-module.exports = withNativeWind(config, { input: "./styles/global.css" });
+module.exports = withUniwindConfig(config, { cssEntryFile: "./styles/global.css" });
+
 

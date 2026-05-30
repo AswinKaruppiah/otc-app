@@ -73,7 +73,7 @@ export const ExchangeCard = () => {
   };
 
   return (
-    <View>
+    <View className="gap-8">
       {/* Main card container */}
       <View className="relative w-full">
         {/* Top Half (INR) */}
@@ -99,7 +99,7 @@ export const ExchangeCard = () => {
           </View>
 
           {/* Row 2: Amount Value Input */}
-          <View className="my-5">
+          <View className="my-4">
             <TextInput
               value={formatNumber(inrAmount)}
               onChangeText={handleInrChange}
@@ -162,7 +162,7 @@ export const ExchangeCard = () => {
           </View>
 
           {/* Row 2: Amount Value Input */}
-          <View className="my-5">
+          <View className="my-4">
             <TextInput
               value={formatNumber(usdtAmount)}
               onChangeText={handleUsdtChange}
@@ -185,9 +185,7 @@ export const ExchangeCard = () => {
       </View>
 
       {/* Action Button */}
-      <Button onPress={() => {}} className="mt-8">
-        Buy USDT
-      </Button>
+      <Button onPress={() => {}}>Buy USDT</Button>
 
       {/* Google Authentication Component */}
       <GoogleAuth />

@@ -1,3 +1,23 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import 'uniwind';
+@import 'heroui-native/styles';
+
+@source '../app/**/*.{js,jsx,ts,tsx}';
+@source '../components/**/*.{js,jsx,ts,tsx}';
+@source '../section/**/*.{js,jsx,ts,tsx}';
+@source '../node_modules/heroui-native/lib';
+
+@theme {
+  --color-noirBg: #111418;
+  --color-noirCard: #1d282d;
+  --color-noirMint: #baffd8;
+  --color-noirCyan: #96dded;
+  --color-noirText: #fcfcfc;
+
+  --font-sans: Noir-Regular;
+  --font-noir: Noir-Regular;
+  --font-nior: Noir-Regular;
+  --font-noir-medium: Noir-Medium;
+}
+
+

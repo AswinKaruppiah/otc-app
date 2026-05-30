@@ -1,6 +1,6 @@
 import { View } from "react-native";
-import { useRouter } from "expo-router";
 import { ExchangeCard } from "./Exchange";
+import { Button } from "heroui-native";
 
 /**
  * Home/Index Screen — Main dashboard of the Quotex application.
@@ -11,25 +11,6 @@ import { ExchangeCard } from "./Exchange";
  */
 
 export default function HomeOverview() {
-  const router = useRouter();
-
-  const quickActions = [
-    {
-      name: "Withdraw",
-      route: "/withdraw",
-      icon: "arrow-down-right",
-      color: "#baffd8",
-    },
-    { name: "Bank", route: "/bank", icon: "briefcase", color: "#96dded" },
-    {
-      name: "Activity",
-      route: "/transactions",
-      icon: "repeat",
-      color: "#ffffff",
-    },
-    { name: "Profile", route: "/profile", icon: "user", color: "#ffffff" },
-  ];
-
   return (
     <View className="w-full">
       <ExchangeCard />

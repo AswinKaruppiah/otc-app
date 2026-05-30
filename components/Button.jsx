@@ -1,17 +1,10 @@
 import React from "react";
 import { Text, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { cssInterop } from "nativewind";
+import { withUniwind } from "uniwind";
 import HapticTouchableOpacity from "./HapticTouchableOpacity";
 
-cssInterop(MaterialIcons, {
-  className: {
-    target: "style",
-    nativeStyleToProp: {
-      color: true,
-    },
-  },
-});
+const StyledMaterialIcons = withUniwind(MaterialIcons);
 
 /**
  * Reusable Button Component for Quotex
@@ -46,10 +39,10 @@ export default function Button({
       >
         <Text className="text-noirBg font-noir-medium text-xl">{children}</Text>
         <View className="absolute top-1 bottom-1 right-1 aspect-square rounded-full bg-noirBg items-center justify-center">
-          <MaterialIcons
+          <StyledMaterialIcons
             name="arrow-forward-ios"
             size={20}
-            className="text-noirMint"
+            colorClassName="accent-noirMint"
           />
         </View>
       </HapticTouchableOpacity>

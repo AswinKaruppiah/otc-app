@@ -96,7 +96,7 @@ export default function GoogleAuth() {
 
   if (userInfo) {
     return (
-      <View className="w-full bg-noirCard border border-white/[0.08] rounded-3xl p-6 mt-6">
+      <View className="w-full bg-noirCard border border-white/[0.08] rounded-3xl p-6">
         <View className="flex-row items-center gap-4 mb-5">
           <View className="relative">
             {userInfo.user.photo ? (

@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { Slot } from "expo-router";
 import { useFonts } from "expo-font";
 import ApolloProviderWrapper from "../components/provider/ApolloProvider";
+import { HeroUINativeProvider } from "heroui-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 /**
  * Root layout — wraps the entire app.
@@ -25,8 +27,13 @@ export default function RootLayout() {
   }
 
   return (
-    <ApolloProviderWrapper>
-      <Slot />
-    </ApolloProviderWrapper>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <HeroUINativeProvider config={{ devInfo: { stylingPrinciples: false } }}>
+        <ApolloProviderWrapper>
+          <Slot />
+        </ApolloProviderWrapper>
+      </HeroUINativeProvider>
+    </GestureHandlerRootView>
   );
 }
+
