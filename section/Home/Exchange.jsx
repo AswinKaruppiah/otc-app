@@ -14,6 +14,7 @@ export const ExchangeCard = () => {
   const [inrAmount, setInrAmount] = useState("85000");
   const [usdtAmount, setUsdtAmount] = useState("1000");
   const [isBaseInr, setIsBaseInr] = useState(true);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const EXCHANGE_RATE = 85;
   const { isAuth, loading, error } = useUser();
 
@@ -190,16 +191,14 @@ export const ExchangeCard = () => {
       {/* Action Button */}
 
       <Show>
-        <Show.If isTrue={loading || !!error}>
+        <Show.If isTrue={(loading || !!error) && !isLoggingIn}>
           <Skeleton className="w-full h-20 rounded-full" />
         </Show.If>
-        <Show.ElseIf isTrue={isAuth}>
+        <Show.ElseIf isTrue={isAuth && !isLoggingIn}>
           <Button onPress={() => {}}>Buy USDT</Button>
         </Show.ElseIf>
-        <Show.Else>
-          <GoogleAuth />
-        </Show.Else>
       </Show>
+      <GoogleAuth isLoggingIn={isLoggingIn} setIsLoggingIn={setIsLoggingIn} />
     </View>
   );
 };

@@ -19,13 +19,14 @@ GoogleSignin.configure({
   profileImageSize: 120,
 });
 
-export default function GoogleAuth() {
+export default function GoogleAuth({ isLoggingIn, setIsLoggingIn }) {
   const client = useApolloClient();
   const [syncGoogleUser, { loading }] = useMutation(SYNC_GOOGLE_USER);
   const { isAuth, loading: userLoading } = useUser();
   const { toast } = useToast();
 
   const handleSignIn = async () => {
+    setIsLoggingIn(true);
     try {
       await GoogleSignin.hasPlayServices();
       const response = await GoogleSignin.signIn();
@@ -64,8 +65,6 @@ export default function GoogleAuth() {
         // Sign in was cancelled by user
       }
     } catch (error) {
-      console.log(error);
-
       if (isErrorWithCode(error)) {
         switch (error.code) {
           case statusCodes.SIGN_IN_CANCELLED:
@@ -100,10 +99,12 @@ export default function GoogleAuth() {
           variant: "danger",
         });
       }
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
-  if (!userLoading && !isAuth) {
+  if (isLoggingIn || (!userLoading && !isAuth)) {
     return (
       <View className="gap-3">
         <View className="flex-row items-center gap-3">
@@ -116,13 +117,12 @@ export default function GoogleAuth() {
 
         <HapticTouchableOpacity
           onPress={handleSignIn}
-          disabled={loading}
+          disabled={isLoggingIn || loading}
           hapticType="medium"
           activeOpacity={0.85}
           className="w-full flex-row items-center justify-center gap-3 py-5 rounded-2xl border border-white/[0.08] bg-white/[0.04]"
-          style={{ opacity: loading ? 0.5 : 1 }}
         >
-          {loading ? (
+          {isLoggingIn || loading ? (
             <ActivityIndicator size="small" color="rgba(255,255,255,0.6)" />
           ) : (
             <>
