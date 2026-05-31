@@ -1,6 +1,8 @@
 import React from "react";
-import { Text, View, TouchableOpacity } from "react-native";
+import { Text, View, TouchableOpacity, ActivityIndicator } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
+import { useUser } from "../../hooks/useUser";
+import { getInitials } from "../../utils/helper";
 
 /**
  * Profile Screen — User avatar, status details, account actions.
@@ -9,8 +11,30 @@ import Feather from "@expo/vector-icons/Feather";
  *   - Colors: bg-noirCard, bg-noirMint, bg-noirCyan
  */
 export default function Profile() {
+  const { user, loading, error } = useUser();
+
+  if (loading && !user) {
+    return (
+      <View className="flex-1 items-center justify-center py-20 w-full">
+        <ActivityIndicator size="large" color="#baffd8" />
+        <Text className="text-gray-400 font-noir mt-4 text-[14px]">
+          Loading Profile...
+        </Text>
+      </View>
+    );
+  }
+
+  const displayName = user?.fullName || "Guest User";
+  const displayEmail = user?.email || "No Email Address";
+  const displayInitials = getInitials(displayName);
+  const displayBadge = user?.kycStatus === "APPROVED" 
+    ? "Verified Member" 
+    : user?.kycStatus 
+      ? `KYC: ${user.kycStatus}` 
+      : "Standard Account";
+
   const profileOptions = [
-    { id: "1", label: "Personal Details", value: "Alex Mercer", icon: "user" },
+    { id: "1", label: "Personal Details", value: displayName, icon: "user" },
     {
       id: "2",
       label: "Linked Bank Accounts",
@@ -31,14 +55,14 @@ export default function Profile() {
       {/* Avatar Section */}
       <View className="items-center mb-6">
         <View className="w-24 h-24 rounded-full bg-noirMint/10 border-2 border-noirMint/25 items-center justify-center mb-3.5 relative">
-          <Text className="text-noirMint font-noir text-[32px] ">AM</Text>
+          <Text className="text-noirMint font-noir text-[32px] ">{displayInitials}</Text>
           <TouchableOpacity className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-noirMint border-2 border-noirBg items-center justify-center">
             <Feather name="camera" size={14} color="#111418" />
           </TouchableOpacity>
         </View>
-        <Text className="text-[22px] text-noirText font-noir mb-1">Alex Mercer</Text>
+        <Text className="text-[22px] text-noirText font-noir mb-1">{displayName}</Text>
         <Text className="text-[14px] text-gray-400 font-noir">
-          alex.mercer@quotex.com
+          {displayEmail}
         </Text>
       </View>
 
@@ -46,7 +70,7 @@ export default function Profile() {
       <View className="bg-noirMint/10 border border-noirMint/25 px-4 py-1.5 rounded-full mb-8 flex-row items-center gap-1.5">
         <Feather name="award" size={14} color="#baffd8" />
         <Text className="text-noirMint font-noir text-[12px] tracking-[0.5px]">
-          Quotex Pro Member
+          {displayBadge}
         </Text>
       </View>
 

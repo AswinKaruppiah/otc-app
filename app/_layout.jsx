@@ -5,6 +5,10 @@ import { useFonts } from "expo-font";
 import ApolloProviderWrapper from "../components/provider/ApolloProvider";
 import { HeroUINativeProvider } from "heroui-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Uniwind } from "uniwind";
+
+// Force dark theme for both Uniwind (Tailwind) and HeroUI Native
+Uniwind.setTheme("dark");
 
 /**
  * Root layout — wraps the entire app.
@@ -28,7 +32,11 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <HeroUINativeProvider config={{ devInfo: { stylingPrinciples: false } }}>
+      <HeroUINativeProvider
+        config={{
+          devInfo: { stylingPrinciples: false },
+        }}
+      >
         <ApolloProviderWrapper>
           <Slot />
         </ApolloProviderWrapper>
@@ -36,4 +44,3 @@ export default function RootLayout() {
     </GestureHandlerRootView>
   );
 }
-

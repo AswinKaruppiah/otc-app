@@ -1,8 +1,14 @@
-import { View, Animated, Image } from "react-native";
+import React, { useState } from "react";
+import { View, Animated, Image, Text, Pressable } from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useScrollY } from "../context/ScrollContext";
+import { useUser } from "../hooks/useUser";
+import { useRouter } from "expo-router";
+import { Avatar, Skeleton, BottomSheet, Button } from "heroui-native";
+import Show from "./Show";
+import { getInitials } from "../utils/helper";
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
@@ -12,9 +18,12 @@ const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
  *
  * Built using NativeWind classes and scroll-driven scaling/translation animations.
  */
-export default function TopBar({ title = "QUOTEX", right }) {
+export default function TopBar() {
   const scrollY = useScrollY();
   const insets = useSafeAreaInsets();
+  const router = useRouter();
+  const { user, loading } = useUser();
+  const [profileSheetOpen, setProfileSheetOpen] = useState(false);
 
   // 1. Interpolate scrollY to drive the blur and gradient overlay (0 at top, 1 at 80px scroll)
   const scrimOpacity = scrollY
@@ -117,19 +126,74 @@ export default function TopBar({ title = "QUOTEX", right }) {
           }}
         />
 
-        {right ? (
-          <Animated.View
-            className="flex-row items-center"
-            style={{
-              transform: [
-                { scale: rightScale },
-                { translateY: rightTranslateY },
-              ],
-            }}
+        <Animated.View
+          style={{
+            transform: [{ scale: rightScale }, { translateY: rightTranslateY }],
+          }}
+        >
+          <BottomSheet
+            isOpen={profileSheetOpen}
+            onOpenChange={setProfileSheetOpen}
           >
-            {right}
-          </Animated.View>
-        ) : null}
+            <BottomSheet.Trigger asChild>
+              <Pressable
+                onPress={() => setProfileSheetOpen(true)}
+                className="active:opacity-75"
+              >
+                <Show>
+                  <Show.If isTrue={loading}>
+                    <Skeleton className="w-10 h-10 rounded-full" />
+                  </Show.If>
+                  <Show.ElseIf isTrue={user}>
+                    <Avatar size="sm" className="ring ring-noirMint">
+                      {user?.profileImage ? (
+                        <Avatar.Image source={{ uri: user.profileImage }} />
+                      ) : null}
+                      <Avatar.Fallback>
+                        <Text className="text-noirMint">
+                          {getInitials(user?.fullName)}
+                        </Text>
+                      </Avatar.Fallback>
+                    </Avatar>
+                  </Show.ElseIf>
+                </Show>
+              </Pressable>
+            </BottomSheet.Trigger>
+            <BottomSheet.Portal>
+              <BottomSheet.Overlay />
+              <BottomSheet.Content>
+                <View className="items-center mb-5">
+                  <Avatar size="lg" className="ring ring-noirMint">
+                    {user?.profileImage ? (
+                      <Avatar.Image source={{ uri: user.profileImage }} />
+                    ) : null}
+                    <Avatar.Fallback>
+                      <Text className="text-noirMint text-xl">
+                        {getInitials(user?.fullName)}
+                      </Text>
+                    </Avatar.Fallback>
+                  </Avatar>
+                </View>
+                <View className="mb-8 gap-2 items-center">
+                  <BottomSheet.Title className="text-center">
+                    {user?.fullName ?? "My Account"}
+                  </BottomSheet.Title>
+                  <BottomSheet.Description className="text-center">
+                    {user?.email ?? ""}
+                  </BottomSheet.Description>
+                </View>
+                <View className="h-px bg-white/5 mb-8" />
+                <Button
+                  variant="danger-soft"
+                  onPress={() => setProfileSheetOpen(false)}
+                  className="h-14"
+                >
+                  Log Out
+                </Button>
+              </BottomSheet.Content>
+            </BottomSheet.Portal>
+          </BottomSheet>
+        </Animated.View>
       </View>
     </Animated.View>
   );

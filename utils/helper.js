@@ -27,3 +27,19 @@ export const formatNumber = (val) => {
   }
   return integerPart;
 };
+
+/**
+ * Returns the initials of a name, up to two letters.
+ * Defaults to "U" if name is falsy.
+ */
+export const getInitials = (name) => {
+  if (!name) return "U";
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+};
+
