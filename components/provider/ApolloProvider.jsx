@@ -2,24 +2,35 @@ import { useMemo, useEffect } from "react";
 import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 import { ApolloProvider } from "@apollo/client/react";
 import { SetContextLink } from "@apollo/client/link/context";
+import { useToast } from "heroui-native";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import * as SecureStore from "../../utils/secureStore";
 
 /**
  * Helper to clear local token and reset Apollo cache.
  */
-const clearAuthToken = async (client) => {
+const clearAuthToken = async (client, toast) => {
   try {
     const existingToken = await SecureStore.getItemAsync("accessToken");
     if (existingToken) {
-      console.log("Clearing token and resetting Apollo store.");
+      await GoogleSignin.signOut();
       await SecureStore.deleteItemAsync("accessToken");
       await SecureStore.deleteItemAsync("accessTokenExpiration");
-      if (client) {
-        await client.resetStore();
-      }
+      await client.resetStore();
+      await client.clearStore();
+      toast?.show({
+        label: "Signed Out",
+        description: "Your session has expired.",
+        variant: "success",
+      });
     }
   } catch (e) {
     console.error("Error clearing auth token:", e);
+    toast?.show({
+      label: "Error",
+      description: `Sign out failed: ${e.message}`,
+      variant: "danger",
+    });
   }
 };
 
@@ -27,6 +38,7 @@ const clearAuthToken = async (client) => {
  * Encapsulates Apollo Client initialization inside a component scope.
  */
 function ApolloProviderWrapper({ children }) {
+  const { toast } = useToast();
   const client = useMemo(() => {
     let clientInstance = null;
 
@@ -62,10 +74,12 @@ function ApolloProviderWrapper({ children }) {
   useEffect(() => {
     const checkExpiration = async () => {
       try {
-        const expirationStr = await SecureStore.getItemAsync("accessTokenExpiration");
+        const expirationStr = await SecureStore.getItemAsync(
+          "accessTokenExpiration",
+        );
         if (expirationStr && Date.now() >= parseInt(expirationStr, 10)) {
           console.log("Token expiration reached in session checker.");
-          await clearAuthToken(client);
+          await clearAuthToken(client, toast);
         }
       } catch (e) {
         console.error("Error in expiration checker:", e);

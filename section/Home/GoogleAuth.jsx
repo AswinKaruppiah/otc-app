@@ -46,8 +46,7 @@ export default function GoogleAuth({ isLoggingIn, setIsLoggingIn }) {
         const token = syncResponse.data?.syncGoogleUser?.accessToken;
         if (token) {
           await SecureStore.setItemAsync("accessToken", token);
-          // Store token expiration (10 seconds for testing)
-          const expirationTime = Date.now() + 30 * 60 * 1000;
+          const expirationTime = Date.now() + 24 * 60 * 60 * 1000;
           await SecureStore.setItemAsync(
             "accessTokenExpiration",
             expirationTime.toString(),
