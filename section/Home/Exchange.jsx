@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { View, Text, Image, TextInput } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -6,13 +6,16 @@ import Button from "../../components/Button";
 import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
 import { sanitizeAmount, formatNumber } from "../../utils/helper";
 import GoogleAuth from "./GoogleAuth";
-// import GoogleAuth from "./GoogleAuth";
+import { useUser } from "../../hooks/useUser";
+import Show from "../../components/Show";
+import { Skeleton } from "heroui-native";
 
 export const ExchangeCard = () => {
   const [inrAmount, setInrAmount] = useState("85000");
   const [usdtAmount, setUsdtAmount] = useState("1000");
   const [isBaseInr, setIsBaseInr] = useState(true);
   const EXCHANGE_RATE = 85;
+  const { isAuth, loading, error } = useUser();
 
   const handleInrChange = (val) => {
     const cleanInr = sanitizeAmount(val);
@@ -185,10 +188,18 @@ export const ExchangeCard = () => {
       </View>
 
       {/* Action Button */}
-      <Button onPress={() => {}}>Buy USDT</Button>
 
-      {/* Google Authentication Component */}
-      <GoogleAuth />
+      <Show>
+        <Show.If isTrue={loading || !!error}>
+          <Skeleton className="w-full h-20 rounded-full" />
+        </Show.If>
+        <Show.ElseIf isTrue={isAuth}>
+          <Button onPress={() => {}}>Buy USDT</Button>
+        </Show.ElseIf>
+        <Show.Else>
+          <GoogleAuth />
+        </Show.Else>
+      </Show>
     </View>
   );
 };

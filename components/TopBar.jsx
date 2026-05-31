@@ -6,7 +6,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useScrollY } from "../context/ScrollContext";
 import { useUser } from "../hooks/useUser";
 import { useRouter } from "expo-router";
-import { Avatar, Skeleton, BottomSheet, Button } from "heroui-native";
+import { Avatar, Skeleton, BottomSheet, Button, useToast } from "heroui-native";
+import { useApolloClient } from "@apollo/client/react";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import * as SecureStore from "../utils/secureStore";
 import Show from "./Show";
 import { getInitials } from "../utils/helper";
 
@@ -24,6 +27,30 @@ export default function TopBar() {
   const router = useRouter();
   const { user, loading } = useUser();
   const [profileSheetOpen, setProfileSheetOpen] = useState(false);
+  const apolloClient = useApolloClient();
+  const { toast } = useToast();
+
+  const handleSignOut = async () => {
+    try {
+      await GoogleSignin.signOut();
+      await SecureStore.deleteItemAsync("accessToken");
+      await SecureStore.deleteItemAsync("accessTokenExpiration");
+      await apolloClient.resetStore();
+      await apolloClient.clearStore();
+      setProfileSheetOpen(false);
+      toast.show({
+        label: "Signed Out",
+        description: "You have successfully signed out.",
+        variant: "success",
+      });
+    } catch (error) {
+      toast.show({
+        label: "Error",
+        description: `Failed to sign out: ${error.message}`,
+        variant: "danger",
+      });
+    }
+  };
 
   // 1. Interpolate scrollY to drive the blur and gradient overlay (0 at top, 1 at 80px scroll)
   const scrimOpacity = scrollY
@@ -163,7 +190,7 @@ export default function TopBar() {
               <BottomSheet.Overlay />
               <BottomSheet.Content>
                 <View className="items-center mb-5">
-                  <Avatar size="lg" className="ring ring-noirMint">
+                  <Avatar className="ring h-24 w-24 ring-noirMint">
                     {user?.profileImage ? (
                       <Avatar.Image source={{ uri: user.profileImage }} />
                     ) : null}
@@ -185,7 +212,7 @@ export default function TopBar() {
                 <View className="h-px bg-white/5 mb-8" />
                 <Button
                   variant="danger-soft"
-                  onPress={() => setProfileSheetOpen(false)}
+                  onPress={handleSignOut}
                   className="h-14"
                 >
                   Log Out

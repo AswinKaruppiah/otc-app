@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { View, Text, Image, ActivityIndicator } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
 import {
   GoogleSignin,
   statusCodes,
@@ -9,10 +8,10 @@ import {
 import Ionicons from "@expo/vector-icons/Ionicons";
 import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
 import { useMutation, useApolloClient } from "@apollo/client/react";
-import { useToast } from "heroui-native";
 import { useUser } from "../../hooks/useUser";
 import * as SecureStore from "../../utils/secureStore";
 import { SYNC_GOOGLE_USER } from "../../apollo/mutation";
+import { useToast } from "heroui-native";
 
 GoogleSignin.configure({
   webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
@@ -23,8 +22,8 @@ GoogleSignin.configure({
 export default function GoogleAuth() {
   const client = useApolloClient();
   const [syncGoogleUser, { loading }] = useMutation(SYNC_GOOGLE_USER);
+  const { isAuth, loading: userLoading } = useUser();
   const { toast } = useToast();
-  const { user, loading: userLoading } = useUser();
 
   const handleSignIn = async () => {
     try {
@@ -65,6 +64,8 @@ export default function GoogleAuth() {
         // Sign in was cancelled by user
       }
     } catch (error) {
+      console.log(error);
+
       if (isErrorWithCode(error)) {
         switch (error.code) {
           case statusCodes.SIGN_IN_CANCELLED:
@@ -102,135 +103,39 @@ export default function GoogleAuth() {
     }
   };
 
-  const handleSignOut = async () => {
-    try {
-      await GoogleSignin.signOut();
-      await SecureStore.deleteItemAsync("accessToken");
-      await SecureStore.deleteItemAsync("accessTokenExpiration");
-      await client.resetStore();
-      await client.clearStore();
-      toast.show({
-        label: "Signed Out",
-        description: "You have successfully signed out.",
-        variant: "success",
-      });
-    } catch (error) {
-      console.error("Google Sign-Out Error:", error);
-      toast.show({
-        label: "Error",
-        description: `Failed to sign out: ${error.message}`,
-        variant: "danger",
-      });
-    }
-  };
-
-  if (userLoading && !user) {
+  if (!userLoading && !isAuth) {
     return (
-      <View className="w-full bg-noirCard border border-white/[0.04] rounded-3xl p-6 mt-6 items-center justify-center min-h-[140px]">
-        <ActivityIndicator size="large" color="#10B981" />
-      </View>
-    );
-  }
-
-  if (user) {
-    const isVerified =
-      user.kycStatus === "COMPLETED" || user.kycStatus === "VERIFIED";
-
-    return (
-      <View className="w-full bg-noirCard border border-white/[0.08] rounded-3xl p-6">
-        <View className="flex-row items-center gap-4 mb-5">
-          <View className="relative">
-            {user.profileImage ? (
-              <Image
-                source={{ uri: user.profileImage }}
-                className="w-14 h-14 rounded-full border-2 border-noirMint"
-              />
-            ) : (
-              <View className="w-14 h-14 rounded-full bg-noirMint/10 border-2 border-noirMint/25 items-center justify-center">
-                <Text className="text-noirMint font-noir-medium text-lg">
-                  {user.fullName ? user.fullName.charAt(0).toUpperCase() : "U"}
-                </Text>
-              </View>
-            )}
-            <View className="absolute -bottom-1 -right-1 bg-noirMint rounded-full p-0.5 border border-noirCard">
-              <Ionicons name="checkmark-circle" size={14} color="#111418" />
-            </View>
-          </View>
-
-          <View className="flex-1">
-            <Text
-              className="text-noirText font-noir-medium text-lg"
-              numberOfLines={1}
-            >
-              {user.fullName}
-            </Text>
-            <Text
-              className="text-gray-400 font-noir text-xs mt-0.5"
-              numberOfLines={1}
-            >
-              {user.email}
-            </Text>
-          </View>
-
-          <View
-            className={`border px-2.5 py-1 rounded-full ${
-              isVerified
-                ? "bg-noirMint/10 border-noirMint/20"
-                : "bg-amber-500/10 border-amber-500/20"
-            }`}
-          >
-            <Text
-              className={`font-noir text-[11px] font-semibold ${
-                isVerified ? "text-noirMint" : "text-amber-500"
-              }`}
-            >
-              {isVerified ? "Verified" : "Unverified"}
-            </Text>
-          </View>
+      <View className="gap-3">
+        <View className="flex-row items-center gap-3">
+          <View className="flex-1 h-px bg-white/10" />
+          <Text className="text-white/30 font-noir text-xs tracking-widest uppercase">
+            or sign in
+          </Text>
+          <View className="flex-1 h-px bg-white/10" />
         </View>
 
         <HapticTouchableOpacity
-          onPress={handleSignOut}
+          onPress={handleSignIn}
           disabled={loading}
-          hapticType="light"
-          className="w-full bg-white/5 border border-white/[0.04] py-3.5 rounded-full items-center justify-center"
+          hapticType="medium"
+          activeOpacity={0.85}
+          className="w-full flex-row items-center justify-center gap-3 py-5 rounded-2xl border border-white/[0.08] bg-white/[0.04]"
+          style={{ opacity: loading ? 0.5 : 1 }}
         >
           {loading ? (
-            <ActivityIndicator size="small" color="#ff7b7b" />
+            <ActivityIndicator size="small" color="rgba(255,255,255,0.6)" />
           ) : (
-            <Text className="text-red-400 font-noir text-sm">
-              Sign Out from Google
-            </Text>
+            <>
+              <View className="w-5 h-5 items-center justify-center">
+                <Ionicons name="logo-google" size={18} color="#ffffff" />
+              </View>
+              <Text className="text-white/80 font-noir-medium text-sm tracking-wide">
+                Continue with Google
+              </Text>
+            </>
           )}
         </HapticTouchableOpacity>
       </View>
     );
   }
-
-  return (
-    <View className="w-full bg-noirCard border border-white/[0.04] rounded-3xl p-6 mt-6">
-      <Text className="text-gray-400 font-noir text-[14px] mb-4 text-center">
-        Access all premium features instantly
-      </Text>
-      <HapticTouchableOpacity
-        onPress={handleSignIn}
-        disabled={loading}
-        hapticType="medium"
-        className={`w-full bg-white flex-row items-center justify-center py-4 rounded-full gap-3 ${
-          loading ? "opacity-60" : ""
-        }`}
-      >
-        {loading ? (
-          <ActivityIndicator size="small" color="#111418" />
-        ) : (
-          <>
-            <Ionicons name="logo-google" size={20} color="#111418" />
-            <Text className="text-noirBg font-noir-medium text-base">
-              Continue with Google
-            </Text>
-          </>
-        )}
-      </HapticTouchableOpacity>
-    </View>
-  );
 }
