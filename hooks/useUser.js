@@ -10,7 +10,6 @@ import { GET_USER } from "../apollo/query";
 export function useUser(options = {}) {
   const { data, loading, error, refetch } = useQuery(GET_USER, {
     // Avoid stale user details by fetching on mount, can be overridden by options.
-    fetchPolicy: "network-only",
     ...options,
   });
 
