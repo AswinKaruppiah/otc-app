@@ -153,77 +153,81 @@ export default function TopBar() {
           }}
         />
 
-        <BottomSheet
-          isOpen={profileSheetOpen}
-          onOpenChange={setProfileSheetOpen}
-        >
-          <BottomSheet.Trigger asChild>
-            <Animated.View
-              style={{
-                transform: [
-                  { scale: rightScale },
-                  { translateY: rightTranslateY },
-                ],
-              }}
+        <Show>
+          <Show.If isTrue={user || loading}>
+            <BottomSheet
+              isOpen={profileSheetOpen}
+              onOpenChange={setProfileSheetOpen}
             >
-              <Pressable
-                onPress={() => setProfileSheetOpen(true)}
-                className="active:opacity-75"
-              >
-                <Show>
-                  <Show.If isTrue={loading}>
-                    <Skeleton className="w-10 h-10 rounded-full" />
-                  </Show.If>
-                  <Show.ElseIf isTrue={user}>
-                    <Avatar size="sm" className="ring ring-noirMint">
+              <BottomSheet.Trigger asChild>
+                <Animated.View
+                  style={{
+                    transform: [
+                      { scale: rightScale },
+                      { translateY: rightTranslateY },
+                    ],
+                  }}
+                >
+                  <Pressable
+                    onPress={() => setProfileSheetOpen(true)}
+                    className="active:opacity-75"
+                  >
+                    <Show>
+                      <Show.If isTrue={loading}>
+                        <Skeleton className="w-10 h-10 rounded-full" />
+                      </Show.If>
+                      <Show.ElseIf isTrue={user}>
+                        <Avatar size="sm" className="ring ring-noirMint">
+                          {user?.profileImage ? (
+                            <Avatar.Image source={{ uri: user.profileImage }} />
+                          ) : null}
+                          <Avatar.Fallback>
+                            <Text className="text-noirMint">
+                              {getInitials(user?.fullName)}
+                            </Text>
+                          </Avatar.Fallback>
+                        </Avatar>
+                      </Show.ElseIf>
+                    </Show>
+                  </Pressable>
+                </Animated.View>
+              </BottomSheet.Trigger>
+              <BottomSheet.Portal>
+                <BottomSheet.Overlay />
+                <BottomSheet.Content>
+                  <View className="items-center mb-5">
+                    <Avatar className="ring h-24 w-24 ring-noirMint">
                       {user?.profileImage ? (
                         <Avatar.Image source={{ uri: user.profileImage }} />
                       ) : null}
                       <Avatar.Fallback>
-                        <Text className="text-noirMint">
+                        <Text className="text-noirMint text-xl">
                           {getInitials(user?.fullName)}
                         </Text>
                       </Avatar.Fallback>
                     </Avatar>
-                  </Show.ElseIf>
-                </Show>
-              </Pressable>
-            </Animated.View>
-          </BottomSheet.Trigger>
-          <BottomSheet.Portal>
-            <BottomSheet.Overlay />
-            <BottomSheet.Content>
-              <View className="items-center mb-5">
-                <Avatar className="ring h-24 w-24 ring-noirMint">
-                  {user?.profileImage ? (
-                    <Avatar.Image source={{ uri: user.profileImage }} />
-                  ) : null}
-                  <Avatar.Fallback>
-                    <Text className="text-noirMint text-xl">
-                      {getInitials(user?.fullName)}
-                    </Text>
-                  </Avatar.Fallback>
-                </Avatar>
-              </View>
-              <View className="mb-8 gap-2 items-center">
-                <BottomSheet.Title className="text-center font-noir-medium">
-                  {user?.fullName ?? "My Account"}
-                </BottomSheet.Title>
-                <BottomSheet.Description className="text-center font-noir">
-                  {user?.email ?? ""}
-                </BottomSheet.Description>
-              </View>
-              <View className="h-px bg-white/5 mb-8" />
-              <Button
-                variant="danger-soft"
-                onPress={handleSignOut}
-                className="h-14"
-              >
-                Log Out
-              </Button>
-            </BottomSheet.Content>
-          </BottomSheet.Portal>
-        </BottomSheet>
+                  </View>
+                  <View className="mb-8 gap-2 items-center">
+                    <BottomSheet.Title className="text-center font-noir-medium">
+                      {user?.fullName ?? "My Account"}
+                    </BottomSheet.Title>
+                    <BottomSheet.Description className="text-center font-noir">
+                      {user?.email ?? ""}
+                    </BottomSheet.Description>
+                  </View>
+                  <View className="h-px bg-white/5 mb-8" />
+                  <Button
+                    variant="danger-soft"
+                    onPress={handleSignOut}
+                    className="h-14"
+                  >
+                    Log Out
+                  </Button>
+                </BottomSheet.Content>
+              </BottomSheet.Portal>
+            </BottomSheet>
+          </Show.If>
+        </Show>
       </View>
     </Animated.View>
   );
