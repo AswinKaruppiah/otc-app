@@ -129,7 +129,7 @@ export default function BottomTabBar() {
             key={tab.route}
             tab={tab}
             isActive={activeIndex === index}
-            onPress={() => router.replace(tab.route)}
+            onPress={() => router.push(tab.route)}
           />
         ))}
       </View>
@@ -194,7 +194,9 @@ function TabButton({ tab, isActive, onPress }) {
         <Feather
           name={tab.icon}
           size={24}
-          color={isActive ? "rgba(186, 255, 216, 0.75)" : "rgba(255, 255, 255, 0.45)"}
+          color={
+            isActive ? "rgba(186, 255, 216, 0.75)" : "rgba(255, 255, 255, 0.45)"
+          }
         />
       </Animated.View>
     </HapticTouchableOpacity>

@@ -12,6 +12,7 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import * as SecureStore from "../utils/secureStore";
 import Show from "./Show";
 import { getInitials } from "../utils/helper";
+import Feather from "@expo/vector-icons/Feather";
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
@@ -215,11 +216,52 @@ export default function TopBar() {
                       {user?.email ?? ""}
                     </BottomSheet.Description>
                   </View>
+                  <View className="w-full gap-3 mb-6">
+                    <Pressable
+                      onPress={() => {
+                        setProfileSheetOpen(false);
+                        router.push("/bank");
+                      }}
+                      className="w-full bg-white/5 border border-white/[0.04] py-4 px-5 rounded-full flex-row items-center justify-between active:opacity-75"
+                    >
+                      <View className="flex-row items-center gap-3">
+                        <Feather name="plus-circle" size={26} color="#baffd8" />
+                        <Text className="text-white font-noir text-base -mb-0.5">
+                          Add Wallet
+                        </Text>
+                      </View>
+                      <Feather
+                        name="chevron-right"
+                        size={16}
+                        color="rgba(255, 255, 255, 0.3)"
+                      />
+                    </Pressable>
+
+                    <Pressable
+                      onPress={() => {
+                        setProfileSheetOpen(false);
+                      }}
+                      className="w-full bg-white/5 border border-white/[0.04] py-4 px-5 rounded-full flex-row items-center justify-between active:opacity-75"
+                    >
+                      <View className="flex-row items-center gap-3">
+                        <Feather name="help-circle" size={26} color="#96dded" />
+                        <Text className="text-white font-noir text-base -mb-0.5">
+                          Support
+                        </Text>
+                      </View>
+                      <Feather
+                        name="chevron-right"
+                        size={16}
+                        color="rgba(255, 255, 255, 0.3)"
+                      />
+                    </Pressable>
+                  </View>
                   <View className="h-px bg-white/5 mb-8" />
+
                   <Button
                     variant="danger-soft"
                     onPress={handleSignOut}
-                    className="h-14"
+                    className="h-14 rounded-full"
                   >
                     Log Out
                   </Button>
