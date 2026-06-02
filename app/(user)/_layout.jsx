@@ -9,6 +9,7 @@ import ScreenBackground from "../../components/ScreenBackground";
 import TopBar from "../../components/TopBar";
 import { ScrollProvider, useScrollY } from "../../context/ScrollContext";
 import BottomTabBar from "../../components/BottomTabBar";
+import { useUser } from "../../hooks/useUser";
 
 /**
  * Layout for all (user) screens.
@@ -31,6 +32,7 @@ export default function UserLayout() {
 function UserLayoutContent() {
   const scrollY = useScrollY();
   const insets = useSafeAreaInsets();
+  const { isAuth } = useUser();
 
   // TopBar height is 60. Add 20px spacing so content starts below TopBar.
   const paddingTop = 60 + insets.top + 20;
@@ -53,7 +55,7 @@ function UserLayoutContent() {
       >
         <Slot />
       </Animated.ScrollView>
-      <BottomTabBar />
+      {isAuth && <BottomTabBar />}
     </View>
   );
 }

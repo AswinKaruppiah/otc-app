@@ -5,6 +5,7 @@ import { SetContextLink } from "@apollo/client/link/context";
 import { useToast } from "heroui-native";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import * as SecureStore from "../../utils/secureStore";
+import { router } from "expo-router";
 
 /**
  * Helper to clear local token and reset Apollo cache.
@@ -23,6 +24,7 @@ const clearAuthToken = async (client, toast) => {
         description: "Your session has expired.",
         variant: "success",
       });
+      router.replace("/");
     }
   } catch (e) {
     console.error("Error clearing auth token:", e);
