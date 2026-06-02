@@ -44,6 +44,7 @@ export default function TopBar() {
         description: "You have successfully signed out.",
         variant: "success",
       });
+      router.replace("/");
     } catch (error) {
       toast.show({
         label: "Error",
