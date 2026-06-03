@@ -1,12 +1,19 @@
-import React, { useState } from "react";
-import { View, Animated, Image, Text, Pressable } from "react-native";
+import { useState } from "react";
+import { View, Animated, Text, Pressable } from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useScrollY } from "../context/ScrollContext";
 import { useUser } from "../hooks/useUser";
 import { useRouter } from "expo-router";
-import { Avatar, Skeleton, BottomSheet, Button, useToast } from "heroui-native";
+import {
+  Avatar,
+  Skeleton,
+  BottomSheet,
+  Button,
+  useToast,
+} from "heroui-native";
+import LogoutDialog from "./dialog/LogoutDialog";
 import { useApolloClient } from "@apollo/client/react";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import * as SecureStore from "../utils/secureStore";
@@ -28,6 +35,7 @@ export default function TopBar() {
   const router = useRouter();
   const { user, loading } = useUser();
   const [profileSheetOpen, setProfileSheetOpen] = useState(false);
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const apolloClient = useApolloClient();
   const { toast } = useToast();
 
@@ -36,9 +44,9 @@ export default function TopBar() {
       await GoogleSignin.signOut();
       await SecureStore.deleteItemAsync("accessToken");
       await SecureStore.deleteItemAsync("accessTokenExpiration");
-      await apolloClient.resetStore();
+      setLogoutDialogOpen(false);
       await apolloClient.clearStore();
-      setProfileSheetOpen(false);
+      await apolloClient.resetStore();
       toast.show({
         label: "Signed Out",
         description: "You have successfully signed out.",
@@ -57,53 +65,53 @@ export default function TopBar() {
   // 1. Interpolate scrollY to drive the blur and gradient overlay (0 at top, 1 at 80px scroll)
   const scrimOpacity = scrollY
     ? scrollY.interpolate({
-        inputRange: [0, 80],
-        outputRange: [0, 1],
-        extrapolate: "clamp",
-      })
+      inputRange: [0, 80],
+      outputRange: [0, 1],
+      extrapolate: "clamp",
+    })
     : 1;
 
   // 2. Title Scale: shrinks from 1 to 0.88 as user scrolls
   const titleScale = scrollY
     ? scrollY.interpolate({
-        inputRange: [0, 80],
-        outputRange: [1, 0.88],
-        extrapolate: "clamp",
-      })
+      inputRange: [0, 80],
+      outputRange: [1, 0.88],
+      extrapolate: "clamp",
+    })
     : 1;
 
   // 3. Title Translation: slides slightly left and up to align with compact mode
   const titleTranslateX = scrollY
     ? scrollY.interpolate({
-        inputRange: [0, 80],
-        outputRange: [0, -10],
-        extrapolate: "clamp",
-      })
+      inputRange: [0, 80],
+      outputRange: [0, -10],
+      extrapolate: "clamp",
+    })
     : 0;
 
   const titleTranslateY = scrollY
     ? scrollY.interpolate({
-        inputRange: [0, 80],
-        outputRange: [0, -2],
-        extrapolate: "clamp",
-      })
+      inputRange: [0, 80],
+      outputRange: [0, -2],
+      extrapolate: "clamp",
+    })
     : 0;
 
   // 4. Right Content Scale and Translation: matches the title's shift
   const rightScale = scrollY
     ? scrollY.interpolate({
-        inputRange: [0, 80],
-        outputRange: [1, 0.92],
-        extrapolate: "clamp",
-      })
+      inputRange: [0, 80],
+      outputRange: [1, 0.92],
+      extrapolate: "clamp",
+    })
     : 1;
 
   const rightTranslateY = scrollY
     ? scrollY.interpolate({
-        inputRange: [0, 80],
-        outputRange: [0, -2],
-        extrapolate: "clamp",
-      })
+      inputRange: [0, 80],
+      outputRange: [0, -2],
+      extrapolate: "clamp",
+    })
     : 0;
 
   const headerHeight = 60 + insets.top;
@@ -261,7 +269,10 @@ export default function TopBar() {
 
                   <Button
                     variant="danger-soft"
-                    onPress={handleSignOut}
+                    onPress={() => {
+                      setProfileSheetOpen(false);
+                      setTimeout(() => setLogoutDialogOpen(true), 200);
+                    }}
                     className="h-14 rounded-full"
                   >
                     Log Out
@@ -272,6 +283,12 @@ export default function TopBar() {
           </Show.If>
         </Show>
       </View>
+
+      <LogoutDialog
+        isOpen={logoutDialogOpen}
+        onOpenChange={setLogoutDialogOpen}
+        onConfirm={handleSignOut}
+      />
     </Animated.View>
   );
 }

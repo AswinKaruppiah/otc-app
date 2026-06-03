@@ -195,10 +195,12 @@ export const ExchangeCard = () => {
           <Skeleton className="w-full h-20 rounded-full" />
         </Show.If>
         <Show.ElseIf isTrue={isAuth && !isLoggingIn}>
-          <Button onPress={() => {}}>Buy USDT</Button>
+          <Button onPress={() => { }}>Buy USDT</Button>
         </Show.ElseIf>
+        <Show.Else>
+          <GoogleAuth isLoggingIn={isLoggingIn} setIsLoggingIn={setIsLoggingIn} />
+        </Show.Else>
       </Show>
-      <GoogleAuth isLoggingIn={isLoggingIn} setIsLoggingIn={setIsLoggingIn} />
     </View>
   );
 };

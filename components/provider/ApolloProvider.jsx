@@ -17,8 +17,8 @@ const clearAuthToken = async (client, toast) => {
       await GoogleSignin.signOut();
       await SecureStore.deleteItemAsync("accessToken");
       await SecureStore.deleteItemAsync("accessTokenExpiration");
-      await client.resetStore();
-      await client.clearStore();
+      await apolloClient.clearStore();
+      await apolloClient.resetStore();
       toast?.show({
         label: "Signed Out",
         description: "Your session has expired.",
