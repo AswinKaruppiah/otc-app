@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { haptic } from "../utils/haptics";
 import { View, Animated, Text, Pressable } from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
@@ -270,6 +271,7 @@ export default function TopBar() {
                   <Button
                     variant="danger-soft"
                     onPress={() => {
+                      haptic.warning();
                       setProfileSheetOpen(false);
                       setTimeout(() => setLogoutDialogOpen(true), 200);
                     }}

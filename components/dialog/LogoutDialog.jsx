@@ -1,6 +1,7 @@
 import { View } from "react-native";
 import { Dialog, Button } from "heroui-native";
 import Feather from "@expo/vector-icons/Feather";
+import { haptic } from "../../utils/haptics";
 
 export default function LogoutDialog({ isOpen, onOpenChange, onConfirm }) {
   return (
@@ -29,7 +30,7 @@ export default function LogoutDialog({ isOpen, onOpenChange, onConfirm }) {
           <View className="gap-2.5 mt-6">
             <Button
               variant="danger"
-              onPress={onConfirm}
+              onPress={() => { haptic.heavy(); onConfirm(); }}
               className="h-13 rounded-full"
             >
               Sign Out

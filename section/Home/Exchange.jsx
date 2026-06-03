@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, Text, Image, TextInput } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Button from "../../components/Button";
 import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
 import { sanitizeAmount, formatNumber } from "../../utils/helper";
@@ -11,7 +11,7 @@ import Show from "../../components/Show";
 import { Skeleton } from "heroui-native";
 
 export const ExchangeCard = () => {
-  const [inrAmount, setInrAmount] = useState("85000");
+  const [inrAmount, setInrAmount] = useState("10000");
   const [usdtAmount, setUsdtAmount] = useState("1000");
   const [isBaseInr, setIsBaseInr] = useState(true);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -115,11 +115,11 @@ export const ExchangeCard = () => {
             />
           </View>
 
-          {/* Row 3: Balance */}
+          {/* Row 3: Order Pending */}
           <View className="flex-row justify-between items-center">
-            <Text className="text-gray-400 font-noir text-[13px]">Balance</Text>
+            <Text className="text-gray-400 font-noir text-[13px]">Order Pending</Text>
             <Text className="text-gray-400 font-noir text-[13px]">
-              1,50,000.00
+              2
             </Text>
           </View>
         </LinearGradient>
@@ -139,7 +139,7 @@ export const ExchangeCard = () => {
               elevation: 2,
             }}
           >
-            <Ionicons name="swap-vertical" size={24} color="#baffd8" />
+            <MaterialIcons name="swap-calls" size={30} color="#baffd8" strokeWidth={1.2} />
           </HapticTouchableOpacity>
         </View>
 
@@ -178,11 +178,11 @@ export const ExchangeCard = () => {
             />
           </View>
 
-          {/* Row 3: Balance */}
+          {/* Row 3: Exchange Rate */}
           <View className="flex-row justify-between items-center">
-            <Text className="text-gray-400 font-noir text-[13px]">Balance</Text>
+            <Text className="text-gray-400 font-noir text-[13px]">Exchange Rate</Text>
             <Text className="text-gray-400 font-noir text-[13px]">
-              5,420.50
+              1 USDT = 85 INR
             </Text>
           </View>
         </LinearGradient>
