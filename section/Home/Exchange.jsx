@@ -12,8 +12,10 @@ import Show from "../../components/Show";
 import { Skeleton } from "heroui-native";
 import { useQuery } from "@apollo/client/react";
 import { LIST_ORDERS } from "../../apollo/query";
+import { useRouter } from "expo-router";
 
 export const ExchangeCard = () => {
+  const router = useRouter();
   const { latestPrice } = useLatestPrice();
   const exchangeRate = latestPrice?.sellPrice ? parseFloat(latestPrice.sellPrice) : 0;
 
@@ -199,7 +201,7 @@ export const ExchangeCard = () => {
           <Skeleton className="w-full h-20 rounded-full" />
         </Show.If>
         <Show.ElseIf isTrue={isAuth && !isLoggingIn}>
-          <Button onPress={() => { }}>Buy USDT</Button>
+          <Button onPress={() => router.push("/onboarding")}>Buy USDT</Button>
         </Show.ElseIf>
         <Show.Else>
           <GoogleAuth isLoggingIn={isLoggingIn} setIsLoggingIn={setIsLoggingIn} />

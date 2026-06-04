@@ -4,7 +4,7 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { Slot } from "expo-router";
+import { Slot, usePathname } from "expo-router";
 import ScreenBackground from "../../components/ScreenBackground";
 import TopBar from "../../components/TopBar";
 import { ScrollProvider, useScrollY } from "../../context/ScrollContext";
@@ -33,9 +33,11 @@ function UserLayoutContent() {
   const scrollY = useScrollY();
   const insets = useSafeAreaInsets();
   const { isAuth } = useUser();
+  const pathname = usePathname();
 
   // TopBar height is 60. Add 20px spacing so content starts below TopBar.
   const paddingTop = 60 + insets.top + 20;
+  const showTabBar = isAuth && pathname !== "/onboarding";
 
   return (
     <View style={{ flex: 1 }}>
@@ -55,7 +57,7 @@ function UserLayoutContent() {
       >
         <Slot />
       </Animated.ScrollView>
-      {isAuth && <BottomTabBar />}
+      {showTabBar && <BottomTabBar />}
     </View>
   );
 }
