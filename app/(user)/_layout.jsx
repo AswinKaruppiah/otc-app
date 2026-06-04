@@ -50,7 +50,7 @@ function UserLayoutContent() {
         scrollEventThrottle={16}
         contentContainerStyle={{
           paddingHorizontal: 20,
-          paddingBottom: 84 + insets.bottom,
+          paddingBottom: (showTabBar ? 84 : 20) + insets.bottom,
           paddingTop,
           gap: 20,
         }}
