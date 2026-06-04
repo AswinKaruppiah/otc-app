@@ -1,13 +1,14 @@
 import { ApolloLink, Observable } from "@apollo/client";
+import { isUnauthenticatedError } from "../utils/helper";
 
 /**
  * Apollo Link that logs outgoing requests and incoming responses.
- * Enabled only in development (__DEV__) mode to ensure production performance.
+ * Enabled only if process.env.EXPO_PUBLIC_LOG_API is set to "true".
  *
  * Placed after authLink to allow logging of outgoing headers (like Bearer tokens).
  */
 export const loggerLink = new ApolloLink((operation, forward) => {
-  if (!__DEV__) {
+  if (process.env.EXPO_PUBLIC_LOG_API !== "true") {
     return forward(operation);
   }
 
@@ -48,13 +49,19 @@ export const loggerLink = new ApolloLink((operation, forward) => {
           const hasErrors = response.errors && response.errors.length > 0;
 
           if (hasErrors) {
-            console.warn(
-              `\n┌────── ❌ GRAPHQL ERROR (${elapsed}ms) ───────────────────────────────\n` +
-              `│ Operation: ${operationName || "Unnamed Operation"}\n` +
-              `│ Errors:    ${JSON.stringify(response.errors, null, 2).replace(/\n/g, "\n│            ")}\n` +
-              `│ Data:      ${JSON.stringify(response.data, null, 2).replace(/\n/g, "\n│            ")}\n` +
-              `└────────────────────────────────────────────────────────────────────`
+            const isUnauth = response.errors.some((err) =>
+              isUnauthenticatedError(err)
             );
+
+            if (!isUnauth) {
+              console.warn(
+                `\n┌────── ❌ GRAPHQL ERROR (${elapsed}ms) ───────────────────────────────\n` +
+                `│ Operation: ${operationName || "Unnamed Operation"}\n` +
+                `│ Errors:    ${JSON.stringify(response.errors, null, 2).replace(/\n/g, "\n│            ")}\n` +
+                `│ Data:      ${JSON.stringify(response.data, null, 2).replace(/\n/g, "\n│            ")}\n` +
+                `└────────────────────────────────────────────────────────────────────`
+              );
+            }
           } else {
             console.log(
               `\n┌────── ✅ GRAPHQL RESPONSE (${elapsed}ms) ────────────────────────────\n` +
@@ -67,12 +74,14 @@ export const loggerLink = new ApolloLink((operation, forward) => {
         },
         error: (err) => {
           const elapsed = Date.now() - startTime;
-          console.warn(
-            `\n┌────── ❌ GRAPHQL NETWORK/HTTP ERROR (${elapsed}ms) ─────────────────\n` +
-            `│ Operation: ${operationName || "Unnamed Operation"}\n` +
-            `│ Error:     ${err.message || err}\n` +
-            `└────────────────────────────────────────────────────────────────────`
-          );
+          if (!isUnauthenticatedError(err)) {
+            console.warn(
+              `\n┌────── ❌ GRAPHQL NETWORK/HTTP ERROR (${elapsed}ms) ─────────────────\n` +
+              `│ Operation: ${operationName || "Unnamed Operation"}\n` +
+              `│ Error:     ${err.message || err}\n` +
+              `└────────────────────────────────────────────────────────────────────`
+            );
+          }
           observer.error(err);
         },
         complete: () => {
