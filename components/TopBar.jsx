@@ -46,6 +46,7 @@ export default function TopBar() {
       await SecureStore.deleteItemAsync("accessToken");
       await SecureStore.deleteItemAsync("accessTokenExpiration");
       setLogoutDialogOpen(false);
+      router.replace("/");
       await apolloClient.clearStore();
       await apolloClient.resetStore();
       toast.show({
@@ -53,7 +54,6 @@ export default function TopBar() {
         description: "You have successfully signed out.",
         variant: "success",
       });
-      router.replace("/");
     } catch (error) {
       if (isUnauthenticatedError(error)) {
         toast.show({
