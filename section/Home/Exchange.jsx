@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { View, Text, Image, TextInput } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -7,73 +7,52 @@ import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
 import { sanitizeAmount, formatNumber } from "../../utils/helper";
 import GoogleAuth from "./GoogleAuth";
 import { useUser } from "../../hooks/useUser";
+import { useLatestPrice } from "../../hooks/useLatestPrice";
 import Show from "../../components/Show";
 import { Skeleton } from "heroui-native";
 
 export const ExchangeCard = () => {
-  const [inrAmount, setInrAmount] = useState("10000");
-  const [usdtAmount, setUsdtAmount] = useState("1000");
+  const { latestPrice } = useLatestPrice();
+  const exchangeRate = latestPrice?.sellPrice ? parseFloat(latestPrice.sellPrice) : 0;
+  const [inputValue, setInputValue] = useState("10000");
   const [isBaseInr, setIsBaseInr] = useState(true);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const EXCHANGE_RATE = 85;
   const { isAuth, loading, error } = useUser();
+
+  // Compute inrAmount using useMemo
+  const inrAmount = useMemo(() => {
+    if (isBaseInr) return inputValue;
+    if (!inputValue) return "";
+    if (exchangeRate === 0) return "";
+    const usdtVal = parseFloat(inputValue) || 0;
+    const inrVal = usdtVal * exchangeRate;
+    return Number(inrVal.toFixed(2)).toString();
+  }, [inputValue, isBaseInr, exchangeRate]);
+
+  // Compute usdtAmount using useMemo
+  const usdtAmount = useMemo(() => {
+    if (!isBaseInr) return inputValue;
+    if (!inputValue) return "";
+    if (exchangeRate === 0) return "";
+    const inrVal = parseFloat(inputValue) || 0;
+    const usdtVal = inrVal / exchangeRate;
+    return Number(usdtVal.toFixed(2)).toString();
+  }, [inputValue, isBaseInr, exchangeRate]);
 
   const handleInrChange = (val) => {
     const cleanInr = sanitizeAmount(val);
-    setInrAmount(cleanInr);
     setIsBaseInr(true);
-
-    if (cleanInr === "") {
-      setUsdtAmount("");
-    } else {
-      const inrVal = parseFloat(cleanInr) || 0;
-      const usdtVal = inrVal / EXCHANGE_RATE;
-      setUsdtAmount(Number(usdtVal.toFixed(2)).toString());
-    }
+    setInputValue(cleanInr);
   };
 
   const handleUsdtChange = (val) => {
     const cleanUsdt = sanitizeAmount(val);
-    setUsdtAmount(cleanUsdt);
     setIsBaseInr(false);
-
-    if (cleanUsdt === "") {
-      setInrAmount("");
-    } else {
-      const usdtVal = parseFloat(cleanUsdt) || 0;
-      const inrVal = usdtVal * EXCHANGE_RATE;
-      setInrAmount(Number(inrVal.toFixed(2)).toString());
-    }
+    setInputValue(cleanUsdt);
   };
 
   const handleSwap = () => {
-    if (isBaseInr) {
-      // The current INR amount becomes the new USDT amount
-      const val = inrAmount;
-      if (val === "") {
-        setUsdtAmount("");
-        setInrAmount("");
-      } else {
-        setUsdtAmount(val);
-        const usdtVal = parseFloat(val) || 0;
-        const inrVal = usdtVal * EXCHANGE_RATE;
-        setInrAmount(Number(inrVal.toFixed(2)).toString());
-      }
-      setIsBaseInr(false);
-    } else {
-      // The current USDT amount becomes the new INR amount
-      const val = usdtAmount;
-      if (val === "") {
-        setInrAmount("");
-        setUsdtAmount("");
-      } else {
-        setInrAmount(val);
-        const inrVal = parseFloat(val) || 0;
-        const usdtVal = inrVal / EXCHANGE_RATE;
-        setUsdtAmount(Number(usdtVal.toFixed(2)).toString());
-      }
-      setIsBaseInr(true);
-    }
+    setIsBaseInr((prev) => !prev);
   };
 
   return (
@@ -181,9 +160,16 @@ export const ExchangeCard = () => {
           {/* Row 3: Exchange Rate */}
           <View className="flex-row justify-between items-center">
             <Text className="text-gray-400 font-noir text-[13px]">Exchange Rate</Text>
-            <Text className="text-gray-400 font-noir text-[13px]">
-              1 USDT = 85 INR
-            </Text>
+            <Show>
+              <Show.If isTrue={loading || !!error}>
+                <Skeleton className="w-24 h-3.5 rounded-sm" />
+              </Show.If>
+              <Show.Else>
+                <Text className="text-gray-400 font-noir text-sm">
+                  1 USDT = {exchangeRate} INR
+                </Text>
+              </Show.Else>
+            </Show>
           </View>
         </LinearGradient>
       </View>

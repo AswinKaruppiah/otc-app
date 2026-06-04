@@ -26,3 +26,14 @@ export const GET_USER = gql`
     }
   }
 `;
+
+export const LATEST_PRICE = gql`
+  query LatestPrice {
+    latestPrice {
+      id
+      sellPrice
+      market
+    }
+  }
+`;
+
