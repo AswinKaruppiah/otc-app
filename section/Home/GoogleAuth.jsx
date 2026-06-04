@@ -109,7 +109,7 @@ export default function GoogleAuth({ isLoggingIn, setIsLoggingIn }) {
         <View className="flex-row items-center gap-3">
           <View className="flex-1 h-px bg-white/10" />
           <Text className="text-white/30 font-noir text-xs tracking-widest uppercase">
-            or sign in
+            Sign in or Login
           </Text>
           <View className="flex-1 h-px bg-white/10" />
         </View>
