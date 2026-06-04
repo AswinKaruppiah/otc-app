@@ -10,10 +10,18 @@ import { useUser } from "../../hooks/useUser";
 import { useLatestPrice } from "../../hooks/useLatestPrice";
 import Show from "../../components/Show";
 import { Skeleton } from "heroui-native";
+import { useQuery } from "@apollo/client/react";
+import { LIST_ORDERS } from "../../apollo/query";
 
 export const ExchangeCard = () => {
   const { latestPrice } = useLatestPrice();
   const exchangeRate = latestPrice?.sellPrice ? parseFloat(latestPrice.sellPrice) : 0;
+
+  const { data: ordersData, loading: ordersLoading, error: ordersError, networkStatus } = useQuery(LIST_ORDERS, {
+    variables: { status: ["PENDING"] },
+  });
+  const pendingOrdersCount = ordersData?.listOrders?.total ?? 0;
+
   const [inputValue, setInputValue] = useState("10000");
   const [isBaseInr, setIsBaseInr] = useState(true);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -95,11 +103,21 @@ export const ExchangeCard = () => {
           </View>
 
           {/* Row 3: Order Pending */}
-          <View className="flex-row justify-between items-center">
+          <View className="flex-row justify-between items-end">
             <Text className="text-gray-400 font-noir text-[13px]">Order Pending</Text>
-            <Text className="text-gray-400 font-noir text-[13px]">
-              2
-            </Text>
+            <Show>
+              <Show.If isTrue={!isAuth}>
+                <Text className="text-gray-400 font-noir text-sm leading-0">-</Text>
+              </Show.If>
+              <Show.ElseIf isTrue={networkStatus === 1 || !!ordersError}>
+                <Skeleton className="w-8 h-3.5 rounded-sm" />
+              </Show.ElseIf>
+              <Show.Else>
+                <Text className="text-gray-400 leading-none font-noir text-sm">
+                  {pendingOrdersCount}
+                </Text>
+              </Show.Else>
+            </Show>
           </View>
         </LinearGradient>
 
@@ -158,14 +176,14 @@ export const ExchangeCard = () => {
           </View>
 
           {/* Row 3: Exchange Rate */}
-          <View className="flex-row justify-between items-center">
+          <View className="flex-row justify-between items-end">
             <Text className="text-gray-400 font-noir text-[13px]">Exchange Rate</Text>
             <Show>
               <Show.If isTrue={loading || !!error}>
                 <Skeleton className="w-24 h-3.5 rounded-sm" />
               </Show.If>
               <Show.Else>
-                <Text className="text-gray-400 font-noir text-sm">
+                <Text className="text-gray-400 leading-none font-noir text-sm">
                   1 USDT = {exchangeRate} INR
                 </Text>
               </Show.Else>

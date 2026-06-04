@@ -37,3 +37,12 @@ export const LATEST_PRICE = gql`
   }
 `;
 
+export const LIST_ORDERS = gql`
+  query ListOrders($status: [String!]) {
+    listOrders(status: $status) {
+      total
+    }
+  }
+`;
+
+
