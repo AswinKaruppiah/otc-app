@@ -29,8 +29,6 @@ const clearAuthToken = async (client, toast) => {
       router.replace("/");
     }
   } catch (e) {
-    console.error("Error clearing auth token:", e);
-
     if (isUnauthenticatedError(e)) {
       toast?.show({
         label: "Signed Out",
