@@ -107,7 +107,7 @@ export const ExchangeCard = () => {
             <Text className="text-gray-400 font-noir text-[13px]">Order Pending</Text>
             <Show>
               <Show.If isTrue={!isAuth}>
-                <Text className="text-gray-400 font-noir text-sm leading-0">-</Text>
+                <Text className="text-gray-400 leading-none font-noir text-sm">-</Text>
               </Show.If>
               <Show.ElseIf isTrue={networkStatus === 1 || !!ordersError}>
                 <Skeleton className="w-8 h-3.5 rounded-sm" />

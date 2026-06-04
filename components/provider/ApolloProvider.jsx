@@ -6,6 +6,8 @@ import { useToast } from "heroui-native";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import * as SecureStore from "../../utils/secureStore";
 import { router } from "expo-router";
+import { loggerLink } from "../../apollo/logger";
+import { isUnauthenticatedError } from "../../utils/helper";
 
 /**
  * Helper to clear local token and reset Apollo cache.
@@ -17,8 +19,8 @@ const clearAuthToken = async (client, toast) => {
       await GoogleSignin.signOut();
       await SecureStore.deleteItemAsync("accessToken");
       await SecureStore.deleteItemAsync("accessTokenExpiration");
-      await apolloClient.clearStore();
-      await apolloClient.resetStore();
+      await client.clearStore();
+      await client.resetStore();
       toast?.show({
         label: "Signed Out",
         description: "Your session has expired.",
@@ -28,11 +30,21 @@ const clearAuthToken = async (client, toast) => {
     }
   } catch (e) {
     console.error("Error clearing auth token:", e);
-    toast?.show({
-      label: "Error",
-      description: `Sign out failed: ${e.message}`,
-      variant: "danger",
-    });
+
+    if (isUnauthenticatedError(e)) {
+      toast?.show({
+        label: "Signed Out",
+        description: "Your session has expired.",
+        variant: "success",
+      });
+      router.replace("/");
+    } else {
+      toast?.show({
+        label: "Error",
+        description: `Sign out failed: ${e.message}`,
+        variant: "danger",
+      });
+    }
   }
 };
 
@@ -66,7 +78,7 @@ function ApolloProviderWrapper({ children }) {
     });
 
     clientInstance = new ApolloClient({
-      link: authLink.concat(httpLink),
+      link: authLink.concat(loggerLink).concat(httpLink),
       cache: new InMemoryCache(),
     });
 

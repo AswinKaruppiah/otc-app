@@ -19,7 +19,7 @@ import { useApolloClient } from "@apollo/client/react";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import * as SecureStore from "../utils/secureStore";
 import Show from "./Show";
-import { getInitials } from "../utils/helper";
+import { getInitials, isUnauthenticatedError } from "../utils/helper";
 import Feather from "@expo/vector-icons/Feather";
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
@@ -55,11 +55,20 @@ export default function TopBar() {
       });
       router.replace("/");
     } catch (error) {
-      toast.show({
-        label: "Error",
-        description: `Failed to sign out: ${error.message}`,
-        variant: "danger",
-      });
+      if (isUnauthenticatedError(error)) {
+        toast.show({
+          label: "Signed Out",
+          description: "You have successfully signed out.",
+          variant: "success",
+        });
+        router.replace("/");
+      } else {
+        toast.show({
+          label: "Error",
+          description: `Failed to sign out: ${error.message}`,
+          variant: "danger",
+        });
+      }
     }
   };
 
@@ -165,7 +174,7 @@ export default function TopBar() {
         />
 
         <Show>
-          <Show.If isTrue={user || loading}>
+          <Show.If isTrue={user}>
             <BottomSheet
               isOpen={profileSheetOpen}
               onOpenChange={setProfileSheetOpen}

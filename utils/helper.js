@@ -43,3 +43,22 @@ export const getInitials = (name) => {
     .slice(0, 2);
 };
 
+/**
+ * Checks if a given error or its sub-errors indicate an authentication failure.
+ */
+export const isUnauthenticatedError = (error) => {
+  const errors = error?.errors || error?.graphQLErrors || [];
+  const hasUnauth = errors.some(
+    (e) =>
+      e?.extensions?.code === "UNAUTHENTICATED" ||
+      e?.message?.includes("UNAUTHENTICATED") ||
+      e?.message?.includes("Authentication required")
+  );
+
+  return (
+    hasUnauth ||
+    error?.message?.includes("UNAUTHENTICATED") ||
+    error?.message?.includes("Authentication required")
+  );
+};
+
