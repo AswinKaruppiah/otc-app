@@ -7,3 +7,12 @@ export const SYNC_GOOGLE_USER = gql`
     }
   }
 `;
+
+export const UPDATE_USER_PROFILE = gql`
+  mutation UpdateUserProfile($userId: ID!, $input: UpdateUserProfileInput!) {
+    updateUserProfile(userId: $userId, input: $input) {
+      id
+    }
+  }
+`;
+
