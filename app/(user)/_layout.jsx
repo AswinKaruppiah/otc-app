@@ -48,6 +48,7 @@ function UserLayoutContent() {
           { useNativeDriver: false },
         )}
         scrollEventThrottle={16}
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: 20,
           paddingBottom: (showTabBar ? 84 : 20) + insets.bottom,
