@@ -16,10 +16,8 @@ import {
 } from "heroui-native";
 import LogoutDialog from "./dialog/LogoutDialog";
 import { useApolloClient } from "@apollo/client/react";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import * as SecureStore from "../utils/secureStore";
 import Show from "./Show";
-import { getInitials, isUnauthenticatedError } from "../utils/helper";
+import { getInitials, isUnauthenticatedError, clearAuthSession } from "../utils/helper";
 import Feather from "@expo/vector-icons/Feather";
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
@@ -42,13 +40,10 @@ export default function TopBar() {
 
   const handleSignOut = async () => {
     try {
-      await GoogleSignin.signOut();
-      await SecureStore.deleteItemAsync("accessToken");
-      await SecureStore.deleteItemAsync("accessTokenExpiration");
-      setLogoutDialogOpen(false);
-      router.replace("/");
-      await apolloClient.clearStore();
-      await apolloClient.resetStore();
+      await clearAuthSession(apolloClient, async () => {
+        setLogoutDialogOpen(false);
+        router.replace("/");
+      });
       toast.show({
         label: "Signed Out",
         description: "You have successfully signed out.",

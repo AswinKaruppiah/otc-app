@@ -1,21 +1,24 @@
 import { useState, useEffect } from "react";
-import { View, Text, ActivityIndicator } from "react-native";
+import { View } from "react-native";
 import { useMutation } from "@apollo/client/react";
 import { useRouter } from "expo-router";
 import { useToast } from "heroui-native";
-
 import { useUser } from "../../hooks/useUser";
 import { UPDATE_USER_PROFILE } from "../../apollo/mutation";
 import { GET_USER } from "../../apollo/query";
-
 import WelcomeScreen from "./Welcome";
-import UserDataScreen from "./UserData";
+import AccountTypeStep from "./AccountType";
+import ProfileDetailsStep from "./ProfileDetails";
+import ReferralStep from "./Referral";
 import SuccessScreen from "./Success";
+import { useApolloClient } from "@apollo/client/react";
+import { clearAuthSession } from "../../utils/helper";
 
 export default function OnboardingOverview() {
     const router = useRouter();
     const { toast } = useToast();
     const { user, loading: userLoading } = useUser();
+    const apolloClient = useApolloClient();
 
     const [step, setStep] = useState(1);
     const [profileType, setProfileType] = useState("corporate");
@@ -54,8 +57,8 @@ export default function OnboardingOverview() {
                 description: "Your details have been successfully verified.",
                 variant: "success",
             });
-            // Move to success screen
-            setStep(3);
+            // Move to success screen (Step 5)
+            setStep(5);
         },
         onError: (err) => {
             toast?.show({
@@ -66,26 +69,15 @@ export default function OnboardingOverview() {
         },
     });
 
-    if (userLoading && !user) {
-        return (
-            <View className="flex-1 items-center justify-center py-20 w-full">
-                <ActivityIndicator size="large" color="#baffd8" />
-                <Text className="text-gray-400 font-noir mt-4 text-[14px]">
-                    Initializing setup...
-                </Text>
-            </View>
-        );
-    }
-
     const handleNextStep = () => {
-        setStep((prev) => Math.min(prev + 1, 3));
+        setStep((prev) => Math.min(prev + 1, 5));
     };
 
     const handlePrevStep = () => {
         setStep((prev) => Math.max(prev - 1, 1));
     };
 
-    const handleSubmitProfile = () => {
+    const handleSubmitProfile = async () => {
         const userId = user?.id || user?.userId;
         if (!userId) {
             toast?.show({
@@ -93,6 +85,8 @@ export default function OnboardingOverview() {
                 description: "Unable to identify user session. Please try logging in again.",
                 variant: "danger",
             });
+            await clearAuthSession(apolloClient);
+            router.replace("/");
             return;
         }
 
@@ -124,20 +118,35 @@ export default function OnboardingOverview() {
             )}
 
             {step === 2 && (
-                <UserDataScreen
+                <AccountTypeStep
                     profileType={profileType}
                     onChangeProfileType={setProfileType}
-                    formData={formData}
-                    setFormData={setFormData}
-                    onSubmit={handleSubmitProfile}
-                    submitting={updating}
+                    onNext={handleNextStep}
                 />
             )}
 
             {step === 3 && (
-                <SuccessScreen
+                <ProfileDetailsStep
                     profileType={profileType}
                     formData={formData}
+                    setFormData={setFormData}
+                    onNext={handleNextStep}
+                    onBack={handlePrevStep}
+                />
+            )}
+
+            {step === 4 && (
+                <ReferralStep
+                    formData={formData}
+                    setFormData={setFormData}
+                    onSubmit={handleSubmitProfile}
+                    onBack={handlePrevStep}
+                    submitting={updating}
+                />
+            )}
+
+            {step === 5 && (
+                <SuccessScreen
                     onFinish={handleFinishOnboarding}
                 />
             )}

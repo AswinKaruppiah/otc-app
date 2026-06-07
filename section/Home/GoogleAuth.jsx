@@ -12,6 +12,7 @@ import { useUser } from "../../hooks/useUser";
 import * as SecureStore from "../../utils/secureStore";
 import { SYNC_GOOGLE_USER } from "../../apollo/mutation";
 import { useToast } from "heroui-native";
+import { useRouter } from "expo-router";
 
 GoogleSignin.configure({
   webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
@@ -24,6 +25,8 @@ export default function GoogleAuth({ isLoggingIn, setIsLoggingIn }) {
   const [syncGoogleUser, { loading }] = useMutation(SYNC_GOOGLE_USER);
   const { isAuth, loading: userLoading } = useUser();
   const { toast } = useToast();
+  const router = useRouter();
+
 
   const handleSignIn = async () => {
     setIsLoggingIn(true);
@@ -43,6 +46,20 @@ export default function GoogleAuth({ isLoggingIn, setIsLoggingIn }) {
           },
         });
 
+        if (syncResponse.data?.syncGoogleUser?.onboarding) {
+          toast.show({
+            label: "Success",
+            description: `Welcome back, ${name}!`,
+            variant: "success",
+          });
+        } else {
+          toast.show({
+            label: "Welcome",
+            description: `Welcome, ${name}! Let's get your account set up.`,
+          });
+          router.replace("/onboarding");
+        }
+
         const token = syncResponse.data?.syncGoogleUser?.accessToken;
         if (token) {
           await SecureStore.setItemAsync("accessToken", token);
@@ -54,12 +71,6 @@ export default function GoogleAuth({ isLoggingIn, setIsLoggingIn }) {
           // Reset cache to reload query components with authenticated auth headers
           await client.resetStore();
         }
-
-        toast.show({
-          label: "Success",
-          description: `Welcome back, ${name}!`,
-          variant: "success",
-        });
       } else {
         // Sign in was cancelled by user
       }

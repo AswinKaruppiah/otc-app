@@ -27,7 +27,7 @@ export const ExchangeCard = () => {
   const [inputValue, setInputValue] = useState("10000");
   const [isBaseInr, setIsBaseInr] = useState(true);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const { isAuth, loading, error } = useUser();
+  const { isAuth, loading, error, user } = useUser();
 
   // Compute inrAmount using useMemo
   const inrAmount = useMemo(() => {
@@ -200,8 +200,13 @@ export const ExchangeCard = () => {
         <Show.If isTrue={(loading || !!error) && !isLoggingIn}>
           <Skeleton className="w-full h-20 rounded-full" />
         </Show.If>
+        <Show.ElseIf isTrue={isAuth && !isLoggingIn && !user.onboarding}>
+          <Button onPress={() => router.replace("/onboarding")}>
+            Get Started
+          </Button>
+        </Show.ElseIf>
         <Show.ElseIf isTrue={isAuth && !isLoggingIn}>
-          <Button onPress={() => router.push("/onboarding")}>Buy USDT</Button>
+          <Button>Buy USDT</Button>
         </Show.ElseIf>
         <Show.Else>
           <GoogleAuth isLoggingIn={isLoggingIn} setIsLoggingIn={setIsLoggingIn} />

@@ -1,3 +1,6 @@
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import * as SecureStore from "./secureStore";
+
 /**
  * Sanitizes input to allow only digits and a single decimal point
  * with at most two decimal places.
@@ -60,5 +63,52 @@ export const isUnauthenticatedError = (error) => {
     error?.message?.includes("UNAUTHENTICATED") ||
     error?.message?.includes("Authentication required")
   );
+};
+
+/**
+ * Clear user session: Google sign out, delete SecureStore tokens, clear and reset Apollo store.
+ */
+export const clearAuthSession = async (client, middleware) => {
+  try {
+    await GoogleSignin.signOut().catch((e) => {
+      console.log("GoogleSignin.signOut non-fatal or user not logged in:", e);
+    });
+  } catch (e) {
+    console.warn("Failed Google SignOut:", e);
+  }
+
+  try {
+    await SecureStore.deleteItemAsync("accessToken");
+    await SecureStore.deleteItemAsync("accessTokenExpiration");
+  } catch (e) {
+    console.error("Failed SecureStore token deletion:", e);
+  }
+
+  if (middleware && typeof middleware === "function") {
+    try {
+      await middleware();
+    } catch (e) {
+      console.error("Error executing clearAuthSession middleware:", e);
+    }
+  }
+
+  if (client) {
+    try {
+      await client.clearStore();
+    } catch (e) {
+      const isAbort = e?.name === "AbortError" || e?.message?.toLowerCase().includes("abort");
+      if (!isAbort && !isUnauthenticatedError(e)) {
+        console.warn("Apollo clearStore error:", e);
+      }
+    }
+    try {
+      await client.resetStore();
+    } catch (e) {
+      const isAbort = e?.name === "AbortError" || e?.message?.toLowerCase().includes("abort");
+      if (!isAbort && !isUnauthenticatedError(e)) {
+        console.warn("Apollo resetStore error:", e);
+      }
+    }
+  }
 };
 
