@@ -5,7 +5,6 @@ import { useRouter } from "expo-router";
 import { useToast } from "heroui-native";
 import { useUser } from "../../hooks/useUser";
 import { UPDATE_USER_PROFILE } from "../../apollo/mutation";
-import { GET_USER } from "../../apollo/query";
 import WelcomeScreen from "./Welcome";
 import AccountTypeStep from "./AccountType";
 import ProfileDetailsStep from "./ProfileDetails";
@@ -14,13 +13,12 @@ import SuccessScreen from "./Success";
 import { useApolloClient } from "@apollo/client/react";
 import { clearAuthSession } from "../../utils/helper";
 
-export default function OnboardingOverview() {
+export default function OnboardingOverview({ step, setStep, onAllowLeave }) {
     const router = useRouter();
     const { toast } = useToast();
     const { user, loading: userLoading } = useUser();
     const apolloClient = useApolloClient();
 
-    const [step, setStep] = useState(1);
     const [profileType, setProfileType] = useState("corporate");
     const [formData, setFormData] = useState({
         fullName: "",
@@ -40,23 +38,19 @@ export default function OnboardingOverview() {
                 annualTurnover: user.salaryVolume || "",
                 referralCode: user.referralCode || "",
             });
-            if (user.profileType) {
-                setProfileType(user.profileType.toLowerCase());
-            }
             setHasPreFilled(true);
         }
     }, [user, hasPreFilled]);
 
     // Mutation definition
     const [updateProfile, { loading: updating }] = useMutation(UPDATE_USER_PROFILE, {
-        awaitRefetchQueries: true,
-        refetchQueries: [{ query: GET_USER }],
         onCompleted: () => {
             toast?.show({
                 label: "Profile Saved",
                 description: "Your details have been successfully verified.",
                 variant: "success",
             });
+            if (onAllowLeave) onAllowLeave();
             // Move to success screen (Step 5)
             setStep(5);
         },
@@ -85,6 +79,7 @@ export default function OnboardingOverview() {
                 description: "Unable to identify user session. Please try logging in again.",
                 variant: "danger",
             });
+            if (onAllowLeave) onAllowLeave();
             await clearAuthSession(apolloClient);
             router.replace("/");
             return;
