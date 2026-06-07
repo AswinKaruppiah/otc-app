@@ -1,54 +1,124 @@
-import React from "react";
-import { View, Text, ScrollView } from "react-native";
-import Feather from "@expo/vector-icons/Feather";
+import { useEffect, useRef } from "react";
+import { View, Text, ScrollView, Animated } from "react-native";
 import Button from "../../components/Button";
-import { LinearGradient } from "expo-linear-gradient";
+import { useUser } from "../../hooks/useUser";
+import { Avatar } from "heroui-native";
+import { withUniwind } from "uniwind";
+import Feather from "@expo/vector-icons/Feather";
+import { getInitials } from "../../utils/helper";
+
+const StyledFeather = withUniwind(Feather);
+
+const PROFILE_TYPE_LABELS = {
+  individual: "Individual Account",
+  corporate: "Business Account",
+};
 
 export default function SuccessScreen({ onFinish }) {
+  const { user } = useUser();
+
+  const badgeScale = useRef(new Animated.Value(0)).current;
+  const contentFade = useRef(new Animated.Value(0)).current;
+  const contentRise = useRef(new Animated.Value(16)).current;
+
+  useEffect(() => {
+    Animated.sequence([
+      Animated.spring(badgeScale, {
+        toValue: 1,
+        friction: 5,
+        tension: 80,
+        useNativeDriver: true,
+      }),
+      Animated.parallel([
+        Animated.timing(contentFade, {
+          toValue: 1,
+          duration: 320,
+          useNativeDriver: true,
+        }),
+        Animated.spring(contentRise, {
+          toValue: 0,
+          friction: 8,
+          tension: 60,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start();
+  }, []);
+
+  const profileTypeLabel = PROFILE_TYPE_LABELS[user?.profileType] ?? user?.profileType;
+
   return (
     <View className="flex-1 justify-between px-5 py-4 w-full">
-      <ScrollView 
-        showsVerticalScrollIndicator={false} 
-        contentContainerStyle={{ alignItems: 'center', flexGrow: 1, justifyContent: 'center' }}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ alignItems: "center", flexGrow: 1, justifyContent: "center" }}
       >
-        {/* Header Info */}
-        <View className="items-center mb-6">
-          <View className="bg-noirMint/10 border border-noirMint/25 px-4 py-1.5 rounded-full mb-4 flex-row items-center gap-1.5">
-            <Feather name="shield" size={13} color="#baffd8" />
-            <Text className="text-noirMint font-noir text-[12px] tracking-[0.5px]">
-              Setup Complete
+        {/* Celebration Badge */}
+        <Animated.View
+          style={{ transform: [{ scale: badgeScale }] }}
+          className="items-center justify-center mb-5"
+        >
+          <View className="w-32 h-32 rounded-full bg-noirMint/10 items-center justify-center">
+            <View className="w-24 h-24 rounded-full bg-noirMint items-center justify-center">
+              <StyledFeather name="check" size={48} colorClassName="accent-noirBg" />
+            </View>
+          </View>
+        </Animated.View>
+
+        <Animated.View
+          style={{ opacity: contentFade, transform: [{ translateY: contentRise }] }}
+          className="items-center w-full"
+        >
+          {/* Header Info */}
+          <View className="items-center mb-7">
+            <Text className="text-[32px] text-noirText font-noir mb-2 text-center tracking-[-0.5px]">
+              You're all set
+            </Text>
+            <Text className="text-[14px] text-gray-400 font-noir text-center max-w-[280px] leading-[20px]">
+              Your account has been created and is ready to use.
             </Text>
           </View>
-          <Text className="text-[32px] text-noirText font-noir mb-2 text-center tracking-[-0.5px]">
-            All Set!
-          </Text>
-          <Text className="text-[14px] text-gray-400 font-noir text-center max-w-[280px] leading-[20px]">
-            Your account has been configured successfully.
-          </Text>
-        </View>
 
-        {/* Success Card Animation/Glow */}
-        <View className="w-full relative items-center justify-center my-4">
-          <View className="absolute w-48 h-48 rounded-full bg-noirMint/5 blur-xl" />
-          <LinearGradient
-            colors={["#baffd8", "#96dded"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            className="w-24 h-24 rounded-full items-center justify-center shadow-lg"
-          >
-            <View className="w-[88px] h-[88px] rounded-full bg-noirBg items-center justify-center">
-              <Feather name="check" size={42} color="#baffd8" />
+          {/* Profile Summary Card */}
+          <View className="flex-row items-start w-full bg-noirBg border border-white/10 rounded-lg px-5 py-5">
+            <Avatar className="w-20 h-20 rounded-full bg-white/5 border border-white/10">
+              {user?.profileImage ? (
+                <Avatar.Image source={{ uri: user.profileImage }} />
+              ) : null}
+              <Avatar.Fallback className="bg-transparent">
+                <Text className="text-white text-lg font-noir-medium">
+                  {getInitials(user?.fullName)}
+                </Text>
+              </Avatar.Fallback>
+            </Avatar>
+
+            <View className="flex-1 ml-4">
+              <Text className="text-white text-lg font-noir-medium mb-0.5" numberOfLines={1}>
+                {user?.fullName}
+              </Text>
+              <Text className="text-gray-400 text-sm font-noir mb-2.5" numberOfLines={1}>
+                {user?.email}
+              </Text>
+
+              {profileTypeLabel ? (
+                <View className="flex-row items-center self-start bg-noirMint/10 px-3 py-1.5 rounded-full">
+                  <StyledFeather name="user-check" size={13} colorClassName="accent-noirMint" />
+                  <Text className="text-noirMint text-[11px] font-noir-medium uppercase tracking-wider ml-1.5">
+                    {profileTypeLabel}
+                  </Text>
+                </View>
+              ) : null}
             </View>
-          </LinearGradient>
-        </View>
+          </View>
+        </Animated.View>
       </ScrollView>
 
       {/* Action Button */}
-      <View className="w-full pt-4">
+      <Animated.View style={{ opacity: contentFade }} className="w-full pt-4">
         <Button onPress={onFinish} primary={true}>
           Go to Dashboard
         </Button>
-      </View>
+      </Animated.View>
     </View>
   );
 }
