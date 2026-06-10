@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { View, Text, Image, TextInput } from "react-native";
+import SelectBank from "./SelectBank";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Button from "../../components/Button";
@@ -28,6 +29,21 @@ export const ExchangeCard = () => {
   const [isBaseInr, setIsBaseInr] = useState(true);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const { isAuth, loading, error, user } = useUser();
+  const [isBankSheetOpen, setIsBankSheetOpen] = useState(false);
+  const [selectedBank, setSelectedBank] = useState({
+    id: "1",
+    bankName: "Chase Bank",
+    type: "Checking Account",
+    accountNum: "•••• 8821",
+    routingNum: "021000021",
+    status: "Primary",
+    icon: "home",
+    iconColor: "#baffd8",
+  });
+
+  const handleBuy = (bank) => {
+    setSelectedBank(bank);
+  };
 
   // Compute inrAmount using useMemo
   const inrAmount = useMemo(() => {
@@ -206,12 +222,20 @@ export const ExchangeCard = () => {
           </Button>
         </Show.ElseIf>
         <Show.ElseIf isTrue={isAuth && !isLoggingIn && user}>
-          <Button>Buy USDT</Button>
+          <Button onPress={() => setIsBankSheetOpen(true)}>Buy USDT</Button>
         </Show.ElseIf>
         <Show.Else>
           <GoogleAuth isLoggingIn={isLoggingIn} setIsLoggingIn={setIsLoggingIn} />
         </Show.Else>
       </Show>
+
+      {/* Select Bank Bottom Sheet */}
+      <SelectBank
+        isOpen={isBankSheetOpen}
+        onOpenChange={setIsBankSheetOpen}
+        selectedBankId={selectedBank.id}
+        onSelectBank={handleBuy}
+      />
     </View>
   );
 };
