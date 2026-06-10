@@ -1,5 +1,6 @@
 import { useQuery } from "@apollo/client/react";
 import { GET_USER } from "../apollo/query";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 /**
  * Custom hook to fetch and manage the authenticated user's data.
@@ -15,7 +16,7 @@ export function useUser(options = {}) {
 
   return {
     user: data?.userMe || null,
-    isAuth: !!data?.userMe,
+    isAuth: !!GoogleSignin.getCurrentUser(),
     loading,
     error,
     refetch,

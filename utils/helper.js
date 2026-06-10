@@ -101,14 +101,6 @@ export const clearAuthSession = async (client, middleware) => {
         console.warn("Apollo clearStore error:", e);
       }
     }
-    try {
-      await client.resetStore();
-    } catch (e) {
-      const isAbort = e?.name === "AbortError" || e?.message?.toLowerCase().includes("abort");
-      if (!isAbort && !isUnauthenticatedError(e)) {
-        console.warn("Apollo resetStore error:", e);
-      }
-    }
   }
 };
 

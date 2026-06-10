@@ -13,12 +13,8 @@ import * as SecureStore from "../../utils/secureStore";
 import { SYNC_GOOGLE_USER } from "../../apollo/mutation";
 import { useToast } from "heroui-native";
 import { useRouter } from "expo-router";
+import { GET_USER, LIST_ORDERS } from "../../apollo/query";
 
-GoogleSignin.configure({
-  webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-  iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
-  profileImageSize: 120,
-});
 
 export default function GoogleAuth({ isLoggingIn, setIsLoggingIn }) {
   const client = useApolloClient();
@@ -68,8 +64,11 @@ export default function GoogleAuth({ isLoggingIn, setIsLoggingIn }) {
             "accessTokenExpiration",
             expirationTime.toString(),
           );
-          // Reset cache to reload query components with authenticated auth headers
-          await client.resetStore();
+          // Clear cache to ensure subsequent queries fetch fresh data with the new token
+          // await client.clearStore();
+          await client.refetchQueries({
+            include: [GET_USER, LIST_ORDERS],
+          });
         }
       } else {
         // Sign in was cancelled by user

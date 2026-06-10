@@ -32,7 +32,7 @@ export default function TopBar() {
   const scrollY = useScrollY();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { user, loading } = useUser();
+  const { user, loading, isAuth } = useUser();
   const [profileSheetOpen, setProfileSheetOpen] = useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const apolloClient = useApolloClient();
@@ -169,7 +169,7 @@ export default function TopBar() {
         />
 
         <Show>
-          <Show.If isTrue={user}>
+          <Show.If isTrue={isAuth}>
             <BottomSheet
               isOpen={profileSheetOpen}
               onOpenChange={setProfileSheetOpen}
@@ -191,7 +191,7 @@ export default function TopBar() {
                       <Show.If isTrue={loading}>
                         <Skeleton className="w-10 h-10 rounded-full" />
                       </Show.If>
-                      <Show.ElseIf isTrue={user}>
+                      <Show.ElseIf isTrue={isAuth && user}>
                         <Avatar size="sm" className="ring ring-noirMint">
                           {user?.profileImage ? (
                             <Avatar.Image source={{ uri: user.profileImage }} />

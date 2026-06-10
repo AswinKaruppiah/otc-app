@@ -16,7 +16,7 @@ import { useRouter } from "expo-router";
 
 export const ExchangeCard = () => {
   const router = useRouter();
-  const { latestPrice } = useLatestPrice();
+  const { latestPrice, loading: latestPriceLoading, error: latestPriceError, networkStatus: latestPriceNetworkStatus } = useLatestPrice();
   const exchangeRate = latestPrice?.sellPrice ? parseFloat(latestPrice.sellPrice) : 0;
 
   const { data: ordersData, loading: ordersLoading, error: ordersError, networkStatus } = useQuery(LIST_ORDERS, {
@@ -181,7 +181,7 @@ export const ExchangeCard = () => {
           <View className="flex-row justify-between items-end">
             <Text className="text-gray-400 font-noir text-[13px]">Exchange Rate</Text>
             <Show>
-              <Show.If isTrue={loading || !!error}>
+              <Show.If isTrue={latestPriceNetworkStatus === 1 || !!latestPriceError}>
                 <Skeleton className="w-24 h-3.5 rounded-sm" />
               </Show.If>
               <Show.Else>
@@ -197,15 +197,15 @@ export const ExchangeCard = () => {
       {/* Action Button */}
 
       <Show>
-        <Show.If isTrue={(loading || !!error) && !isLoggingIn}>
+        <Show.If isTrue={(loading || (isAuth && !user) || !!error) && !isLoggingIn}>
           <Skeleton className="w-full h-20 rounded-full" />
         </Show.If>
-        <Show.ElseIf isTrue={isAuth && !isLoggingIn && !user.onboarding}>
+        <Show.ElseIf isTrue={isAuth && !isLoggingIn && user && !user.onboarding}>
           <Button onPress={() => router.replace("/onboarding")}>
             Get Started
           </Button>
         </Show.ElseIf>
-        <Show.ElseIf isTrue={isAuth && !isLoggingIn}>
+        <Show.ElseIf isTrue={isAuth && !isLoggingIn && user}>
           <Button>Buy USDT</Button>
         </Show.ElseIf>
         <Show.Else>
