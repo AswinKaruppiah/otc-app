@@ -17,7 +17,6 @@ import { useRouter } from "expo-router";
 export default function SelectBank({
   isOpen,
   onOpenChange,
-  selectedBankId,
   onSelectBank,
   banks = [
     {
@@ -68,15 +67,11 @@ export default function SelectBank({
           {/* Banks List */}
           <View className="w-full gap-3 mb-6">
             {banks.map((bank) => {
-              const isSelected = selectedBankId === bank.id;
               return (
                 <Pressable
                   key={bank.id}
                   onPress={() => handleSelect(bank)}
-                  className={`w-full py-3 pl-3 pr-5 rounded-xl flex-row items-center justify-between border active:opacity-75 ${isSelected
-                    ? "bg-noirMint/10 border-noirMint/30"
-                    : "bg-white/5 border-white/[0.04]"
-                    }`}
+                  className={`w-full py-3 pl-3 pr-5 rounded-xl flex-row items-center justify-between border active:opacity-75 bg-noirBg border-noirMint/10`}
                 >
                   <View className="flex-row items-center gap-3">
                     <View
@@ -94,15 +89,11 @@ export default function SelectBank({
                       </Text>
                     </View>
                   </View>
-                  {isSelected ? (
-                    <Feather name="check-circle" size={20} color="#baffd8" />
-                  ) : (
-                    <Feather
-                      name="chevron-right"
-                      size={16}
-                      color="rgba(255, 255, 255, 0.3)"
-                    />
-                  )}
+                  <Feather
+                    name="chevron-right"
+                    size={16}
+                    color="rgba(255, 255, 255, 0.3)"
+                  />
                 </Pressable>
               );
             })}

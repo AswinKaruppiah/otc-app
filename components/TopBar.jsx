@@ -1,24 +1,17 @@
 import { useState } from "react";
-import { haptic } from "../utils/haptics";
-import { View, Animated, Text, Pressable } from "react-native";
+import { View, Animated } from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useScrollY } from "../context/ScrollContext";
 import { useUser } from "../hooks/useUser";
-import { useRouter } from "expo-router";
-import {
-  Avatar,
-  Skeleton,
-  BottomSheet,
-  Button,
-  useToast,
-} from "heroui-native";
+import { useToast } from "heroui-native";
 import LogoutDialog from "./dialog/LogoutDialog";
 import { useApolloClient } from "@apollo/client/react";
 import Show from "./Show";
-import { getInitials, isUnauthenticatedError, clearAuthSession } from "../utils/helper";
-import Feather from "@expo/vector-icons/Feather";
+import { isUnauthenticatedError, clearAuthSession } from "../utils/helper";
+import { useRouter } from "expo-router";
+import ProfileSheet from "./ProfileSheet";
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
@@ -170,122 +163,15 @@ export default function TopBar() {
 
         <Show>
           <Show.If isTrue={isAuth}>
-            <BottomSheet
+            <ProfileSheet
               isOpen={profileSheetOpen}
               onOpenChange={setProfileSheetOpen}
-            >
-              <BottomSheet.Trigger asChild>
-                <Animated.View
-                  style={{
-                    transform: [
-                      { scale: rightScale },
-                      { translateY: rightTranslateY },
-                    ],
-                  }}
-                >
-                  <Pressable
-                    onPress={() => setProfileSheetOpen(true)}
-                    className="active:opacity-75"
-                  >
-                    <Show>
-                      <Show.If isTrue={loading}>
-                        <Skeleton className="w-10 h-10 rounded-full" />
-                      </Show.If>
-                      <Show.ElseIf isTrue={isAuth && user}>
-                        <Avatar size="sm" className="ring ring-noirMint">
-                          {user?.profileImage ? (
-                            <Avatar.Image source={{ uri: user.profileImage }} />
-                          ) : null}
-                          <Avatar.Fallback>
-                            <Text className="text-noirMint">
-                              {getInitials(user?.fullName)}
-                            </Text>
-                          </Avatar.Fallback>
-                        </Avatar>
-                      </Show.ElseIf>
-                    </Show>
-                  </Pressable>
-                </Animated.View>
-              </BottomSheet.Trigger>
-              <BottomSheet.Portal>
-                <BottomSheet.Overlay />
-                <BottomSheet.Content>
-                  <View className="items-center mb-5">
-                    <Avatar className="ring h-24 w-24 ring-noirMint">
-                      {user?.profileImage ? (
-                        <Avatar.Image source={{ uri: user.profileImage }} />
-                      ) : null}
-                      <Avatar.Fallback>
-                        <Text className="text-noirMint text-xl">
-                          {getInitials(user?.fullName)}
-                        </Text>
-                      </Avatar.Fallback>
-                    </Avatar>
-                  </View>
-                  <View className="mb-8 gap-2 items-center">
-                    <BottomSheet.Title className="text-center font-noir-medium">
-                      {user?.fullName ?? "My Account"}
-                    </BottomSheet.Title>
-                    <BottomSheet.Description className="text-center font-noir">
-                      {user?.email ?? ""}
-                    </BottomSheet.Description>
-                  </View>
-                  <View className="w-full gap-3 mb-6">
-                    <Pressable
-                      onPress={() => {
-                        setProfileSheetOpen(false);
-                        router.push("/bank");
-                      }}
-                      className="w-full bg-white/5 border border-white/[0.04] py-4 px-5 rounded-full flex-row items-center justify-between active:opacity-75"
-                    >
-                      <View className="flex-row items-center gap-3">
-                        <Feather name="plus-circle" size={26} color="#baffd8" />
-                        <Text className="text-white font-noir text-base -mb-0.5">
-                          Add Wallet
-                        </Text>
-                      </View>
-                      <Feather
-                        name="chevron-right"
-                        size={16}
-                        color="rgba(255, 255, 255, 0.3)"
-                      />
-                    </Pressable>
-
-                    <Pressable
-                      onPress={() => {
-                        setProfileSheetOpen(false);
-                      }}
-                      className="w-full bg-white/5 border border-white/[0.04] py-4 px-5 rounded-full flex-row items-center justify-between active:opacity-75"
-                    >
-                      <View className="flex-row items-center gap-3">
-                        <Feather name="help-circle" size={26} color="#96dded" />
-                        <Text className="text-white font-noir text-base -mb-0.5">
-                          Support
-                        </Text>
-                      </View>
-                      <Feather
-                        name="chevron-right"
-                        size={16}
-                        color="rgba(255, 255, 255, 0.3)"
-                      />
-                    </Pressable>
-                  </View>
-                  <View className="h-px bg-white/5 mb-8" />
-
-                  <Button
-                    variant="danger-soft"
-                    onPress={() => {
-                      haptic.warning();
-                      setProfileSheetOpen(false);
-                      setTimeout(() => setLogoutDialogOpen(true), 200);
-                    }}
-                    className="h-14 rounded-full"
-                  >
-                    Log Out
-                  </Button>
-                </BottomSheet.Content>
-              </BottomSheet.Portal>
-            </BottomSheet>
+              user={user}
+              loading={loading}
+              rightScale={rightScale}
+              rightTranslateY={rightTranslateY}
+              onLogoutPress={() => setLogoutDialogOpen(true)}
+            />
           </Show.If>
         </Show>
       </View>

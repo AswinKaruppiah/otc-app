@@ -30,16 +30,7 @@ export const ExchangeCard = () => {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const { isAuth, loading, error, user } = useUser();
   const [isBankSheetOpen, setIsBankSheetOpen] = useState(false);
-  const [selectedBank, setSelectedBank] = useState({
-    id: "1",
-    bankName: "Chase Bank",
-    type: "Checking Account",
-    accountNum: "•••• 8821",
-    routingNum: "021000021",
-    status: "Primary",
-    icon: "home",
-    iconColor: "#baffd8",
-  });
+  const [selectedBank, setSelectedBank] = useState();
 
   const handleBuy = (bank) => {
     setSelectedBank(bank);
@@ -233,7 +224,6 @@ export const ExchangeCard = () => {
       <SelectBank
         isOpen={isBankSheetOpen}
         onOpenChange={setIsBankSheetOpen}
-        selectedBankId={selectedBank.id}
         onSelectBank={handleBuy}
       />
     </View>
