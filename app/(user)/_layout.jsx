@@ -29,19 +29,25 @@ export default function UserLayout() {
   );
 }
 
+// Routes where the Top Bar or Bottom Tab Bar should be hidden
+const HIDE_TOP_BAR_ROUTES = [];
+const HIDE_BOTTOM_BAR_ROUTES = ["/onboarding", "/order"];
+
 function UserLayoutContent() {
   const scrollY = useScrollY();
   const insets = useSafeAreaInsets();
   const { isAuth } = useUser();
   const pathname = usePathname();
 
+  const showTopBar = !HIDE_TOP_BAR_ROUTES.includes(pathname);
+  const showTabBar = isAuth && !HIDE_BOTTOM_BAR_ROUTES.includes(pathname);
+
   // TopBar height is 60. Add 20px spacing so content starts below TopBar.
-  const paddingTop = 60 + insets.top + 20;
-  const showTabBar = isAuth && pathname !== "/onboarding";
+  const paddingTop = (showTopBar ? 60 : 0) + insets.top + 20;
 
   return (
     <View style={{ flex: 1 }}>
-      <TopBar />
+      {showTopBar && <TopBar />}
       <Animated.ScrollView
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],

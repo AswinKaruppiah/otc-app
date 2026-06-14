@@ -3,6 +3,8 @@ import { View, Text, Pressable } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
 import { haptic } from "../../utils/haptics";
+import { useConfirmExit } from "../../hooks/useConfirmExit";
+import ConfirmExitDialog from "../../components/dialog/ConfirmExitDialog";
 
 /**
  * Order Screen — A premium, dummy order preview screen that displays the chosen bank account
@@ -11,6 +13,7 @@ import { haptic } from "../../utils/haptics";
 export default function OrderRoute() {
   const router = useRouter();
   const params = useLocalSearchParams();
+  const { isOpen, setIsOpen, confirmExit, cancelExit } = useConfirmExit();
 
   // Retrieve parameters passed via route navigation
   const {
@@ -135,6 +138,13 @@ export default function OrderRoute() {
       >
         <Text className="text-noirBg font-noir-medium text-[15px]">Go Back</Text>
       </Pressable>
+
+      {/* Exit confirmation dialog */}
+      <ConfirmExitDialog
+        isOpen={isOpen}
+        onOpenChange={setIsOpen}
+        onConfirm={confirmExit}
+      />
     </View>
   );
 }
