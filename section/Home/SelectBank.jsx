@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { View, Text, Pressable } from "react-native";
 import { BottomSheet, Skeleton } from "heroui-native";
 import Feather from "@expo/vector-icons/Feather";
@@ -22,7 +21,6 @@ export default function SelectBank({
   isOpen,
   onOpenChange,
   onSelectBank,
-  banks,
 }) {
   const router = useRouter();
 
@@ -30,25 +28,7 @@ export default function SelectBank({
     skip: !isOpen,
   });
 
-  const displayedBanks = useMemo(() => {
-    if (banks) return banks;
-    if (!data?.myBankAccounts) return [];
-
-    const colors = ["#baffd8", "#96dded", "#ffc4d6", "#e8caff"];
-    return data.myBankAccounts.map((bank, index) => {
-      const iconColor = colors[index % colors.length];
-      const type = bank.accountType || "Checking Account";
-      const icon = type.toLowerCase().includes("saving") ? "briefcase" : "home";
-      const accountNum = bank.accountNumberMasked || (bank.accountNumber ? `•••• ${bank.accountNumber.slice(-4)}` : "");
-      return {
-        ...bank,
-        type,
-        accountNum,
-        icon,
-        iconColor,
-      };
-    });
-  }, [banks, data]);
+  const displayedBanks = data?.myBankAccounts || [];
 
   const handleSelect = (bank) => {
     haptic.light();
@@ -116,7 +96,13 @@ export default function SelectBank({
               </Show.ElseIf>
 
               <Show.Else>
-                {displayedBanks.map((bank) => {
+                {displayedBanks.map((bank, index) => {
+                  const colors = ["#baffd8", "#96dded", "#ffc4d6", "#e8caff"];
+                  const iconColor = bank.iconColor || colors[index % colors.length];
+                  const type = bank.accountType || bank.type || "Checking Account";
+                  const icon = bank.icon || (type.toLowerCase().includes("saving") ? "briefcase" : "home");
+                  const accountNum = bank.accountNumberMasked || bank.accountNum || (bank.accountNumber ? `•••• ${bank.accountNumber.slice(-4)}` : "");
+
                   return (
                     <Pressable
                       key={bank.id}
@@ -126,16 +112,16 @@ export default function SelectBank({
                       <View className="flex-row items-center gap-3">
                         <View
                           className="w-14 aspect-square rounded-lg items-center justify-center"
-                          style={{ backgroundColor: `${bank.iconColor}15` }}
+                          style={{ backgroundColor: `${iconColor}15` }}
                         >
-                          <Feather name={bank.icon} size={22} color={bank.iconColor} />
+                          <Feather name={icon} size={22} color={iconColor} />
                         </View>
                         <View>
                           <Text className="text-white font-noir text-base leading-tight">
                             {bank.bankName}
                           </Text>
                           <Text className="text-gray-400 font-noir text-xs mt-0.5">
-                            {bank.type} • {bank.accountNum}
+                            {type} • {accountNum}
                           </Text>
                         </View>
                       </View>
