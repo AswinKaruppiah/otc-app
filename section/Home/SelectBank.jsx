@@ -1,8 +1,12 @@
+import { useMemo } from "react";
 import { View, Text, Pressable } from "react-native";
-import { BottomSheet } from "heroui-native";
+import { BottomSheet, Skeleton } from "heroui-native";
 import Feather from "@expo/vector-icons/Feather";
 import { haptic } from "../../utils/haptics";
 import { useRouter } from "expo-router";
+import { useQuery } from "@apollo/client/react";
+import { MY_BANK_ACCOUNTS } from "../../apollo/query";
+import Show from "../../components/Show";
 
 /**
  * SelectBank — A premium bottom sheet component that displays the user's linked bank accounts
@@ -12,36 +16,39 @@ import { useRouter } from "expo-router";
  * @param {function} onOpenChange - Callback function triggered when sheet open status changes.
  * @param {string} selectedBankId - The ID of the currently selected bank.
  * @param {function} onSelectBank - Callback function triggered when a bank is selected.
- * @param {Array} banks - List of banks to render (optional, defaults to mock banks).
+ * @param {Array} banks - List of banks to render (optional).
  */
 export default function SelectBank({
   isOpen,
   onOpenChange,
   onSelectBank,
-  banks = [
-    {
-      id: "1",
-      bankName: "Chase Bank",
-      type: "Checking Account",
-      accountNum: "•••• 8821",
-      routingNum: "021000021",
-      status: "Primary",
-      icon: "home",
-      iconColor: "#baffd8",
-    },
-    {
-      id: "2",
-      bankName: "Wells Fargo",
-      type: "Savings Account",
-      accountNum: "•••• 4302",
-      routingNum: "121000248",
-      status: "Secondary",
-      icon: "briefcase",
-      iconColor: "#96dded",
-    },
-  ],
+  banks,
 }) {
   const router = useRouter();
+
+  const { data, loading, error } = useQuery(MY_BANK_ACCOUNTS, {
+    skip: !isOpen,
+  });
+
+  const displayedBanks = useMemo(() => {
+    if (banks) return banks;
+    if (!data?.myBankAccounts) return [];
+
+    const colors = ["#baffd8", "#96dded", "#ffc4d6", "#e8caff"];
+    return data.myBankAccounts.map((bank, index) => {
+      const iconColor = colors[index % colors.length];
+      const type = bank.accountType || "Checking Account";
+      const icon = type.toLowerCase().includes("saving") ? "briefcase" : "home";
+      const accountNum = bank.accountNumberMasked || (bank.accountNumber ? `•••• ${bank.accountNumber.slice(-4)}` : "");
+      return {
+        ...bank,
+        type,
+        accountNum,
+        icon,
+        iconColor,
+      };
+    });
+  }, [banks, data]);
 
   const handleSelect = (bank) => {
     haptic.light();
@@ -63,40 +70,85 @@ export default function SelectBank({
               Choose an account for your transfer
             </BottomSheet.Description>
           </View>
-
           {/* Banks List */}
           <View className="w-full gap-3 mb-6">
-            {banks.map((bank) => {
-              return (
-                <Pressable
-                  key={bank.id}
-                  onPress={() => handleSelect(bank)}
-                  className={`w-full py-3 pl-3 pr-5 rounded-xl flex-row items-center justify-between border active:opacity-75 bg-noirBg border-noirMint/10`}
-                >
-                  <View className="flex-row items-center gap-3">
+            <Show>
+              <Show.If isTrue={loading}>
+                <View className="gap-3">
+                  {[1, 2].map((i) => (
                     <View
-                      className="w-14 aspect-square rounded-lg items-center justify-center"
-                      style={{ backgroundColor: `${bank.iconColor}15` }}
+                      key={i}
+                      className="w-full py-3 pl-3 pr-5 rounded-xl flex-row items-center justify-between border bg-noirBg border-noirMint/10"
                     >
-                      <Feather name={bank.icon} size={22} color={bank.iconColor} />
+                      <View className="flex-row items-center gap-3">
+                        <Skeleton className="w-14 h-14 rounded-lg" />
+                        <View className="gap-1.5">
+                          <Skeleton className="w-28 h-5 rounded-md" />
+                          <Skeleton className="w-20 h-4 rounded-md" />
+                        </View>
+                      </View>
+                      <Feather
+                        name="chevron-right"
+                        size={16}
+                        color="rgba(255, 255, 255, 0.3)"
+                      />
                     </View>
-                    <View>
-                      <Text className="text-white font-noir text-base leading-tight">
-                        {bank.bankName}
-                      </Text>
-                      <Text className="text-gray-400 font-noir text-xs mt-0.5">
-                        {bank.type} • {bank.accountNum}
-                      </Text>
-                    </View>
-                  </View>
-                  <Feather
-                    name="chevron-right"
-                    size={16}
-                    color="rgba(255, 255, 255, 0.3)"
-                  />
-                </Pressable>
-              );
-            })}
+                  ))}
+                </View>
+              </Show.If>
+
+              <Show.ElseIf isTrue={!!error}>
+                <View className="items-center py-6 gap-2">
+                  <Feather name="alert-circle" size={26} color="#ffb3ba" />
+                  <Text className="text-red-400 font-noir text-sm text-center">
+                    Failed to load bank accounts
+                  </Text>
+                </View>
+              </Show.ElseIf>
+
+              <Show.ElseIf isTrue={displayedBanks.length === 0}>
+                <View className="items-center py-6 gap-2">
+                  <Feather name="info" size={24} color="rgba(255, 255, 255, 0.4)" />
+                  <Text className="text-gray-400 font-noir text-sm text-center">
+                    No bank accounts linked yet
+                  </Text>
+                </View>
+              </Show.ElseIf>
+
+              <Show.Else>
+                {displayedBanks.map((bank) => {
+                  return (
+                    <Pressable
+                      key={bank.id}
+                      onPress={() => handleSelect(bank)}
+                      className={`w-full py-3 pl-3 pr-5 rounded-xl flex-row items-center justify-between border active:opacity-75 bg-noirBg border-noirMint/10`}
+                    >
+                      <View className="flex-row items-center gap-3">
+                        <View
+                          className="w-14 aspect-square rounded-lg items-center justify-center"
+                          style={{ backgroundColor: `${bank.iconColor}15` }}
+                        >
+                          <Feather name={bank.icon} size={22} color={bank.iconColor} />
+                        </View>
+                        <View>
+                          <Text className="text-white font-noir text-base leading-tight">
+                            {bank.bankName}
+                          </Text>
+                          <Text className="text-gray-400 font-noir text-xs mt-0.5">
+                            {bank.type} • {bank.accountNum}
+                          </Text>
+                        </View>
+                      </View>
+                      <Feather
+                        name="chevron-right"
+                        size={16}
+                        color="rgba(255, 255, 255, 0.3)"
+                      />
+                    </Pressable>
+                  );
+                })}
+              </Show.Else>
+            </Show>
 
             {/* Add Bank Action */}
             <Pressable

@@ -43,6 +43,22 @@ export const LIST_ORDERS = gql`
       total
     }
   }
+`;export const MY_BANK_ACCOUNTS = gql`
+  query MyBankAccounts {
+    myBankAccounts {
+      id
+      label
+      bankName
+      accountHolderName
+      accountNumberMasked
+      accountNumber
+      ifscCode
+      branch
+      accountType
+      isActive
+      status
+      createdAt
+      updatedAt
+    }
+  }
 `;
-
-
