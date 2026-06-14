@@ -14,13 +14,11 @@ import Show from "../../components/Show";
  * @param {boolean} isOpen - Controls visibility of the bottom sheet.
  * @param {function} onOpenChange - Callback function triggered when sheet open status changes.
  * @param {string} selectedBankId - The ID of the currently selected bank.
- * @param {function} onSelectBank - Callback function triggered when a bank is selected.
  * @param {Array} banks - List of banks to render (optional).
  */
 export default function SelectBank({
   isOpen,
   onOpenChange,
-  onSelectBank,
 }) {
   const router = useRouter();
 
@@ -32,8 +30,20 @@ export default function SelectBank({
 
   const handleSelect = (bank) => {
     haptic.light();
-    onSelectBank?.(bank);
     onOpenChange?.(false);
+
+    router.push({
+      pathname: "/order",
+      params: {
+        id: bank.id,
+        bankName: bank.bankName,
+        accountHolderName: bank.accountHolderName,
+        accountNumber: bank.accountNumber,
+        ifscCode: bank.ifscCode,
+        branch: bank.branch,
+        type: bank.accountType,
+      }
+    });
   };
 
   return (

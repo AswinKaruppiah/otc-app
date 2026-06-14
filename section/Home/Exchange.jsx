@@ -30,11 +30,6 @@ export const ExchangeCard = () => {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const { isAuth, loading, error, user } = useUser();
   const [isBankSheetOpen, setIsBankSheetOpen] = useState(false);
-  const [selectedBank, setSelectedBank] = useState();
-
-  const handleBuy = (bank) => {
-    setSelectedBank(bank);
-  };
 
   // Compute inrAmount using useMemo
   const inrAmount = useMemo(() => {
@@ -224,7 +219,6 @@ export const ExchangeCard = () => {
       <SelectBank
         isOpen={isBankSheetOpen}
         onOpenChange={setIsBankSheetOpen}
-        onSelectBank={handleBuy}
       />
     </View>
   );
