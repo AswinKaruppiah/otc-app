@@ -6,6 +6,7 @@ import { useRouter } from "expo-router";
 import { useQuery } from "@apollo/client/react";
 import { MY_BANK_ACCOUNTS } from "../../apollo/query";
 import Show from "../../components/Show";
+import { maskAccountNumber } from "../../utils/helper";
 
 /**
  * SelectBank — A premium bottom sheet component that displays the user's linked bank accounts
@@ -19,6 +20,9 @@ import Show from "../../components/Show";
 export default function SelectBank({
   isOpen,
   onOpenChange,
+  inrAmount,
+  usdtAmount,
+  exchangeRate,
 }) {
   const router = useRouter();
 
@@ -42,6 +46,9 @@ export default function SelectBank({
         ifscCode: bank.ifscCode,
         branch: bank.branch,
         type: bank.accountType,
+        inrAmount,
+        usdtAmount,
+        exchangeRate,
       }
     });
   };
@@ -111,7 +118,7 @@ export default function SelectBank({
                   const iconColor = bank.iconColor || colors[index % colors.length];
                   const type = bank.accountType || bank.type || "Checking Account";
                   const icon = bank.icon || (type.toLowerCase().includes("saving") ? "briefcase" : "home");
-                  const accountNum = bank.accountNumberMasked || bank.accountNum || (bank.accountNumber ? `•••• ${bank.accountNumber.slice(-4)}` : "");
+                  const accountNum = maskAccountNumber(bank.accountNumber || "", "");
 
                   return (
                     <Pressable

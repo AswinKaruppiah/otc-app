@@ -104,3 +104,15 @@ export const clearAuthSession = async (client, middleware) => {
   }
 };
 
+/**
+ * Masks a bank account number to show only the last 4 digits.
+ * If no account number is provided, optionally returns a default fallback mask.
+ */
+export const maskAccountNumber = (accountNumber, fallback = "**** 8821") => {
+  if (!accountNumber) return fallback;
+  // If the account number is already masked, return it
+  if (accountNumber.startsWith("****")) return accountNumber;
+  return `**** ${accountNumber.slice(-4)}`;
+};
+
+

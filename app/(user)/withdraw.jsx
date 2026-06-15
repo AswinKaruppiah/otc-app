@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Text, View, TextInput, Alert, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
+import { maskAccountNumber } from "../../utils/helper";
 
 /**
  * Withdraw Screen — Inputs withdrawal amount, selects destination bank, and chooses speed.
@@ -13,7 +14,7 @@ export default function Withdraw() {
   const router = useRouter();
   const [amount, setAmount] = useState("");
   const [selectedBank, setSelectedBank] = useState(
-    "Chase Checking (•••• 8821)",
+    `Chase Checking (${maskAccountNumber("8821")})`,
   );
   const [isInstant, setIsInstant] = useState(false);
   const totalBalance = 12450.8;
@@ -116,7 +117,7 @@ export default function Withdraw() {
           </View>
           <View>
             <Text className="text-noirText font-noir text-[14px] ">Chase Checking</Text>
-            <Text className="text-gray-400 font-noir text-[12px] ">•••• 8821</Text>
+            <Text className="text-gray-400 font-noir text-[12px] ">{maskAccountNumber("8821")}</Text>
           </View>
         </View>
         <Feather

@@ -219,6 +219,9 @@ export const ExchangeCard = () => {
       <SelectBank
         isOpen={isBankSheetOpen}
         onOpenChange={setIsBankSheetOpen}
+        inrAmount={inrAmount}
+        usdtAmount={usdtAmount}
+        exchangeRate={exchangeRate}
       />
     </View>
   );

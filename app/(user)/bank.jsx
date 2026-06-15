@@ -2,6 +2,7 @@ import React from "react";
 import { Text, View, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
+import { maskAccountNumber } from "../../utils/helper";
 
 /**
  * Bank Screen — Linked bank accounts, details, and transfer limits.
@@ -17,7 +18,7 @@ export default function Bank() {
       id: "1",
       bankName: "Chase Bank",
       type: "Checking Account",
-      accountNum: "•••• 8821",
+      accountNum: maskAccountNumber("8821"),
       routingNum: "021000021",
       status: "Primary",
       icon: "home",
@@ -27,7 +28,7 @@ export default function Bank() {
       id: "2",
       bankName: "Wells Fargo",
       type: "Savings Account",
-      accountNum: "•••• 4302",
+      accountNum: maskAccountNumber("4302"),
       routingNum: "121000248",
       status: "Secondary",
       icon: "briefcase",
