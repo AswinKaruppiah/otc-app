@@ -13,7 +13,6 @@ import { isUnauthenticatedError, clearAuthSession } from "../utils/helper";
 import { useRouter } from "expo-router";
 import ProfileSheet from "./ProfileSheet";
 
-const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 /**
  * TopBar — Sticky header with a premium blurred background using the
@@ -59,15 +58,6 @@ export default function TopBar() {
       }
     }
   };
-
-  // 1. Interpolate scrollY to drive the blur and gradient overlay (0 at top, 1 at 80px scroll)
-  const scrimOpacity = scrollY
-    ? scrollY.interpolate({
-      inputRange: [0, 80],
-      outputRange: [0, 1],
-      extrapolate: "clamp",
-    })
-    : 1;
 
   // 2. Title Scale: shrinks from 1 to 0.88 as user scrolls
   const titleScale = scrollY
@@ -120,19 +110,17 @@ export default function TopBar() {
       style={{ height: headerHeight, paddingTop: insets.top }}
     >
       {/* Frosted Glass Blur Background */}
-      <AnimatedBlurView
+      <BlurView
         intensity={40}
         tint="dark"
         experimentalBlurMethod="dimezisBlurView"
         className="absolute inset-0"
-        style={{ opacity: scrimOpacity }}
       />
 
       {/* Top-to-bottom theme-matched navy gradient overlay */}
-      <Animated.View
+      <View
         className="absolute inset-0"
         pointerEvents="none"
-        style={{ opacity: scrimOpacity }}
       >
         <LinearGradient
           colors={[
@@ -143,7 +131,7 @@ export default function TopBar() {
           end={{ x: 0, y: 1 }}
           className="absolute inset-0"
         />
-      </Animated.View>
+      </View>
 
       {/* Row content positioned below the safe area / status bar */}
       <View className="flex-1 flex-row items-center justify-between px-5">
