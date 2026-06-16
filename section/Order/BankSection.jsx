@@ -20,13 +20,21 @@ export const BankAccountCard = ({
 
             <View className="w-full rounded-xl overflow-hidden border border-white/[0.04]">
                 <View className="flex-row  bg-black/5 items-center p-5 gap-3.5">
-                    <View>
-                        <Text className="text-white font-noir text-base">
+                    <View className="flex-1">
+                        <Text 
+                            className="text-white font-noir text-base"
+                            numberOfLines={1}
+                            ellipsizeMode="tail"
+                        >
                             {bankName}
                         </Text>
                         <Show>
                             <Show.If isTrue={!!(type || accountNumMasked)}>
-                                <Text className="text-gray-400 font-noir text-xs mt-0.5">
+                                <Text 
+                                    className="text-gray-400 font-noir text-xs mt-0.5"
+                                    numberOfLines={1}
+                                    ellipsizeMode="tail"
+                                >
                                     {type}{type && accountNumMasked ? " • " : ""}{accountNumMasked}
                                 </Text>
                             </Show.If>
