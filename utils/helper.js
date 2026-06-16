@@ -115,4 +115,14 @@ export const maskAccountNumber = (accountNumber, fallback = "**** 8821") => {
   return `**** ${accountNumber.slice(-4)}`;
 };
 
+/**
+ * Formats a bank account number by grouping digits into chunks of 4 separated by spaces.
+ */
+export const formatAccountNumber = (accountNumber) => {
+  if (!accountNumber) return "";
+  const cleaned = String(accountNumber).replace(/[-\s]/g, "");
+  return cleaned.replace(/(.{4})/g, "$1 ").trim();
+};
+
+
 

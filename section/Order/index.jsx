@@ -3,8 +3,10 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useConfirmExit } from "../../hooks/useConfirmExit";
 import ConfirmExitDialog from "../../components/dialog/ConfirmExitDialog";
 import { BankAccountCard } from "./BankSection";
+import { AdminBankAccountCard } from "./AdminBankAccountCard";
 import { CryptoAddressCard } from "./CryptoAddressCard";
 import { OrderDetailsCard } from "./OrderDetailsCard";
+import { useUser } from "../../hooks/useUser";
 
 /**
  * Order Screen — A premium, dummy order preview screen that displays the chosen bank account
@@ -14,6 +16,8 @@ export default function OrderOverview() {
     const router = useRouter();
     const params = useLocalSearchParams();
     const { isOpen, setIsOpen, confirmExit, cancelExit } = useConfirmExit();
+    const { user } = useUser();
+    const assignedAdminBank = user?.assignedAdminBank;
 
     // Retrieve parameters passed via route navigation
     const {
@@ -37,6 +41,9 @@ export default function OrderOverview() {
                 usdtAmount={usdtAmount}
                 exchangeRate={exchangeRate}
             />
+            {assignedAdminBank && (
+                <AdminBankAccountCard bank={assignedAdminBank} />
+            )}
             <CryptoAddressCard />
             <BankAccountCard
                 bankName={bankName}
