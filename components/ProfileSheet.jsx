@@ -3,8 +3,11 @@ import { Avatar, Skeleton, BottomSheet, Button } from "heroui-native";
 import Feather from "@expo/vector-icons/Feather";
 import { haptic } from "../utils/haptics";
 import { getInitials } from "../utils/helper";
-import { useRouter } from "expo-router";
+import { useRouter, usePathname } from "expo-router";
 import Show from "./Show";
+
+// Routes where the profile bottom sheet is disabled
+const HIDE_PROFILE_SHEET_ROUTES = ["/order"];
 
 /**
  * ProfileSheet — Premium profile/account management bottom sheet that allows users
@@ -18,8 +21,12 @@ export default function ProfileSheet({
   rightScale,
   rightTranslateY,
   onLogoutPress,
+  disabled,
 }) {
   const router = useRouter();
+  const pathname = usePathname();
+
+  const isProfileDisabled = disabled || HIDE_PROFILE_SHEET_ROUTES.includes(pathname);
 
   return (
     <BottomSheet isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -33,8 +40,12 @@ export default function ProfileSheet({
           }}
         >
           <Pressable
-            onPress={() => onOpenChange(true)}
-            className="active:opacity-75"
+            onPress={() => {
+              if (isProfileDisabled) return;
+              onOpenChange(true);
+            }}
+            disabled={isProfileDisabled}
+            className={isProfileDisabled ? "" : "active:opacity-75"}
           >
             <Show>
               <Show.If isTrue={loading}>
