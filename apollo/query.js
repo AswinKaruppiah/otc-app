@@ -52,7 +52,9 @@ export const LIST_ORDERS = gql`
       total
     }
   }
-`; export const MY_BANK_ACCOUNTS = gql`
+`;
+
+export const MY_BANK_ACCOUNTS = gql`
   query MyBankAccounts {
     myBankAccounts {
       id

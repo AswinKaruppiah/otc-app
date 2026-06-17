@@ -124,5 +124,25 @@ export const formatAccountNumber = (accountNumber) => {
   return cleaned.replace(/(.{4})/g, "$1 ").trim();
 };
 
+/**
+ * Checks if a file is an image based on its mimeType or file extension.
+ */
+export const isImageFile = (f) => {
+  if (!f) return false;
+  if (f.mimeType?.startsWith("image/")) return true;
+  const ext = f.name?.split(".").pop()?.toLowerCase();
+  return ["png", "jpg", "jpeg"].includes(ext);
+};
+
+/**
+ * Formats a file size in bytes to a human-readable string (B, KB, MB).
+ */
+export const formatFileSize = (bytes) => {
+  if (!bytes) return "";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / 1048576).toFixed(1)} MB`;
+};
+
 
 

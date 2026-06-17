@@ -23,7 +23,8 @@
         "backgroundColor": "#111418"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.aswinth.quotex"
+      "package": "com.aswinth.quotex",
+      "launchMode": "singleTask"
     },
     "web": {
       "favicon": "./assets/logo/quotex-logo.png",
@@ -38,7 +39,8 @@
           "iosUrlScheme": "com.googleusercontent.apps.290463701365-h8g1tahmi1sh6ghplufj5ch9mcq15pdo"
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-image-picker"
     ],
     "extra": {
       "router": {},

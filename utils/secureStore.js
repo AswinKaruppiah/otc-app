@@ -1,5 +1,6 @@
 // In-memory store fallback for development before a native build completes
 const memoryStore = new Map();
+const listeners = new Set();
 
 let SecureStore = null;
 try {
@@ -10,6 +11,19 @@ try {
   );
 }
 
+export function subscribeToToken(listener) {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+function notifyListeners(key) {
+  if (key === "accessToken") {
+    listeners.forEach((l) => l());
+  }
+}
+
 /**
  * Safely sets an item in SecureStore or falls back to in-memory store.
  */
@@ -17,12 +31,14 @@ export async function setItemAsync(key, value) {
   if (SecureStore && typeof SecureStore.setItemAsync === "function") {
     try {
       await SecureStore.setItemAsync(key, value);
+      notifyListeners(key);
       return;
     } catch (e) {
       console.error("SecureStore.setItemAsync failed:", e);
     }
   }
   memoryStore.set(key, value);
+  notifyListeners(key);
 }
 
 /**
@@ -46,10 +62,12 @@ export async function deleteItemAsync(key) {
   if (SecureStore && typeof SecureStore.deleteItemAsync === "function") {
     try {
       await SecureStore.deleteItemAsync(key);
+      notifyListeners(key);
       return;
     } catch (e) {
       console.error("SecureStore.deleteItemAsync failed:", e);
     }
   }
   memoryStore.delete(key);
+  notifyListeners(key);
 }
