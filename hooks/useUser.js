@@ -10,7 +10,7 @@ import * as SecureStore from "../utils/secureStore";
  * @param {Object} options - Optional Apollo useQuery configuration options.
  */
 export function useUser(options = {}) {
-  const [isAuth, setIsAuth] = useState(false);
+  const [isAuth, setIsAuth] = useState(!!SecureStore.getTokenSync());
   const { data, loading, error, refetch } = useQuery(GET_USER, {
     // Avoid stale user details by fetching on mount, can be overridden by options.
     ...options,

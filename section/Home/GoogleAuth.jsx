@@ -13,7 +13,7 @@ import * as SecureStore from "../../utils/secureStore";
 import { SYNC_GOOGLE_USER } from "../../apollo/mutation";
 import { useToast } from "heroui-native";
 import { useRouter } from "expo-router";
-import { GET_USER, LIST_ORDERS } from "../../apollo/query";
+import { GET_USER } from "../../apollo/query";
 
 
 export default function GoogleAuth({ isLoggingIn, setIsLoggingIn }) {
@@ -67,7 +67,7 @@ export default function GoogleAuth({ isLoggingIn, setIsLoggingIn }) {
           // Clear cache to ensure subsequent queries fetch fresh data with the new token
           // await client.clearStore();
           await client.refetchQueries({
-            include: [GET_USER, LIST_ORDERS],
+            include: "active",
           });
         }
       } else {

@@ -1,6 +1,7 @@
 // In-memory store fallback for development before a native build completes
 const memoryStore = new Map();
 const listeners = new Set();
+let tokenCache = null;
 
 let SecureStore = null;
 try {
@@ -18,6 +19,10 @@ export function subscribeToToken(listener) {
   };
 }
 
+export function getTokenSync() {
+  return tokenCache || memoryStore.get("accessToken") || null;
+}
+
 function notifyListeners(key) {
   if (key === "accessToken") {
     listeners.forEach((l) => l());
@@ -28,6 +33,9 @@ function notifyListeners(key) {
  * Safely sets an item in SecureStore or falls back to in-memory store.
  */
 export async function setItemAsync(key, value) {
+  if (key === "accessToken") {
+    tokenCache = value;
+  }
   if (SecureStore && typeof SecureStore.setItemAsync === "function") {
     try {
       await SecureStore.setItemAsync(key, value);
@@ -45,20 +53,29 @@ export async function setItemAsync(key, value) {
  * Safely retrieves an item from SecureStore or falls back to in-memory store.
  */
 export async function getItemAsync(key) {
+  let val = null;
   if (SecureStore && typeof SecureStore.getItemAsync === "function") {
     try {
-      return await SecureStore.getItemAsync(key);
+      val = await SecureStore.getItemAsync(key);
     } catch (e) {
       console.error("SecureStore.getItemAsync failed:", e);
     }
+  } else {
+    val = memoryStore.get(key) || null;
   }
-  return memoryStore.get(key) || null;
+  if (key === "accessToken" && val) {
+    tokenCache = val;
+  }
+  return val;
 }
 
 /**
  * Safely deletes an item from SecureStore or falls back to in-memory store.
  */
 export async function deleteItemAsync(key) {
+  if (key === "accessToken") {
+    tokenCache = null;
+  }
   if (SecureStore && typeof SecureStore.deleteItemAsync === "function") {
     try {
       await SecureStore.deleteItemAsync(key);

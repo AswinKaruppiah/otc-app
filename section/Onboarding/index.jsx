@@ -12,6 +12,7 @@ import ReferralStep from "./Referral";
 import SuccessScreen from "./Success";
 import { useApolloClient } from "@apollo/client/react";
 import { clearAuthSession } from "../../utils/helper";
+import { GET_USER } from "../../apollo/query";
 
 export default function OnboardingOverview({ step, setStep, onAllowLeave }) {
     const router = useRouter();
@@ -36,7 +37,6 @@ export default function OnboardingOverview({ step, setStep, onAllowLeave }) {
                 fullName: user.fullName || "",
                 companyName: user.companyName || "",
                 annualTurnover: user.salaryVolume || "",
-                referralCode: user.referralCode || "",
             });
             setHasPreFilled(true);
         }
@@ -97,7 +97,7 @@ export default function OnboardingOverview({ step, setStep, onAllowLeave }) {
             },
         };
 
-        updateProfile({ variables });
+        updateProfile({ variables, awaitRefetchQueries: true, refetchQueries: [GET_USER] });
     };
 
     const handleFinishOnboarding = () => {
