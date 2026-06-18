@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
-import { View, Animated } from "react-native";
+import { useEffect, useRef } from "react";
+import { View, Animated, Dimensions } from "react-native";
 import HapticTouchableOpacity from "./HapticTouchableOpacity";
 import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter, usePathname } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
-import Svg, { Defs, RadialGradient, Stop, Rect } from "react-native-svg";
+import { LinearGradient } from "expo-linear-gradient";
 
 /**
- * BottomTabBar — Minimal bottom navigation bar displaying only the icons,
- * with a static premium frosted glass blur and navy gradient background.
+ * BottomTabBar — Premium floating capsule bottom navigation.
+ * Features a frosted glass blur background and a sliding white circle
+ * that dynamically highlights the active tab.
  */
 export default function BottomTabBar() {
   const router = useRouter();
@@ -26,7 +26,7 @@ export default function BottomTabBar() {
     {
       name: "Bank",
       route: "/bank",
-      icon: "briefcase",
+      icon: "credit-card",
     },
     {
       name: "Home",
@@ -41,7 +41,7 @@ export default function BottomTabBar() {
     {
       name: "Profile",
       route: "/profile",
-      icon: "user",
+      icon: "hexagon",
     },
   ];
 
@@ -53,76 +53,80 @@ export default function BottomTabBar() {
     matchedIndex !== -1
       ? matchedIndex
       : Math.max(
-          0,
-          tabs.findIndex((tab) => tab.route === "/"),
-        );
+        0,
+        tabs.findIndex((tab) => tab.route === "/"),
+      );
 
-  const [containerWidth, setContainerWidth] = useState(0);
+  const BAR_WIDTH = Dimensions.get("window").width - 80;
+  const singleTabWidth = (BAR_WIDTH - 8) / tabs.length;
   const slideAnim = useRef(new Animated.Value(activeIndex)).current;
 
   useEffect(() => {
     Animated.spring(slideAnim, {
       toValue: activeIndex,
       useNativeDriver: true,
-      tension: 68,
+      tension: 78,
       friction: 9.5,
     }).start();
   }, [activeIndex]);
 
-  const singleTabWidth = containerWidth / tabs.length;
   const translateX = slideAnim.interpolate({
     inputRange: [0, tabs.length - 1],
-    outputRange: [0, singleTabWidth * (tabs.length - 1)],
+    outputRange: [4, 4 + singleTabWidth * (tabs.length - 1)],
   });
 
   return (
     <View
-      className="absolute left-0 right-0 bottom-0 z-[100] rounded-t-3xl overflow-hidden"
+      className="absolute z-[100] rounded-full overflow-hidden"
       style={{
-        paddingBottom: insets.bottom,
-        height: 64 + insets.bottom,
+        width: BAR_WIDTH,
+        alignSelf: "center",
+        bottom: Math.max(insets.bottom, 16),
+        height: 74,
+        backgroundColor: "rgba(15, 18, 22, 0.55)",
       }}
     >
       {/* Frosted Glass Blur Background */}
       <BlurView
-        intensity={80}
+        intensity={100}
         tint="dark"
         experimentalBlurMethod="dimezisBlurView"
         className="absolute inset-0"
       />
 
-      {/* Top-to-bottom theme-matched obsidian gradient overlay */}
-      <View className="absolute inset-0" pointerEvents="none">
-        <LinearGradient
-          colors={[
-            "rgba(17, 20, 24, 1)", // semi-transparent obsidian black at the top
-            "rgba(17, 20, 24, 0.1)", // completely transparent at the bottom
-          ]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          className="absolute inset-0"
-        />
-      </View>
-
       <View
         className="flex-1 flex-row items-center justify-between"
-        onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
+        style={{ paddingHorizontal: 4 }}
       >
         {/* Sliding Active Highlight */}
-        {containerWidth > 0 && (
-          <Animated.View
+        <Animated.View
+          style={{
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            width: singleTabWidth,
+            transform: [{ translateX }],
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          pointerEvents="none"
+        >
+          <LinearGradient
+            colors={["#97D8A4", "#0A5A37", "#012617"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
             style={{
-              position: "absolute",
-              top: 0,
-              bottom: 0,
-              width: singleTabWidth,
-              transform: [{ translateX }],
+              width: 68,
+              height: 68,
+              borderRadius: 34,
+              shadowColor: "#0A5A37",
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: 0.5,
+              shadowRadius: 14,
+              elevation: 10,
             }}
-            pointerEvents="none"
-          >
-            <View className="absolute top-0 left-[32%] right-[32%] h-[3px] bg-noirMint/60 rounded-full" />
-          </Animated.View>
-        )}
+          />
+        </Animated.View>
 
         {tabs.map((tab, index) => (
           <TabButton
@@ -139,66 +143,35 @@ export default function BottomTabBar() {
 
 /**
  * TabButton — Renders each individual navigation icon with a bouncing spring
- * scale animation when it becomes active.
+ * scale animation and transitions its icon color when active.
  */
 function TabButton({ tab, isActive, onPress }) {
   const scale = useRef(new Animated.Value(1)).current;
-  const glowOpacity = useRef(new Animated.Value(isActive ? 1 : 0)).current;
 
   useEffect(() => {
-    Animated.parallel([
-      Animated.spring(scale, {
-        toValue: isActive ? 1.2 : 1.0,
-        useNativeDriver: true,
-        tension: 100,
-        friction: 6,
-      }),
-      Animated.timing(glowOpacity, {
-        toValue: isActive ? 1.0 : 0.0,
-        duration: 250,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    Animated.spring(scale, {
+      toValue: isActive ? 1.05 : 1.0,
+      useNativeDriver: true,
+      tension: 100,
+      friction: 8,
+    }).start();
   }, [isActive]);
-
-  const radialId = `activeTabRadial-${tab.name}`;
 
   return (
     <HapticTouchableOpacity
       activeOpacity={0.7}
       onPress={onPress}
       hapticType="selection"
-      className="flex-1 h-full justify-center items-center w-full"
+      className="flex-1 h-full justify-center items-center"
     >
-      {/* Static Radial Glow: fades smoothly on the active tab */}
-      <Animated.View
-        style={{
-          position: "absolute",
-          opacity: glowOpacity,
-        }}
-        pointerEvents="none"
-      >
-        <Svg height={104} width={104}>
-          <Defs>
-            <RadialGradient id={radialId} cx="50%" cy="50%" r="50%">
-              <Stop offset="0%" stopColor="#baffd8" stopOpacity="0.06" />
-              <Stop offset="50%" stopColor="#baffd8" stopOpacity="0.02" />
-              <Stop offset="100%" stopColor="#baffd8" stopOpacity="0" />
-            </RadialGradient>
-          </Defs>
-          <Rect width={104} height={104} fill={`url(#${radialId})`} />
-        </Svg>
-      </Animated.View>
-
       <Animated.View style={{ transform: [{ scale }] }}>
         <Feather
           name={tab.icon}
-          size={24}
-          color={
-            isActive ? "rgba(186, 255, 216, 0.75)" : "rgba(255, 255, 255, 0.45)"
-          }
+          size={18}
+          color={isActive ? "#ffffff" : "rgba(255, 255, 255, 0.45)"}
         />
       </Animated.View>
     </HapticTouchableOpacity>
   );
 }
+
