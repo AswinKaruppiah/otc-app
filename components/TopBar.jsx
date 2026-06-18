@@ -31,9 +31,9 @@ export default function TopBar() {
   const { toast } = useToast();
 
   const handleSignOut = async () => {
+    setLogoutDialogOpen(false);
     try {
       await clearAuthSession(apolloClient, async () => {
-        setLogoutDialogOpen(false);
         router.replace("/");
       });
       toast.show({
