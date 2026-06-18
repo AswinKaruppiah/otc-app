@@ -226,9 +226,7 @@ export const PaymentProofUploader = ({ onProofsChanged }) => {
                         <Image source={{ uri: proof.uri }} className="w-full h-full" resizeMode="cover" />
                       </Show.If>
                       <Show.Else>
-                        <View className="w-8 h-8 rounded-md bg-red-500/[0.08] items-center justify-center">
-                          <Feather name="file-text" size={16} color="#ff7b7b" />
-                        </View>
+                        <Feather name="file-text" size={20} color="#ff7b7b" />
                       </Show.Else>
                     </Show>
                   </View>
