@@ -22,7 +22,11 @@ import { useToast } from "heroui-native";
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
 
-export const PaymentProofUploader = ({ onProofsChanged }) => {
+export const PaymentProofUploader = ({
+  onProofsChanged,
+  requiredAmount = 0,
+  totalUploadedAmount = 0,
+}) => {
   const [proofs, setProofs] = useState([]); // List of all uploaded proofs
   const [file, setFile] = useState(null); // Current selected file
   const [loading, setLoading] = useState(false);
@@ -41,15 +45,28 @@ export const PaymentProofUploader = ({ onProofsChanged }) => {
     haptic.light();
     try {
       if (Platform.OS === "android") {
-        let contentUri = f.uri;
-        if (f.uri.startsWith("file://")) {
-          contentUri = await FileSystem.getContentUriAsync(f.uri);
+        try {
+          let contentUri = f.uri;
+          if (f.uri.startsWith("file://")) {
+            contentUri = await FileSystem.getContentUriAsync(f.uri);
+          }
+          await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
+            data: contentUri,
+            flags: 1, // Intent.FLAG_GRANT_READ_URI_PERMISSION
+            type: f.mimeType || (f.name?.endsWith(".pdf") ? "application/pdf" : "image/*"),
+          });
+        } catch (intentErr) {
+          console.warn("IntentLauncher failed, falling back to Sharing:", intentErr);
+          const isAvailable = await Sharing.isAvailableAsync();
+          if (isAvailable) {
+            await Sharing.shareAsync(f.uri, {
+              mimeType: f.mimeType,
+              dialogTitle: f.name,
+            });
+          } else {
+            throw intentErr;
+          }
         }
-        await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
-          data: contentUri,
-          flags: 1, // Intent.FLAG_GRANT_READ_URI_PERMISSION
-          type: f.mimeType || (f.name?.endsWith(".pdf") ? "application/pdf" : "image/*"),
-        });
       } else {
         const isAvailable = await Sharing.isAvailableAsync();
         if (isAvailable) {
@@ -72,6 +89,14 @@ export const PaymentProofUploader = ({ onProofsChanged }) => {
   };
 
   const pickFile = async () => {
+    if (requiredAmount > 0 && totalUploadedAmount >= requiredAmount) {
+      toast.show({
+        label: "Already Matched",
+        description: "The required amount is already fully matched.",
+        variant: "warning",
+      });
+      return;
+    }
     haptic.light();
     try {
       setLoading(true);
@@ -152,7 +177,10 @@ export const PaymentProofUploader = ({ onProofsChanged }) => {
     setAmount(cleaned);
   };
 
-  const isCurrentFormValid = !!(file && title.trim() && amount.trim() && utr.trim() && type);
+  const remainingAmount = requiredAmount - totalUploadedAmount;
+  const enteredVal = parseFloat(amount) || 0;
+  const isAmountValid = enteredVal > 0 && enteredVal <= remainingAmount + 0.01;
+  const isCurrentFormValid = !!(file && title.trim() && amount.trim() && utr.trim() && type && isAmountValid);
 
   const addProof = () => {
     if (!isCurrentFormValid) return;
@@ -482,20 +510,37 @@ export const PaymentProofUploader = ({ onProofsChanged }) => {
             </Show.ElseIf>
 
             <Show.Else>
-              <Pressable
-                onPress={pickFile}
-                className="w-full border border-dashed border-noirMint/15 rounded-lg py-12 items-center justify-center bg-noirMint/[0.015] active:bg-noirMint/[0.04]"
-              >
-                <View className="w-16 h-16 rounded-2xl bg-noirMint/[0.06] border border-noirMint/10 items-center justify-center mb-3.5">
-                  <Feather name="upload-cloud" size={28} color="#baffd8" />
-                </View>
-                <Text className="text-white font-noir-medium text-sm mb-1.5">
-                  Upload Receipt
-                </Text>
-                <Text className="text-gray-500 font-noir text-[11px] text-center">
-                  PDF, PNG, or JPG — up to 5 MB
-                </Text>
-              </Pressable>
+              <Show>
+                <Show.If isTrue={requiredAmount > 0 && totalUploadedAmount >= requiredAmount}>
+                  <View className="w-full border border-dashed border-white/10 rounded-lg py-12 items-center justify-center bg-white/[0.01]">
+                    <View className="w-16 h-16 rounded-2xl bg-emerald-500/[0.08] border border-emerald-500/20 items-center justify-center mb-3.5">
+                      <Feather name="check-circle" size={28} color="#6df0a3" />
+                    </View>
+                    <Text className="text-white font-noir-medium text-sm mb-1.5">
+                      Amount Matched
+                    </Text>
+                    <Text className="text-gray-500 font-noir text-[11px] text-center">
+                      No additional proofs required.
+                    </Text>
+                  </View>
+                </Show.If>
+                <Show.Else>
+                  <Pressable
+                    onPress={pickFile}
+                    className="w-full border border-dashed border-noirMint/15 rounded-lg py-12 items-center justify-center bg-noirMint/[0.015] active:bg-noirMint/[0.04]"
+                  >
+                    <View className="w-16 h-16 rounded-2xl bg-noirMint/[0.06] border border-noirMint/10 items-center justify-center mb-3.5">
+                      <Feather name="upload-cloud" size={28} color="#baffd8" />
+                    </View>
+                    <Text className="text-white font-noir-medium text-sm mb-1.5">
+                      Upload Receipt
+                    </Text>
+                    <Text className="text-gray-500 font-noir text-[11px] text-center">
+                      PDF, PNG, or JPG — up to 5 MB
+                    </Text>
+                  </Pressable>
+                </Show.Else>
+              </Show>
             </Show.Else>
           </Show>
         </View>

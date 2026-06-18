@@ -56,6 +56,7 @@ function UserLayoutContent() {
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
+          flexGrow: 1,
           paddingHorizontal: 20,
           paddingBottom: (showTabBar ? 84 : 20) + insets.bottom,
           paddingTop,

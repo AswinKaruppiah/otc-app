@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigation } from "expo-router";
+import { BackHandler } from "react-native";
 
 /**
  * Reusable hook to intercept back navigation / screen removal and prompt user confirmation.
@@ -29,6 +30,22 @@ export function useConfirmExit(isEnabled = true) {
 
     return unsubscribe;
   }, [navigation, isEnabled]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const backAction = () => {
+      cancelExit();
+      return true; // Intercepted and handled
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [isOpen]);
 
   const confirmExit = () => {
     setIsOpen(false);

@@ -40,8 +40,8 @@ export default function Button({
         <Text className="text-noirBg font-noir-medium text-xl">{children}</Text>
         <View className="absolute top-1 bottom-1 right-1 aspect-square rounded-full bg-noirBg items-center justify-center">
           <StyledMaterialIcons
-            name="arrow-forward-ios"
-            size={20}
+            name={disabled ? "lock" : "arrow-forward-ios"}
+            size={disabled ? 18 : 20}
             colorClassName="accent-noirMint"
           />
         </View>

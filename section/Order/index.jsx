@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { View, ActivityIndicator } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { useConfirmExit } from "../../hooks/useConfirmExit";
 import ConfirmExitDialog from "../../components/dialog/ConfirmExitDialog";
 import { BankAccountCard } from "./BankSection";
@@ -18,7 +18,6 @@ import { haptic } from "../../utils/haptics";
  * and details of the order. Conforms to the parent UserLayout container.
  */
 export default function OrderOverview() {
-    const router = useRouter();
     const params = useLocalSearchParams();
     const { user } = useUser();
     const assignedAdminBank = user?.assignedAdminBank;
@@ -44,7 +43,14 @@ export default function OrderOverview() {
     // Only block navigation if order is NOT completed
     const { isOpen, setIsOpen, confirmExit, cancelExit } = useConfirmExit(!orderCompleted);
 
-    const isFormValid = proofsList.length > 0;
+    const totalUploadedAmount = proofsList.reduce((sum, proof) => {
+        const val = parseFloat(proof.amount) || 0;
+        return sum + val;
+    }, 0);
+    const requiredAmount = parseFloat(String(inrAmount).replace(/,/g, "")) || 0;
+    const isAmountMatching = Math.abs(totalUploadedAmount - requiredAmount) < 0.01;
+
+    const isFormValid = proofsList.length > 0 && isAmountMatching;
 
     const handleConfirmPayment = () => {
         if (!isFormValid) return;
@@ -94,11 +100,12 @@ export default function OrderOverview() {
                     branch={branch}
                 />
 
-                {/* Payment Proof Uploader */}
                 <PaymentProofUploader
                     onProofsChanged={setProofsList}
                     initialSenderName={accountHolderName}
                     initialSenderBank={bankName}
+                    requiredAmount={requiredAmount}
+                    totalUploadedAmount={totalUploadedAmount}
                 />
 
                 {/* Confirm Payment Action Button */}
@@ -110,8 +117,10 @@ export default function OrderOverview() {
                     >
                         {isSubmitting ? (
                             <ActivityIndicator color="#111418" />
+                        ) : isFormValid ? (
+                            "Confirm"
                         ) : (
-                            "Confirm Payment"
+                            `Confirm (${requiredAmount > 0 ? Math.round((totalUploadedAmount / requiredAmount) * 100) : 0}%)`
                         )}
                     </Button>
                 </View>
