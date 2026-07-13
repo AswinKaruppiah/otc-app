@@ -20,3 +20,13 @@ export const UPDATE_USER_PROFILE = gql`
   }
 `;
 
+export const CREATE_ORDER = gql`
+  mutation CreateOrder($input: CreateOrderInput!) {
+    createOrder(input: $input) {
+      id
+    }
+  }
+`;
+
+
+

@@ -11,11 +11,12 @@ import { PaymentProofUploader } from "./PaymentProofUploader";
 import OrderSuccess from "./OrderSuccess";
 import Button from "../../components/Button";
 import { useUser } from "../../hooks/useUser";
-import { haptic } from "../../utils/haptics";
+import { usePaymentUpload } from "../../hooks/usePaymentUpload";
 
 /**
- * Order Screen — A premium, dummy order preview screen that displays the chosen bank account
- * and details of the order. Conforms to the parent UserLayout container.
+ * Order Screen — A premium order preview screen that displays the chosen bank account,
+ * details of the order, and handles order creation and payment proof uploads.
+ * Conforms to the parent UserLayout container.
  */
 export default function OrderOverview() {
     const params = useLocalSearchParams();
@@ -36,9 +37,10 @@ export default function OrderOverview() {
         exchangeRate,
     } = params;
 
-    const [proofsList, setProofsList] = useState([]);
     const [orderCompleted, setOrderCompleted] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Custom hook for handling uploads
+    const { proofsList, setProofsList, isLoading: isSubmitting, handleUpload } = usePaymentUpload();
 
     // Only block navigation if order is NOT completed
     const { isOpen, setIsOpen, confirmExit, cancelExit } = useConfirmExit(!orderCompleted);
@@ -54,26 +56,17 @@ export default function OrderOverview() {
 
     const handleConfirmPayment = () => {
         if (!isFormValid) return;
-        haptic.medium();
-        setIsSubmitting(true);
-
-        // Simulate a network upload request for 1.5 seconds
-        setTimeout(() => {
-            haptic.success();
-            setIsSubmitting(false);
-            setOrderCompleted(true);
-        }, 1500);
+        handleUpload({
+            userBankId: id,
+            inrAmount,
+            usdtAmount,
+            exchangeRate,
+            onSuccess: () => setOrderCompleted(true),
+        });
     };
 
     if (orderCompleted) {
-        return (
-            <OrderSuccess
-                inrAmount={inrAmount}
-                usdtAmount={usdtAmount}
-                walletAddress={user?.walletAddress}
-                proofsList={proofsList}
-            />
-        );
+        return <OrderSuccess />;
     }
 
     return (

@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
 import Button from "../../components/Button";
 
-export default function OrderSuccess({ inrAmount, usdtAmount, walletAddress, proofsList }) {
+export default function OrderSuccess() {
   const router = useRouter();
 
   // Animation values for entrance transitions
