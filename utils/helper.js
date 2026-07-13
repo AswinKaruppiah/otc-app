@@ -176,7 +176,24 @@ export const getUtrDetails = (paymentType) => {
       };
   }
 };
+/**
+ * Formats a Date object or ISO string to 'MMM D, YYYY' format (e.g. Jul 13, 2026).
+ */
+export const formatDate = (date) => {
+  const dateObj = date ? new Date(date) : new Date();
+  return dateObj.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
 
-
-
-
+/**
+ * Masks a string showing first N and last N characters, e.g. "abcd...wxyz"
+ */
+export const maskText = (text, visibleLen = 4) => {
+  if (!text) return "";
+  const str = String(text);
+  if (str.length <= visibleLen * 2) return str;
+  return `${str.slice(0, visibleLen)}...${str.slice(-visibleLen)}`;
+};

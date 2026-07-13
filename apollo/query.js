@@ -47,8 +47,15 @@ export const LATEST_PRICE = gql`
 `;
 
 export const LIST_ORDERS = gql`
-  query ListOrders($status: [String!]) {
-    listOrders(status: $status) {
+  query ListOrders($search: String, $status: [String!], $dateTo: DateTime, $dateFrom: DateTime, $page: Int, $limit: Int) {
+    listOrders(search: $search, status: $status, dateTo: $dateTo, dateFrom: $dateFrom, page: $page, limit: $limit) {
+      items {
+        id
+        orderId
+        amountRequested
+        cryptoAmountEstimated
+        createdAt
+      }
       total
     }
   }
