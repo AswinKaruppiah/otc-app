@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
 import { CREATE_ORDER } from "../apollo/mutation";
+import { LIST_ORDERS } from "../apollo/query";
 import * as SecureStore from "../utils/secureStore";
 import { useToast } from "heroui-native";
 import { haptic } from "../utils/haptics";
@@ -91,7 +92,31 @@ export function usePaymentUpload() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const [createOrder] = useMutation(CREATE_ORDER);
+  const [createOrder] = useMutation(CREATE_ORDER, {
+    update(cache, { data: { createOrder: newOrder } }) {
+      if (!newOrder) return;
+      try {
+        const queryOptions = {
+          query: LIST_ORDERS,
+          variables: { status: ["PENDING"] },
+        };
+        const existingData = cache.readQuery(queryOptions);
+        if (existingData && existingData.listOrders) {
+          cache.writeQuery({
+            ...queryOptions,
+            data: {
+              listOrders: {
+                ...existingData.listOrders,
+                total: (existingData.listOrders.total || 0) + 1,
+              },
+            },
+          });
+        }
+      } catch (e) {
+        console.error("Error updating Apollo cache directly:", e);
+      }
+    },
+  });
 
   const handleUpload = async ({ userBankId, inrAmount, usdtAmount, exchangeRate, onSuccess }) => {
     if (proofsList.length === 0) return;
