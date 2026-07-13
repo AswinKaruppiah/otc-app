@@ -392,7 +392,7 @@ export const PaymentProofUploader = ({
                     <Text className="text-gray-400 font-noir-medium text-[11px] uppercase tracking-wider">
                       Title
                     </Text>
-                    <View className="w-full rounded-md border border-white/[0.06] bg-noirBg flex-row items-center px-4 py-2.5">
+                    <View className="w-full rounded-md border border-white/[0.06] bg-noirBg flex-row items-center px-2 py-3">
                       <TextInput
                         value={title}
                         onChangeText={setTitle}
@@ -409,7 +409,7 @@ export const PaymentProofUploader = ({
                     <Text className="text-gray-400 font-noir-medium text-[11px] uppercase tracking-wider">
                       Amount (INR)
                     </Text>
-                    <View className="w-full rounded-md border border-white/[0.06] bg-noirBg flex-row items-center px-4 py-2.5">
+                    <View className="w-full rounded-md border border-white/[0.06] bg-noirBg flex-row items-center px-2 py-3">
                       <Text className="text-white/50 font-noir text-[15px] mr-1.5">₹</Text>
                       <TextInput
                         value={amount}
@@ -428,7 +428,7 @@ export const PaymentProofUploader = ({
                     <Text className="text-gray-400 font-noir-medium text-[11px] uppercase tracking-wider">
                       UTR Number
                     </Text>
-                    <View className="w-full rounded-md border border-white/[0.06] bg-noirBg flex-row items-center px-4 py-2.5">
+                    <View className="w-full rounded-md border border-white/[0.06] bg-noirBg flex-row items-center px-2 py-3">
                       <TextInput
                         value={utr}
                         onChangeText={setUtr}
@@ -493,7 +493,7 @@ export const PaymentProofUploader = ({
                     onPress={removeFile}
                     className="flex-1 h-11 bg-white/5 border border-white/[0.06] rounded-md items-center justify-center active:bg-white/10"
                   >
-                    <Text className="text-gray-400 font-noir text-xs">Cancel</Text>
+                    <Text className="text-gray-400 font-noir">Cancel</Text>
                   </Pressable>
                   <Pressable
                     onPress={addProof}
@@ -501,7 +501,7 @@ export const PaymentProofUploader = ({
                     className={`flex-1 h-11 rounded-md items-center justify-center ${isCurrentFormValid ? "bg-noirMint active:opacity-90" : "bg-noirMint/20 opacity-50"
                       }`}
                   >
-                    <Text className={`font-noir-medium text-xs ${isCurrentFormValid ? "text-[#0b0e11]" : "text-gray-500"}`}>
+                    <Text className={`font-noir-medium ${isCurrentFormValid ? "text-[#0b0e11]" : "text-gray-500"}`}>
                       Add Proof
                     </Text>
                   </Pressable>
