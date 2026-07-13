@@ -144,5 +144,39 @@ export const formatFileSize = (bytes) => {
   return `${(bytes / 1048576).toFixed(1)} MB`;
 };
 
+/**
+ * Returns UTR field details (label and placeholder) dynamically based on the payment/transfer type.
+ */
+export const getUtrDetails = (paymentType) => {
+  switch (paymentType) {
+    case "UPI":
+      return {
+        label: "UPI Reference / Transaction ID",
+        placeholder: "e.g. 12-digit transaction number",
+      };
+    case "IMPS":
+      return {
+        label: "Reference Number / UTR",
+        placeholder: "e.g. 12-digit IMPS reference",
+      };
+    case "NEFT":
+      return {
+        label: "UTR Number (NEFT)",
+        placeholder: "e.g. N123456789012345",
+      };
+    case "RTGS":
+      return {
+        label: "UTR Number (RTGS)",
+        placeholder: "e.g. R123456789012345",
+      };
+    default:
+      return {
+        label: "UTR Number",
+        placeholder: "e.g. Reference/UTR Number",
+      };
+  }
+};
+
+
 
 

@@ -13,7 +13,7 @@ import * as DocumentPicker from "expo-document-picker";
 import Feather from "@expo/vector-icons/Feather";
 import { LinearGradient } from "expo-linear-gradient";
 import { haptic } from "../../utils/haptics";
-import { isImageFile, formatFileSize } from "../../utils/helper";
+import { isImageFile, formatFileSize, getUtrDetails } from "../../utils/helper";
 import Show from "../../components/Show";
 import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system/legacy";
@@ -35,6 +35,14 @@ export const PaymentProofUploader = ({
   const [utr, setUtr] = useState("");
   const [type, setType] = useState("UPI");
   const { toast } = useToast();
+
+  const handleTypeChange = (newType) => {
+    haptic.light();
+    setType(newType);
+    if (!title.trim() || ["UPI Proof", "RTGS Proof", "NEFT Proof", "IMPS Proof"].includes(title.trim())) {
+      setTitle(`${newType} Proof`);
+    }
+  };
 
   useEffect(() => {
     onProofsChanged?.(proofs);
@@ -138,6 +146,9 @@ export const PaymentProofUploader = ({
           return;
         }
         setFile(pickedFile);
+        if (!title.trim()) {
+          setTitle(`${type} Proof`);
+        }
         toast.show({
           label: "Success",
           description: "Payment proof has been selected. Please fill in the details.",
@@ -423,25 +434,6 @@ export const PaymentProofUploader = ({
                     </View>
                   </View>
 
-                  {/* UTR Input */}
-                  <View className="gap-1.5">
-                    <Text className="text-gray-400 font-noir-medium text-[11px] uppercase tracking-wider">
-                      UTR Number
-                    </Text>
-                    <View className="w-full rounded-md border border-white/[0.06] bg-noirBg flex-row items-center px-2 py-3">
-                      <TextInput
-                        value={utr}
-                        onChangeText={setUtr}
-                        placeholder="F65UHG6556H"
-                        placeholderTextColor="rgba(255,255,255,0.18)"
-                        keyboardType="default"
-                        maxLength={22}
-                        className="text-noirText font-noir text-[15px] flex-1"
-                        style={{ paddingVertical: 0 }}
-                      />
-                    </View>
-                  </View>
-
                   {/* Type Selector */}
                   <View className="gap-1.5">
                     <Text className="text-gray-400 font-noir-medium text-[11px] uppercase tracking-wider">
@@ -453,10 +445,7 @@ export const PaymentProofUploader = ({
                         return (
                           <Pressable
                             key={t}
-                            onPress={() => {
-                              haptic.light();
-                              setType(t);
-                            }}
+                            onPress={() => handleTypeChange(t)}
                             className="flex-1 rounded-md overflow-hidden"
                           >
                             <Show>
@@ -483,6 +472,25 @@ export const PaymentProofUploader = ({
                           </Pressable>
                         );
                       })}
+                    </View>
+                  </View>
+
+                  {/* UTR Input */}
+                  <View className="gap-1.5">
+                    <Text className="text-gray-400 font-noir-medium text-[11px] uppercase tracking-wider">
+                      {getUtrDetails(type).label}
+                    </Text>
+                    <View className="w-full rounded-md border border-white/[0.06] bg-noirBg flex-row items-center px-2 py-3">
+                      <TextInput
+                        value={utr}
+                        onChangeText={setUtr}
+                        placeholder={getUtrDetails(type).placeholder}
+                        placeholderTextColor="rgba(255,255,255,0.18)"
+                        keyboardType="default"
+                        maxLength={22}
+                        className="text-noirText font-noir text-[15px] flex-1"
+                        style={{ paddingVertical: 0 }}
+                      />
                     </View>
                   </View>
                 </View>
