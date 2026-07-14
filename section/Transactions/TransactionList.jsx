@@ -43,9 +43,8 @@ export default function TransactionList({ search, status, dateFrom, dateTo, onCo
       dateFrom: dateFrom || null,
       dateTo: dateTo || null,
       page: 1,
-      limit: 50,
+      limit: 10,
     },
-    fetchPolicy: "network-only",
   });
 
   const ordersList = data?.listOrders?.items || [];
