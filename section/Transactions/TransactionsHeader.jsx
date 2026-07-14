@@ -65,11 +65,14 @@ export default function TransactionsHeader({
           activeOpacity={0.8}
           disabled={loading}
         >
-          {loading ? (
-            <ActivityIndicator size="small" color="#111418" />
-          ) : (
-            <Feather name="search" size={18} color="#111418" />
-          )}
+          <Show>
+            <Show.If isTrue={loading}>
+              <ActivityIndicator size="small" color="#111418" />
+            </Show.If>
+            <Show.Else>
+              <Feather name="search" size={18} color="#111418" />
+            </Show.Else>
+          </Show>
         </TouchableOpacity>
       </View>
 
