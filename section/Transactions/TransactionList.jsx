@@ -7,18 +7,18 @@ import { LIST_ORDERS } from "../../apollo/query";
 import TransactionCard from "./TransactionCard";
 import Show from "../../components/Show";
 
-function EmptyState({ search, onRefresh }) {
+function EmptyState({ hasActiveFilters, onRefresh }) {
   return (
     <View className="items-center justify-center py-20 px-4">
       <View className="w-14 h-14 rounded-full bg-white/5 border border-white/[0.06] items-center justify-center mb-4">
-        <Feather name={search ? "search" : "inbox"} size={26} color="#baffd8" />
+        <Feather name={hasActiveFilters ? "search" : "inbox"} size={26} color="#baffd8" />
       </View>
       <Text className="text-base text-noirText font-noir font-semibold mb-1">
-        {search ? "No results found" : "No transactions yet"}
+        {hasActiveFilters ? "No results found" : "No transactions yet"}
       </Text>
       <Text className="text-[13px] text-gray-400 font-noir text-center max-w-[260px] leading-5">
-        {search
-          ? `We couldn't find any trades matching "${search}".`
+        {hasActiveFilters
+          ? "We couldn't find any trades matching your filter criteria."
           : "Your trade transactions history will show up here once you start."}
       </Text>
       <TouchableOpacity
@@ -39,7 +39,7 @@ export default function TransactionList({ search, status, dateFrom, dateTo, onCo
   const { data, loading, error, refetch } = useQuery(LIST_ORDERS, {
     variables: {
       search: search || null,
-      status: status || null,
+      status: status ? [status] : null,
       dateFrom: dateFrom || null,
       dateTo: dateTo || null,
       page: 1,
@@ -106,7 +106,10 @@ export default function TransactionList({ search, status, dateFrom, dateTo, onCo
       </Show.ElseIf>
 
       <Show.ElseIf isTrue={ordersList.length === 0}>
-        <EmptyState search={search} onRefresh={refetch} />
+        <EmptyState
+          hasActiveFilters={!!search || !!status || !!dateFrom || !!dateTo}
+          onRefresh={refetch}
+        />
       </Show.ElseIf>
 
       <Show.Else>

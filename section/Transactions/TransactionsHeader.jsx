@@ -1,7 +1,22 @@
+import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
+import FilterSheet from "./FilterSheet";
 
-export default function TransactionsHeader({ totalCount = 0, searchVal = "", onSearchChange, onFilterPress, onSearchPress }) {
+export default function TransactionsHeader({
+  totalCount = 0,
+  searchVal = "",
+  onSearchChange,
+  onSearchPress,
+  currentStatus,
+  currentDateFrom,
+  currentDateTo,
+  onApplyFilters,
+  onClearFilters,
+}) {
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const hasActiveFilters = !!currentStatus || !!currentDateFrom || !!currentDateTo;
+
   return (
     <View className="w-full pb-4">
       {/* Top Row: Title, Count & Filter Button */}
@@ -15,11 +30,14 @@ export default function TransactionsHeader({ totalCount = 0, searchVal = "", onS
           </Text>
         </View>
         <TouchableOpacity
-          onPress={onFilterPress}
-          className="w-10 h-10 items-center justify-center"
+          onPress={() => setIsFilterOpen(true)}
+          className="w-10 h-10 items-center justify-center relative"
           activeOpacity={0.7}
         >
           <Feather name="sliders" size={25} color="#baffd8" />
+          {hasActiveFilters && (
+            <View className="absolute top-1 right-1 w-2.5 h-2.5 bg-noirMint border border-[#111418] rounded-full" />
+          )}
         </TouchableOpacity>
       </View>
 
@@ -41,6 +59,17 @@ export default function TransactionsHeader({ totalCount = 0, searchVal = "", onS
           <Feather name="search" size={18} color="#111418" />
         </TouchableOpacity>
       </View>
+
+      {/* Filter Bottom Sheet */}
+      <FilterSheet
+        isOpen={isFilterOpen}
+        onOpenChange={setIsFilterOpen}
+        currentStatus={currentStatus}
+        currentDateFrom={currentDateFrom}
+        currentDateTo={currentDateTo}
+        onApply={onApplyFilters}
+        onClear={onClearFilters}
+      />
     </View>
   );
 }
