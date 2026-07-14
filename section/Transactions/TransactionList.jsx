@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 import { useQuery } from "@apollo/client/react";
 import { Skeleton } from "heroui-native";
 import Feather from "@expo/vector-icons/Feather";
@@ -7,30 +7,24 @@ import { LIST_ORDERS } from "../../apollo/query";
 import TransactionCard from "./TransactionCard";
 import Show from "../../components/Show";
 
-function EmptyState({ hasActiveFilters, onRefresh }) {
+function EmptyState({ hasActiveFilters }) {
   return (
-    <View className="items-center justify-center py-20 px-4">
-      <View className="w-14 h-14 rounded-full bg-white/5 border border-white/[0.06] items-center justify-center mb-4">
-        <Feather name={hasActiveFilters ? "search" : "inbox"} size={26} color="#baffd8" />
+    <View className="items-center justify-center py-16 px-6">
+      <View className="mb-6 items-center justify-center">
+        <Feather
+          name={hasActiveFilters ? "search" : "inbox"}
+          size={156}
+          color="rgba(186, 255, 216, 0.2)"
+        />
       </View>
-      <Text className="text-base text-noirText font-noir font-semibold mb-1">
+      <Text className="text-lg text-noirText font-noir font-bold mb-2 text-center">
         {hasActiveFilters ? "No results found" : "No transactions yet"}
       </Text>
-      <Text className="text-[13px] text-gray-400 font-noir text-center max-w-[260px] leading-5">
+      <Text className="text-sm text-gray-400 font-noir text-center max-w-[280px] leading-5">
         {hasActiveFilters
           ? "We couldn't find any trades matching your filter criteria."
           : "Your trade transactions history will show up here once you start."}
       </Text>
-      <TouchableOpacity
-        onPress={onRefresh}
-        className="mt-5 bg-white/5 border border-white/[0.06] px-5 py-2.5 rounded-full flex-row items-center gap-2"
-        activeOpacity={0.8}
-      >
-        <Feather name="refresh-cw" size={14} color="#baffd8" />
-        <Text className="text-noirText font-noir font-semibold text-xs">
-          Refresh List
-        </Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -82,33 +76,26 @@ export default function TransactionList({ search, status, dateFrom, dateTo, onCo
       </Show.If>
 
       <Show.ElseIf isTrue={error && !data}>
-        <View className="flex-1 items-center justify-center py-16 px-4">
-          <View className="w-14 h-14 rounded-full bg-red-500/10 items-center justify-center mb-4">
-            <Feather name="alert-circle" size={28} color="#ff7b7b" />
+        <View className="items-center justify-center py-16 px-6">
+          <View className="mb-6 items-center justify-center">
+            <Feather
+              name="alert-circle"
+              size={156}
+              color="rgba(255, 123, 123, 0.2)"
+            />
           </View>
-          <Text className="text-base text-noirText font-noir font-semibold mb-1">
+          <Text className="text-lg text-noirText font-noir font-bold mb-2 text-center">
             Failed to load transactions
           </Text>
-          <Text className="text-[13px] text-gray-400 font-noir text-center mb-5 max-w-[280px]">
-            {error?.message || "Something went wrong. Please check your connection."}
+          <Text className="text-sm text-gray-400 font-noir text-center max-w-[280px] leading-5">
+            {error?.message || "Something went wrong. Please try again later."}
           </Text>
-          <TouchableOpacity
-            onPress={() => refetch()}
-            className="bg-noirMint px-5 py-2.5 rounded-full flex-row items-center gap-2"
-            activeOpacity={0.8}
-          >
-            <Feather name="refresh-cw" size={14} color="#111418" />
-            <Text className="text-[#111418] font-noir font-bold text-xs">
-              Try Again
-            </Text>
-          </TouchableOpacity>
         </View>
       </Show.ElseIf>
 
       <Show.ElseIf isTrue={ordersList.length === 0}>
         <EmptyState
           hasActiveFilters={!!search || !!status || !!dateFrom || !!dateTo}
-          onRefresh={refetch}
         />
       </Show.ElseIf>
 
