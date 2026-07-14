@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, FlatList } from "react-native";
 import { Skeleton } from "heroui-native";
 import Feather from "@expo/vector-icons/Feather";
 import TransactionCard from "./TransactionCard";
@@ -75,11 +75,17 @@ export default function TransactionList({ ordersList = [], loading, error, hasAc
       </Show.ElseIf>
 
       <Show.Else>
-        <View style={{ paddingBottom: 24 }}>
-          {ordersList.map((item) => (
-            <TransactionCard key={item.id || item.orderId} item={item} />
-          ))}
-        </View>
+        <FlatList
+          data={ordersList}
+          keyExtractor={(item) => item.id || item.orderId}
+          renderItem={({ item }) => <TransactionCard item={item} />}
+          scrollEnabled={false}
+          contentContainerStyle={{ paddingBottom: 24 }}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          removeClippedSubviews={true}
+        />
       </Show.Else>
     </Show>
   );
