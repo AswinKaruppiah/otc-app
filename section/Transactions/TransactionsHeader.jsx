@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import FilterSheet from "./FilterSheet";
-import Show from "../../components/Show";
 
 export default function TransactionsHeader({
   totalCount = 0,
@@ -17,7 +16,7 @@ export default function TransactionsHeader({
 }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchVal, setSearchVal] = useState(search);
-  const hasActiveFilters = !!currentStatus || !!currentDateFrom || !!currentDateTo;
+  const hasActiveFilters = !!currentStatus || !!currentDateFrom || !!currentDateTo || !!searchVal;
 
   // Sync internal search field when parent search is cleared or changed externally
   useEffect(() => {
@@ -66,14 +65,11 @@ export default function TransactionsHeader({
           activeOpacity={0.8}
           disabled={loading}
         >
-          <Show>
-            <Show.If isTrue={loading}>
-              <ActivityIndicator size="small" color="#111418" />
-            </Show.If>
-            <Show.Else>
-              <Feather name="search" size={18} color="#111418" />
-            </Show.Else>
-          </Show>
+          {loading ? (
+            <ActivityIndicator size="small" color="#111418" />
+          ) : (
+            <Feather name="search" size={18} color="#111418" />
+          )}
         </TouchableOpacity>
       </View>
 
