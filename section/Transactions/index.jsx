@@ -7,15 +7,14 @@ export default function TransactionsOverview() {
   const [totalCount, setTotalCount] = useState(0);
 
   const [filters, setFilters] = useState({
-    searchVal: "",
-    activeSearch: "",
+    search: "",
     status: null,
     dateFrom: null,
     dateTo: null,
   });
 
-  const handleSearchSubmit = () => {
-    setFilters((prev) => ({ ...prev, activeSearch: prev.searchVal }));
+  const handleSearchSubmit = (val) => {
+    setFilters((prev) => ({ ...prev, search: val }));
   };
 
   const handleApplyFilters = (newFilters) => {
@@ -28,12 +27,12 @@ export default function TransactionsOverview() {
   };
 
   const handleClearFilters = () => {
-    setFilters((prev) => ({
-      ...prev,
+    setFilters({
+      search: "",
       status: null,
       dateFrom: null,
       dateTo: null,
-    }));
+    });
   };
 
   return (
@@ -41,9 +40,8 @@ export default function TransactionsOverview() {
       {/* Header component with search, title and filter icon */}
       <TransactionsHeader
         totalCount={totalCount}
-        searchVal={filters.searchVal}
-        onSearchChange={(val) => setFilters((prev) => ({ ...prev, searchVal: val }))}
-        onSearchPress={handleSearchSubmit}
+        search={filters.search}
+        onSearchSubmit={handleSearchSubmit}
         currentStatus={filters.status}
         currentDateFrom={filters.dateFrom ? filters.dateFrom.split("T")[0] : ""}
         currentDateTo={filters.dateTo ? filters.dateTo.split("T")[0] : ""}
@@ -54,7 +52,7 @@ export default function TransactionsOverview() {
       {/* List of transactions */}
       <View>
         <TransactionList
-          search={filters.activeSearch}
+          search={filters.search}
           status={filters.status}
           dateFrom={filters.dateFrom}
           dateTo={filters.dateTo}

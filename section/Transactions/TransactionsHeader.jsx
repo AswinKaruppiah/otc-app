@@ -1,13 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import FilterSheet from "./FilterSheet";
 
 export default function TransactionsHeader({
   totalCount = 0,
-  searchVal = "",
-  onSearchChange,
-  onSearchPress,
+  search = "",
+  onSearchSubmit,
   currentStatus,
   currentDateFrom,
   currentDateTo,
@@ -15,7 +14,13 @@ export default function TransactionsHeader({
   onClearFilters,
 }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [searchVal, setSearchVal] = useState(search);
   const hasActiveFilters = !!currentStatus || !!currentDateFrom || !!currentDateTo;
+
+  // Sync internal search field when parent search is cleared or changed externally
+  useEffect(() => {
+    setSearchVal(search);
+  }, [search]);
 
   return (
     <View className="w-full pb-4">
@@ -45,14 +50,15 @@ export default function TransactionsHeader({
       <View className="flex-1 flex-row items-center bg-white/5 border border-white/[0.08] rounded-full py-1.5 pl-4 pr-1.5 gap-2.5">
         <TextInput
           value={searchVal}
-          onChangeText={onSearchChange}
+          onChangeText={setSearchVal}
+          onSubmitEditing={() => onSearchSubmit(searchVal)}
           placeholder="Search..."
           placeholderTextColor="rgba(255, 255, 255, 0.3)"
           className="flex-1 text-[15px] text-noirText font-noir p-0 m-0"
           style={{ paddingVertical: 0 }}
         />
         <TouchableOpacity
-          onPress={onSearchPress}
+          onPress={() => onSearchSubmit(searchVal)}
           className="bg-noirMint w-10 h-10 rounded-full items-center justify-center"
           activeOpacity={0.8}
         >
