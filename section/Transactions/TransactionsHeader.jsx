@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import FilterSheet from "./FilterSheet";
+import Show from "../../components/Show";
 
 export default function TransactionsHeader({
   totalCount = 0,
@@ -12,6 +13,7 @@ export default function TransactionsHeader({
   currentDateTo,
   onApplyFilters,
   onClearFilters,
+  loading = false,
 }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchVal, setSearchVal] = useState(search);
@@ -38,6 +40,7 @@ export default function TransactionsHeader({
           onPress={() => setIsFilterOpen(true)}
           className="w-10 h-10 items-center justify-center relative"
           activeOpacity={0.7}
+          disabled={loading}
         >
           <Feather name="sliders" size={25} color="#baffd8" />
           {hasActiveFilters && (
@@ -61,8 +64,16 @@ export default function TransactionsHeader({
           onPress={() => onSearchSubmit(searchVal)}
           className="bg-noirMint w-10 h-10 rounded-full items-center justify-center"
           activeOpacity={0.8}
+          disabled={loading}
         >
-          <Feather name="search" size={18} color="#111418" />
+          <Show>
+            <Show.If isTrue={loading}>
+              <ActivityIndicator size="small" color="#111418" />
+            </Show.If>
+            <Show.Else>
+              <Feather name="search" size={18} color="#111418" />
+            </Show.Else>
+          </Show>
         </TouchableOpacity>
       </View>
 

@@ -1,9 +1,6 @@
-import { useEffect } from "react";
 import { View, Text } from "react-native";
-import { useQuery } from "@apollo/client/react";
 import { Skeleton } from "heroui-native";
 import Feather from "@expo/vector-icons/Feather";
-import { LIST_ORDERS } from "../../apollo/query";
 import TransactionCard from "./TransactionCard";
 import Show from "../../components/Show";
 
@@ -29,30 +26,10 @@ function EmptyState({ hasActiveFilters }) {
   );
 }
 
-export default function TransactionList({ search, status, dateFrom, dateTo, onCountChange }) {
-  const { data, loading, error, refetch } = useQuery(LIST_ORDERS, {
-    variables: {
-      search: search || null,
-      status: status ? [status] : null,
-      dateFrom: dateFrom || null,
-      dateTo: dateTo || null,
-      page: 1,
-      limit: 10,
-    },
-  });
-
-  const ordersList = data?.listOrders?.items || [];
-  const totalCount = data?.listOrders?.total || 0;
-
-  useEffect(() => {
-    if (onCountChange) {
-      onCountChange(totalCount);
-    }
-  }, [totalCount, onCountChange]);
-
+export default function TransactionList({ ordersList = [], loading, error, hasActiveFilters }) {
   return (
     <Show>
-      <Show.If isTrue={loading && !data}>
+      <Show.If isTrue={loading && ordersList.length === 0}>
         <View className="gap-2">
           {new Array(10).fill(0).map((_, i) => (
             <View key={i} className="flex-row items-center justify-between py-4">
@@ -75,7 +52,7 @@ export default function TransactionList({ search, status, dateFrom, dateTo, onCo
         </View>
       </Show.If>
 
-      <Show.ElseIf isTrue={error && !data}>
+      <Show.ElseIf isTrue={error && ordersList.length === 0}>
         <View className="items-center justify-center py-16 px-6">
           <View className="mb-6 items-center justify-center">
             <Feather
@@ -94,9 +71,7 @@ export default function TransactionList({ search, status, dateFrom, dateTo, onCo
       </Show.ElseIf>
 
       <Show.ElseIf isTrue={ordersList.length === 0}>
-        <EmptyState
-          hasActiveFilters={!!search || !!status || !!dateFrom || !!dateTo}
-        />
+        <EmptyState hasActiveFilters={hasActiveFilters} />
       </Show.ElseIf>
 
       <Show.Else>
@@ -109,5 +84,3 @@ export default function TransactionList({ search, status, dateFrom, dateTo, onCo
     </Show>
   );
 }
-
-

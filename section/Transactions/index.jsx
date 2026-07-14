@@ -1,17 +1,32 @@
 import { useState } from "react";
 import { View } from "react-native";
+import { useQuery } from "@apollo/client/react";
+import { LIST_ORDERS } from "../../apollo/query";
 import TransactionsHeader from "./TransactionsHeader";
 import TransactionList from "./TransactionList";
 
 export default function TransactionsOverview() {
-  const [totalCount, setTotalCount] = useState(0);
-
   const [filters, setFilters] = useState({
     search: "",
     status: null,
     dateFrom: null,
     dateTo: null,
   });
+
+  const { data, loading, error } = useQuery(LIST_ORDERS, {
+    variables: {
+      search: filters.search || null,
+      status: filters.status ? [filters.status] : null,
+      dateFrom: filters.dateFrom || null,
+      dateTo: filters.dateTo || null,
+      page: 1,
+      limit: 10,
+    },
+  });
+
+  const totalCount = data?.listOrders?.total || 0;
+  const ordersList = data?.listOrders?.items || [];
+  const hasActiveFilters = !!filters.search || !!filters.status || !!filters.dateFrom || !!filters.dateTo;
 
   const handleSearchSubmit = (val) => {
     setFilters((prev) => ({ ...prev, search: val }));
@@ -47,16 +62,16 @@ export default function TransactionsOverview() {
         currentDateTo={filters.dateTo ? filters.dateTo.split("T")[0] : ""}
         onApplyFilters={handleApplyFilters}
         onClearFilters={handleClearFilters}
+        loading={loading}
       />
 
       {/* List of transactions */}
       <View>
         <TransactionList
-          search={filters.search}
-          status={filters.status}
-          dateFrom={filters.dateFrom}
-          dateTo={filters.dateTo}
-          onCountChange={setTotalCount}
+          ordersList={ordersList}
+          loading={loading}
+          error={error}
+          hasActiveFilters={hasActiveFilters}
         />
       </View>
     </View>
