@@ -95,25 +95,56 @@ export function usePaymentUpload() {
   const [createOrder] = useMutation(CREATE_ORDER, {
     update(cache, { data: { createOrder: newOrder } }) {
       if (!newOrder) return;
+      
+      // 1. Update the PENDING orders count query used on the Home screen
       try {
-        const queryOptions = {
+        const pendingQueryOptions = {
           query: LIST_ORDERS,
           variables: { status: ["PENDING"] },
         };
-        const existingData = cache.readQuery(queryOptions);
-        if (existingData && existingData.listOrders) {
+        const pendingData = cache.readQuery(pendingQueryOptions);
+        if (pendingData && pendingData.listOrders) {
           cache.writeQuery({
-            ...queryOptions,
+            ...pendingQueryOptions,
             data: {
               listOrders: {
-                ...existingData.listOrders,
-                total: (existingData.listOrders.total || 0) + 1,
+                ...pendingData.listOrders,
+                total: (pendingData.listOrders.total || 0) + 1,
+                items: pendingData.listOrders.items
+                  ? [newOrder, ...pendingData.listOrders.items]
+                  : [newOrder],
               },
             },
           });
         }
       } catch (e) {
-        console.error("Error updating Apollo cache directly:", e);
+        console.error("Error updating Apollo pending cache:", e);
+      }
+
+      // 2. Update the default Transactions list query
+      try {
+        const defaultQueryOptions = {
+          query: LIST_ORDERS,
+          variables: {
+            page: 1,
+            limit: 10,
+          },
+        };
+        const defaultData = cache.readQuery(defaultQueryOptions);
+        if (defaultData && defaultData.listOrders) {
+          cache.writeQuery({
+            ...defaultQueryOptions,
+            data: {
+              listOrders: {
+                ...defaultData.listOrders,
+                total: (defaultData.listOrders.total || 0) + 1,
+                items: [newOrder, ...(defaultData.listOrders.items || [])],
+              },
+            },
+          });
+        }
+      } catch (e) {
+        console.error("Error updating Apollo default cache:", e);
       }
     },
   });

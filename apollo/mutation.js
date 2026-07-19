@@ -24,6 +24,10 @@ export const CREATE_ORDER = gql`
   mutation CreateOrder($input: CreateOrderInput!) {
     createOrder(input: $input) {
       id
+      orderId
+      amountRequested
+      cryptoAmountEstimated
+      createdAt
     }
   }
 `;

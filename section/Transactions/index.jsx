@@ -13,20 +13,24 @@ export default function TransactionsOverview() {
     dateTo: null,
   });
 
+  const queryVariables = {
+    page: 1,
+    limit: 10,
+  };
+  if (filters.search) queryVariables.search = filters.search;
+  if (filters.status) queryVariables.status = [filters.status];
+  if (filters.dateFrom && filters.dateTo) {
+    queryVariables.dateFrom = filters.dateFrom;
+    queryVariables.dateTo = filters.dateTo;
+  }
+
   const { data, loading, error } = useQuery(LIST_ORDERS, {
-    variables: {
-      search: filters.search || null,
-      status: filters.status ? [filters.status] : null,
-      dateFrom: filters.dateFrom || null,
-      dateTo: filters.dateTo || null,
-      page: 1,
-      limit: 10,
-    },
+    variables: queryVariables,
   });
 
   const totalCount = data?.listOrders?.total || 0;
   const ordersList = data?.listOrders?.items || [];
-  const hasActiveFilters = !!filters.search || !!filters.status || !!filters.dateFrom || !!filters.dateTo;
+  const hasActiveFilters = !!filters.search || !!filters.status || (!!filters.dateFrom && !!filters.dateTo);
 
   const handleSearchSubmit = (val) => {
     setFilters((prev) => ({ ...prev, search: val }));
