@@ -1,5 +1,5 @@
-import { useMemo, useCallback, memo } from "react";
-import { View, Dimensions } from "react-native";
+import { useMemo, useCallback, memo, useRef, useEffect } from "react";
+import { View, Dimensions, Animated } from "react-native";
 import HapticTouchableOpacity from "./HapticTouchableOpacity";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -58,8 +58,20 @@ export default function BottomTabBar() {
       : Math.max(0, TABS.findIndex((tab) => tab.route === "/"));
   }, [pathname]);
 
-  const translateX = useMemo(() => {
-    return 4 + SINGLE_TAB_WIDTH * activeIndex;
+  // High-performance native translation value
+  const translateXAnim = useRef(
+    new Animated.Value(4 + SINGLE_TAB_WIDTH * activeIndex)
+  ).current;
+
+  // Animate the highlight bar using spring physics on tab changes
+  useEffect(() => {
+    Animated.spring(translateXAnim, {
+      toValue: 4 + SINGLE_TAB_WIDTH * activeIndex,
+      useNativeDriver: true,
+      damping: 20,
+      mass: 0.4,
+      stiffness: 250,
+    }).start();
   }, [activeIndex]);
 
   const handlePress = useCallback((route) => {
@@ -90,13 +102,13 @@ export default function BottomTabBar() {
         style={{ paddingHorizontal: 4 }}
       >
         {/* Sliding Active Highlight */}
-        <View
+        <Animated.View
           style={{
             position: "absolute",
             top: 0,
             bottom: 0,
             width: SINGLE_TAB_WIDTH,
-            transform: [{ translateX }],
+            transform: [{ translateX: translateXAnim }],
             justifyContent: "center",
             alignItems: "center",
           }}
@@ -117,7 +129,7 @@ export default function BottomTabBar() {
               elevation: 10,
             }}
           />
-        </View>
+        </Animated.View>
 
         {TABS.map((tab, index) => (
           <TabButton
