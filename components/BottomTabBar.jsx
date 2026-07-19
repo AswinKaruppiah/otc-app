@@ -1,3 +1,4 @@
+import { useMemo, useCallback, memo } from "react";
 import { View, Dimensions } from "react-native";
 import HapticTouchableOpacity from "./HapticTouchableOpacity";
 import { BlurView } from "expo-blur";
@@ -5,6 +6,37 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter, usePathname } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
 import { LinearGradient } from "expo-linear-gradient";
+
+const TABS = [
+  {
+    name: "Withdraw",
+    route: "/withdraw",
+    icon: "arrow-down-right",
+  },
+  {
+    name: "Bank",
+    route: "/bank",
+    icon: "credit-card",
+  },
+  {
+    name: "Home",
+    route: "/",
+    icon: "home",
+  },
+  {
+    name: "Transactions",
+    route: "/transactions",
+    icon: "repeat",
+  },
+  {
+    name: "Profile",
+    route: "/profile",
+    icon: "hexagon",
+  },
+];
+
+const BAR_WIDTH = Dimensions.get("window").width - 80;
+const SINGLE_TAB_WIDTH = (BAR_WIDTH - 8) / TABS.length;
 
 /**
  * BottomTabBar — Premium floating capsule bottom navigation.
@@ -16,49 +48,23 @@ export default function BottomTabBar() {
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
 
-  const tabs = [
-    {
-      name: "Withdraw",
-      route: "/withdraw",
-      icon: "arrow-down-right",
-    },
-    {
-      name: "Bank",
-      route: "/bank",
-      icon: "credit-card",
-    },
-    {
-      name: "Home",
-      route: "/",
-      icon: "home",
-    },
-    {
-      name: "Transactions",
-      route: "/transactions",
-      icon: "repeat",
-    },
-    {
-      name: "Profile",
-      route: "/profile",
-      icon: "hexagon",
-    },
-  ];
-
   // Resolve the active tab index by matching the parent segment of the pathname
-  const firstSegment = pathname.split("/").filter(Boolean)[0];
-  const parentRoute = firstSegment ? `/${firstSegment}` : "/";
-  const matchedIndex = tabs.findIndex((tab) => tab.route === parentRoute);
-  const activeIndex =
-    matchedIndex !== -1
+  const activeIndex = useMemo(() => {
+    const firstSegment = pathname.split("/").filter(Boolean)[0];
+    const parentRoute = firstSegment ? `/${firstSegment}` : "/";
+    const matchedIndex = TABS.findIndex((tab) => tab.route === parentRoute);
+    return matchedIndex !== -1
       ? matchedIndex
-      : Math.max(
-        0,
-        tabs.findIndex((tab) => tab.route === "/"),
-      );
+      : Math.max(0, TABS.findIndex((tab) => tab.route === "/"));
+  }, [pathname]);
 
-  const BAR_WIDTH = Dimensions.get("window").width - 80;
-  const singleTabWidth = (BAR_WIDTH - 8) / tabs.length;
-  const translateX = 4 + singleTabWidth * activeIndex;
+  const translateX = useMemo(() => {
+    return 4 + SINGLE_TAB_WIDTH * activeIndex;
+  }, [activeIndex]);
+
+  const handlePress = useCallback((route) => {
+    router.push(route);
+  }, [router]);
 
   return (
     <View
@@ -89,7 +95,7 @@ export default function BottomTabBar() {
             position: "absolute",
             top: 0,
             bottom: 0,
-            width: singleTabWidth,
+            width: SINGLE_TAB_WIDTH,
             transform: [{ translateX }],
             justifyContent: "center",
             alignItems: "center",
@@ -113,12 +119,12 @@ export default function BottomTabBar() {
           />
         </View>
 
-        {tabs.map((tab, index) => (
+        {TABS.map((tab, index) => (
           <TabButton
             key={tab.route}
             tab={tab}
             isActive={activeIndex === index}
-            onPress={() => router.push(tab.route)}
+            onPress={handlePress}
           />
         ))}
       </View>
@@ -129,11 +135,11 @@ export default function BottomTabBar() {
 /**
  * TabButton — Renders each individual navigation icon and transitions its icon color when active.
  */
-function TabButton({ tab, isActive, onPress }) {
+const TabButton = memo(function TabButton({ tab, isActive, onPress }) {
   return (
     <HapticTouchableOpacity
       activeOpacity={0.7}
-      onPress={onPress}
+      onPress={() => onPress(tab.route)}
       hapticType="selection"
       className="flex-1 h-full justify-center items-center"
     >
@@ -144,5 +150,5 @@ function TabButton({ tab, isActive, onPress }) {
       />
     </HapticTouchableOpacity>
   );
-}
+});
 
