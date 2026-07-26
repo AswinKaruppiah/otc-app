@@ -510,7 +510,7 @@ export const PaymentProofUploader = ({
                         placeholder={getUtrDetails(type).placeholder}
                         placeholderTextColor="rgba(255,255,255,0.18)"
                         keyboardType="default"
-                        maxLength={22}
+                        maxLength={50}
                         className="text-noirText font-noir text-[15px] flex-1"
                         style={{ paddingVertical: 0 }}
                       />
