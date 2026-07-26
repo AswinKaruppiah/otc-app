@@ -6,8 +6,9 @@ import * as SecureStore from "./secureStore";
  * with at most two decimal places.
  */
 export const sanitizeAmount = (val) => {
-  if (!val) return "";
-  const sanitized = val.replace(/[^0-9.]/g, "");
+  if (val === null || val === undefined || val === "") return "";
+  const strVal = String(val);
+  const sanitized = strVal.replace(/[^0-9.]/g, "");
   const parts = sanitized.split(".");
   let clean = parts[0];
   if (parts.length > 1) {
@@ -17,12 +18,13 @@ export const sanitizeAmount = (val) => {
 };
 
 /**
- * Formats a raw numeric string with thousand separator commas
+ * Formats a raw numeric string or number with thousand separator commas
  * for display readability, while preserving active typing states (like trailing dots).
  */
 export const formatNumber = (val) => {
-  if (!val) return "";
-  const parts = val.split(".");
+  if (val === null || val === undefined || val === "") return "";
+  const strVal = String(val);
+  const parts = strVal.split(".");
   // Add commas to the integer part
   const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   if (parts.length > 1) {
@@ -37,7 +39,7 @@ export const formatNumber = (val) => {
  */
 export const getInitials = (name) => {
   if (!name) return "U";
-  return name
+  return String(name)
     .split(" ")
     .filter(Boolean)
     .map((n) => n[0])
@@ -130,7 +132,8 @@ export const formatAccountNumber = (accountNumber) => {
 export const isImageFile = (f) => {
   if (!f) return false;
   if (f.mimeType?.startsWith("image/")) return true;
-  const ext = f.name?.split(".").pop()?.toLowerCase();
+  const fileName = f.name ? String(f.name) : "";
+  const ext = fileName.split(".").pop()?.toLowerCase();
   return ["png", "jpg", "jpeg"].includes(ext);
 };
 

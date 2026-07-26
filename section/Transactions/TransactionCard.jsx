@@ -2,8 +2,11 @@ import { View, Text, Image } from "react-native";
 import { formatDate, maskText } from "../../utils/helper";
 import { getOrderStatusStyle } from "../../utils/constants";
 import Feather from "@expo/vector-icons/Feather";
+import { useRouter } from "expo-router";
+import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
 
 export default function TransactionCard({ item }) {
+  const router = useRouter();
   const dateStr = formatDate(item.createdAt);
   const rawOrderId = item.orderId || item.id;
   const orderIdText = maskText(rawOrderId, 4).toUpperCase();
@@ -18,7 +21,11 @@ export default function TransactionCard({ item }) {
   );
 
   return (
-    <View className="w-full bg-white/[0.03] border border-white/[0.06] rounded-2xl p-4 mb-3 gap-3">
+    <HapticTouchableOpacity
+      onPress={() => router.push(`/transaction/${item.id || item.orderId}`)}
+      activeOpacity={0.85}
+      className="w-full bg-white/[0.03] border border-white/[0.06] rounded-2xl p-4 mb-3 gap-3"
+    >
       {/* Top Row: Icon + Order ID & Status Badge */}
       <View className="flex-row flex-wrap items-center justify-between">
         <View className="flex-row items-center gap-3 flex-1 mr-2">
@@ -92,6 +99,6 @@ export default function TransactionCard({ item }) {
           </Text>
         </View>
       </View>
-    </View>
+    </HapticTouchableOpacity>
   );
 }
