@@ -4,14 +4,15 @@ import { Animated } from "react-native";
 const ScrollContext = createContext(null);
 
 /**
- * Provides a shared Animated.Value that tracks how far the user has scrolled.
- * Wrap the layout root with this provider, then consume `useScrollY` in any
- * component (TopBar, screens, etc.) that needs to react to scroll position.
+ * Provides a shared Animated.Value that tracks how far the user has scrolled,
+ * as well as a ref to the shared ScrollView so components can programmatically scroll.
  */
 export function ScrollProvider({ children }) {
   const scrollY = useRef(new Animated.Value(0)).current;
+  const scrollViewRef = useRef(null);
+
   return (
-    <ScrollContext.Provider value={scrollY}>
+    <ScrollContext.Provider value={{ scrollY, scrollViewRef }}>
       {children}
     </ScrollContext.Provider>
   );
@@ -19,5 +20,13 @@ export function ScrollProvider({ children }) {
 
 /** Returns the shared Animated.Value for vertical scroll position. */
 export function useScrollY() {
-  return useContext(ScrollContext);
+  const ctx = useContext(ScrollContext);
+  return ctx?.scrollY ?? ctx;
 }
+
+/** Returns the shared ScrollView ref. */
+export function useScrollViewRef() {
+  const ctx = useContext(ScrollContext);
+  return ctx?.scrollViewRef;
+}
+

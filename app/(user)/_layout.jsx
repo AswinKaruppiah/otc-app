@@ -1,4 +1,5 @@
-import { View, Animated } from "react-native";
+import { useState, useEffect } from "react";
+import { View, Animated, KeyboardAvoidingView, Platform, Keyboard } from "react-native";
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
@@ -7,7 +8,7 @@ import { StatusBar } from "expo-status-bar";
 import { Slot, usePathname } from "expo-router";
 import ScreenBackground from "../../components/ScreenBackground";
 import TopBar from "../../components/TopBar";
-import { ScrollProvider, useScrollY } from "../../context/ScrollContext";
+import { ScrollProvider, useScrollY, useScrollViewRef } from "../../context/ScrollContext";
 import BottomTabBar from "../../components/BottomTabBar";
 import { useUser } from "../../hooks/useUser";
 
@@ -35,9 +36,28 @@ const HIDE_BOTTOM_BAR_ROUTES = ["/onboarding", "/order"];
 
 function UserLayoutContent() {
   const scrollY = useScrollY();
+  const scrollViewRef = useScrollViewRef();
   const insets = useSafeAreaInsets();
   const { isAuth } = useUser();
   const pathname = usePathname();
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+
+    const showSub = Keyboard.addListener(showEvent, (e) => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+    const hideSub = Keyboard.addListener(hideEvent, () => {
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   const showTopBar = !HIDE_TOP_BAR_ROUTES.includes(pathname);
   const showTabBar = isAuth && !HIDE_BOTTOM_BAR_ROUTES.includes(pathname);
@@ -46,19 +66,26 @@ function UserLayoutContent() {
   const paddingTop = (showTopBar ? 60 : 0) + insets.top + 20;
 
   return (
-    <View style={{ flex: 1 }}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      style={{ flex: 1 }}
+    >
       {showTopBar && <TopBar />}
       <Animated.ScrollView
+        ref={scrollViewRef}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true },
         )}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets={Platform.OS === "ios"}
+        keyboardDismissMode="interactive"
         contentContainerStyle={{
           flexGrow: 1,
           paddingHorizontal: 20,
-          paddingBottom: (showTabBar ? 84 : 20) + insets.bottom,
+          paddingBottom: (showTabBar ? 84 : 20) + insets.bottom + keyboardHeight,
           paddingTop,
           gap: 20,
         }}
@@ -66,6 +93,6 @@ function UserLayoutContent() {
         <Slot />
       </Animated.ScrollView>
       {showTabBar && <BottomTabBar />}
-    </View>
+    </KeyboardAvoidingView>
   );
 }

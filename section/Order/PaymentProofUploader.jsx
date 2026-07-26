@@ -8,6 +8,7 @@ import {
   Platform,
   Linking,
   TextInput,
+  findNodeHandle,
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import Feather from "@expo/vector-icons/Feather";
@@ -19,6 +20,7 @@ import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system/legacy";
 import * as IntentLauncher from "expo-intent-launcher";
 import { useToast } from "heroui-native";
+import { useScrollViewRef } from "../../context/ScrollContext";
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
 
@@ -27,6 +29,7 @@ export const PaymentProofUploader = ({
   requiredAmount = 0,
   totalUploadedAmount = 0,
 }) => {
+  const scrollViewRef = useScrollViewRef();
   const [proofs, setProofs] = useState([]); // List of all uploaded proofs
   const [file, setFile] = useState(null); // Current selected file
   const [loading, setLoading] = useState(false);
@@ -35,6 +38,23 @@ export const PaymentProofUploader = ({
   const [utr, setUtr] = useState("");
   const [type, setType] = useState("UPI");
   const { toast } = useToast();
+
+  const handleInputFocus = (e) => {
+    const targetHandle = findNodeHandle(e.target);
+    setTimeout(() => {
+      if (scrollViewRef?.current) {
+        if (targetHandle) {
+          scrollViewRef.current?.getScrollResponder()?.scrollResponderScrollNativeHandleToKeyboard(
+            targetHandle,
+            120, // offset above soft keyboard
+            true
+          );
+        } else {
+          scrollViewRef.current.scrollToEnd({ animated: true });
+        }
+      }
+    }, 150);
+  };
 
   const handleTypeChange = (newType) => {
     haptic.light();
@@ -407,6 +427,7 @@ export const PaymentProofUploader = ({
                       <TextInput
                         value={title}
                         onChangeText={setTitle}
+                        onFocus={handleInputFocus}
                         placeholder="e.g. Bank Transfer Proof"
                         placeholderTextColor="rgba(255,255,255,0.18)"
                         className="text-noirText font-noir text-[15px] flex-1"
@@ -425,6 +446,7 @@ export const PaymentProofUploader = ({
                       <TextInput
                         value={amount}
                         onChangeText={handleAmountChange}
+                        onFocus={handleInputFocus}
                         placeholder="0.00"
                         placeholderTextColor="rgba(255,255,255,0.18)"
                         keyboardType="decimal-pad"
@@ -484,6 +506,7 @@ export const PaymentProofUploader = ({
                       <TextInput
                         value={utr}
                         onChangeText={setUtr}
+                        onFocus={handleInputFocus}
                         placeholder={getUtrDetails(type).placeholder}
                         placeholderTextColor="rgba(255,255,255,0.18)"
                         keyboardType="default"
