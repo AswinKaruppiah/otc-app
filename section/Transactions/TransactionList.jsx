@@ -30,22 +30,40 @@ export default function TransactionList({ ordersList = [], loading, error, hasAc
   return (
     <Show>
       <Show.If isTrue={loading && ordersList.length === 0}>
-        <View className="gap-2">
-          {new Array(10).fill(0).map((_, i) => (
-            <View key={i} className="flex-row items-center justify-between py-4">
-              {/* Left side: Avatar & Info */}
-              <View className="flex-row items-center gap-3.5 flex-1 mr-3">
-                <Skeleton className="w-16 h-16 rounded-full" />
-                <View className="flex-1 gap-1.5">
-                  <Skeleton className="w-24 h-5 rounded-md" />
-                  <Skeleton className="w-32 h-4 rounded-md" />
+        <View className="w-full">
+          {new Array(6).fill(0).map((_, i) => (
+            <View
+              key={i}
+              className="w-full bg-white/[0.03] border border-white/[0.06] rounded-2xl p-4 mb-3 gap-3"
+            >
+              {/* Top Row: Icon + Order ID & Status Badge */}
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center gap-3 flex-1 mr-2">
+                  <Skeleton className="w-11 h-11 rounded-xl" />
+                  <View className="flex-1 gap-1.5">
+                    <Skeleton className="w-24 h-5 rounded-md" />
+                    <Skeleton className="w-32 h-3.5 rounded-md" />
+                  </View>
                 </View>
+
+                {/* Status Badge */}
+                <Skeleton className="w-20 h-6 rounded-full" />
               </View>
 
-              {/* Right side: Amounts */}
-              <View className="items-end gap-1.5 flex-shrink-0">
-                <Skeleton className="w-16 h-5 rounded-md" />
-                <Skeleton className="w-12 h-4 rounded-md" />
+              {/* Divider */}
+              <View className="h-px w-full bg-white/[0.04]" />
+
+              {/* Bottom Row: INR Amount & USDT Amount */}
+              <View className="flex-row items-center justify-between">
+                <View className="gap-1.5">
+                  <Skeleton className="w-16 h-3 rounded-md" />
+                  <Skeleton className="w-24 h-5 rounded-md" />
+                </View>
+
+                <View className="items-end gap-1.5">
+                  <Skeleton className="w-20 h-3 rounded-md" />
+                  <Skeleton className="w-24 h-5 rounded-md" />
+                </View>
               </View>
             </View>
           ))}
