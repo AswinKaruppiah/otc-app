@@ -25,9 +25,23 @@ export const TimelineStepItem = ({
       {/* Connecting Line */}
       {!isLast && (
         <View
-          className={`absolute left-[15px] top-8 bottom-[-24px] w-px ${lineColor}`}
+          style={{
+            position: "absolute",
+            left: 15,
+            top: 32,
+            bottom: -24,
+            width: 2,
+            backgroundColor:
+              state === "completed"
+                ? "#baffd8"
+                : state === "rejected"
+                ? "#ef4444"
+                : "rgba(255, 255, 255, 0.25)",
+            zIndex: 0,
+          }}
         />
       )}
+
 
       {/* Circle Icon Indicator */}
       <View
