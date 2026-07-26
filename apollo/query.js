@@ -52,6 +52,7 @@ export const LIST_ORDERS = gql`
       items {
         id
         orderId
+        status
         amountRequested
         cryptoAmountEstimated
         createdAt

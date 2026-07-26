@@ -17,7 +17,7 @@ export default function TransactionsHeader({
 }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchVal, setSearchVal] = useState(search);
-  const hasActiveFilters = !!currentStatus || !!currentDateFrom || !!currentDateTo || !!searchVal;
+  const hasActiveFilters = !!currentStatus || !!currentDateFrom || !!currentDateTo || !!search;
 
   // Sync internal search field when parent search is cleared or changed externally
   useEffect(() => {
