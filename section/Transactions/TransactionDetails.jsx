@@ -15,14 +15,6 @@ import { RecipientWalletCard } from "./details/RecipientWalletCard";
 import { OrderTimelineCard } from "./details/OrderTimelineCard";
 import { BlockchainMetadataCard } from "./details/BlockchainMetadataCard";
 
-const resolveNumber = (value) => {
-  if (typeof value === "number") return value;
-  if (typeof value === "object" && value !== null && "$numberDecimal" in value) {
-    return Number(value.$numberDecimal);
-  }
-  return 0;
-};
-
 export default function TransactionDetails() {
   const params = useLocalSearchParams();
   const router = useRouter();
@@ -67,19 +59,8 @@ export default function TransactionDetails() {
   }
 
   const statusStyle = getOrderStatusStyle(order.status);
-  const fiatAmount = resolveNumber(order.amountRequested);
-  const cryptoAmount = resolveNumber(order.cryptoAmountEstimated);
-  const rate = resolveNumber(order.rate);
   const rawOrderId = order.orderId || order.id;
   const orderIdText = maskText(rawOrderId, 4).toUpperCase();
-
-  const totalSubmitted = resolveNumber(order.totalPaymentsSubmitted || 0);
-  const verifiedAmount = (order.payments || []).reduce((sum, p) => {
-    if (p?.status === "verified") {
-      return sum + resolveNumber(p.amount);
-    }
-    return sum;
-  }, 0);
 
   return (
     <View className="w-full gap-8 pb-12">
@@ -108,18 +89,10 @@ export default function TransactionDetails() {
       </View>
 
       {/* Hero Exchange Card */}
-      <TransactionHeroCard
-        fiatAmount={fiatAmount}
-        cryptoAmount={cryptoAmount}
-        rate={rate}
-      />
+      <TransactionHeroCard order={order} />
 
       {/* Payment Breakdown Card */}
-      <PaymentBreakdownCard
-        fiatAmount={fiatAmount}
-        totalSubmitted={totalSubmitted}
-        verifiedAmount={verifiedAmount}
-      />
+      <PaymentBreakdownCard order={order} />
 
       {/* Recipient Wallet Section */}
       <RecipientWalletCard walletAddress={order.user?.walletAddress} />

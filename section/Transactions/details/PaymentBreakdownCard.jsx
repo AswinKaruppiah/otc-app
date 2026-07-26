@@ -1,11 +1,24 @@
 import { View, Text } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
-export const PaymentBreakdownCard = ({
-  fiatAmount = 0,
-  totalSubmitted = 0,
-  verifiedAmount = 0,
-}) => {
+const resolveNumber = (value) => {
+  if (typeof value === "number") return value;
+  if (typeof value === "object" && value !== null && "$numberDecimal" in value) {
+    return Number(value.$numberDecimal);
+  }
+  return 0;
+};
+
+export const PaymentBreakdownCard = ({ order }) => {
+  const fiatAmount = resolveNumber(order?.amountRequested);
+  const totalSubmitted = resolveNumber(order?.totalPaymentsSubmitted || 0);
+  const verifiedAmount = (order?.payments || []).reduce((sum, p) => {
+    if (p?.status === "verified") {
+      return sum + resolveNumber(p.amount);
+    }
+    return sum;
+  }, 0);
+
   return (
     <View className="gap-3">
       <View className="pl-1 mb-1">

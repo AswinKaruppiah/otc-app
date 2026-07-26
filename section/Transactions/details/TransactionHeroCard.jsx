@@ -2,7 +2,19 @@ import { View, Text, Image, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { formatNumber } from "../../../utils/helper";
 
-export const TransactionHeroCard = ({ fiatAmount = 0, cryptoAmount = 0, rate = 0 }) => {
+const resolveNumber = (value) => {
+  if (typeof value === "number") return value;
+  if (typeof value === "object" && value !== null && "$numberDecimal" in value) {
+    return Number(value.$numberDecimal);
+  }
+  return 0;
+};
+
+export const TransactionHeroCard = ({ order }) => {
+  const fiatAmount = resolveNumber(order?.amountRequested);
+  const cryptoAmount = resolveNumber(order?.cryptoAmountEstimated);
+  const rate = resolveNumber(order?.rate);
+
   return (
     <View className="w-full">
       <LinearGradient
