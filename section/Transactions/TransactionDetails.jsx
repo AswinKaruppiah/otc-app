@@ -7,11 +7,9 @@ import { getOrderStatusStyle } from "../../utils/constants";
 import { maskText } from "../../utils/helper";
 import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
 import { Skeleton } from "heroui-native";
-
 import { TransactionHeroCard } from "./details/TransactionHeroCard";
 import { PaymentBreakdownCard } from "./details/PaymentBreakdownCard";
 import { UserBankCard } from "./details/UserBankCard";
-import { RecipientWalletCard } from "./details/RecipientWalletCard";
 import { OrderTimelineCard } from "./details/OrderTimelineCard";
 import { BlockchainMetadataCard } from "./details/BlockchainMetadataCard";
 
@@ -93,9 +91,6 @@ export default function TransactionDetails() {
 
       {/* Payment Breakdown Card */}
       <PaymentBreakdownCard order={order} />
-
-      {/* Recipient Wallet Section */}
-      <RecipientWalletCard walletAddress={order.user?.walletAddress} />
 
       {/* User Bank Section */}
       <UserBankCard userBank={order.userBank} />

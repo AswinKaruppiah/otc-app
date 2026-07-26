@@ -10,7 +10,7 @@ export const UserBankCard = ({ userBank }) => {
     <View>
       <View className="pl-1 mb-3">
         <Text className="text-gray-400 font-noir-medium text-sm tracking-wider uppercase">
-          User Payment Bank
+          Bank account used for this order
         </Text>
       </View>
 
