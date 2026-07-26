@@ -10,7 +10,7 @@ export const BlockchainMetadataCard = ({ blockchainTx }) => {
     <View>
       <View className="pl-1 mb-3">
         <Text className="text-gray-400 font-noir-medium text-sm tracking-wider uppercase">
-          Blockchain Metadata
+          Blockchain Transaction
         </Text>
       </View>
 
@@ -22,28 +22,22 @@ export const BlockchainMetadataCard = ({ blockchainTx }) => {
       >
         <View className="bg-[#060E0B] rounded-[15px] p-4 gap-1">
           {blockchainTx.hash && (
-            <CopyableRow
-              label="Tx Hash"
-              value={blockchainTx.hash}
-              displayValue={`${blockchainTx.hash.slice(0, 8)}...${blockchainTx.hash.slice(-6)}`}
-              isMonospace={true}
-            />
+            <CopyableRow label="Tx Hash" value={blockchainTx.hash} isMonospace={true} />
           )}
           {blockchainTx.to && (
+            <CopyableRow label="To Address" value={blockchainTx.to} isMonospace={true} />
+          )}
+          {blockchainTx.amount && (
             <CopyableRow
-              label="To Address"
-              value={blockchainTx.to}
-              displayValue={`${blockchainTx.to.slice(0, 8)}...${blockchainTx.to.slice(-6)}`}
-              isMonospace={true}
+              label="Amount Released"
+              value={`${blockchainTx.amount} USDT`}
             />
           )}
           {blockchainTx.confirmedAt && (
-            <View className="flex-row justify-between items-center py-2">
-              <Text className="text-gray-400 font-noir text-[13px]">Confirmed At</Text>
-              <Text className="text-white font-noir text-[14px]">
-                {formatDate(blockchainTx.confirmedAt)}
-              </Text>
-            </View>
+            <CopyableRow
+              label="Confirmed Date"
+              value={formatDate(blockchainTx.confirmedAt)}
+            />
           )}
         </View>
       </LinearGradient>

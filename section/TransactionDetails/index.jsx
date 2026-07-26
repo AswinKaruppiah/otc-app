@@ -7,11 +7,12 @@ import { getOrderStatusStyle } from "../../utils/constants";
 import { maskText } from "../../utils/helper";
 import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
 import { Skeleton } from "heroui-native";
-import { TransactionHeroCard } from "./details/TransactionHeroCard";
-import { PaymentBreakdownCard } from "./details/PaymentBreakdownCard";
-import { UserBankCard } from "./details/UserBankCard";
-import { OrderTimelineCard } from "./details/OrderTimelineCard";
-import { BlockchainMetadataCard } from "./details/BlockchainMetadataCard";
+
+import { TransactionHeroCard } from "./components/TransactionHeroCard";
+import { PaymentBreakdownCard } from "./components/PaymentBreakdownCard";
+import { UserBankCard } from "./components/UserBankCard";
+import { OrderTimelineCard } from "./components/OrderTimelineCard";
+import { BlockchainMetadataCard } from "./components/BlockchainMetadataCard";
 
 export default function TransactionDetails() {
   const params = useLocalSearchParams();
