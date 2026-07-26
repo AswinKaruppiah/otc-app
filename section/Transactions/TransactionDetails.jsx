@@ -133,7 +133,7 @@ export default function TransactionDetails() {
       <UserBankCard userBank={order.userBank} />
 
       {/* Order Timeline Progress Card */}
-      <OrderTimelineCard history={order.history} />
+      <OrderTimelineCard history={order.history} payments={order.payments} />
 
       {/* Blockchain Metadata Card */}
       <BlockchainMetadataCard blockchainTx={order.blockchainTx} />
