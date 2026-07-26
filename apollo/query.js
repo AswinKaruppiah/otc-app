@@ -101,6 +101,10 @@ export const GET_ORDER = gql`
         amount
         confirmedAt
       }
+      history {
+        toStatus
+        createdAt
+      }
       payments {
         id
         paymentIndex

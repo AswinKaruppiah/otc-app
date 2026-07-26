@@ -97,3 +97,34 @@ export const getOrderStatusStyle = (status) => {
     }
   );
 };
+
+export const TIMELINE_STEP_CONFIG = {
+  pending: {
+    iconName: "clock",
+    circleBg: "bg-white/5 border border-white/20",
+    iconColor: "rgba(255, 255, 255, 0.4)",
+    titleColor: "text-gray-400",
+    lineColor: "bg-white/10",
+  },
+  completed: {
+    iconName: "check",
+    circleBg: "bg-noirMint/10 border border-noirMint",
+    iconColor: "#baffd8",
+    titleColor: "text-noirMint",
+    lineColor: "bg-noirMint/40",
+  },
+  active: {
+    iconName: "loader",
+    circleBg: "bg-noirMint/10 border border-noirMint",
+    iconColor: "#baffd8",
+    titleColor: "text-white",
+    lineColor: "bg-white/10",
+  },
+  rejected: {
+    iconName: "x",
+    circleBg: "bg-red-500/10 border border-red-500/40",
+    iconColor: "#ef4444",
+    titleColor: "text-red-400",
+    lineColor: "bg-red-500/30",
+  },
+};
