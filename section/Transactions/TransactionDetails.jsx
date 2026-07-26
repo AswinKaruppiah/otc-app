@@ -2,7 +2,7 @@ import { View, Text } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery } from "@apollo/client/react";
 import Feather from "@expo/vector-icons/Feather";
-import { GET_ORDER, GET_ORDER_PAYMENT_STATS } from "../../apollo/query";
+import { GET_ORDER } from "../../apollo/query";
 import { getOrderStatusStyle } from "../../utils/constants";
 import { maskText } from "../../utils/helper";
 import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
@@ -10,7 +10,6 @@ import { Skeleton } from "heroui-native";
 
 import { TransactionHeroCard } from "./details/TransactionHeroCard";
 import { PaymentBreakdownCard } from "./details/PaymentBreakdownCard";
-import { DepositBankCard } from "./details/DepositBankCard";
 import { UserBankCard } from "./details/UserBankCard";
 import { RecipientWalletCard } from "./details/RecipientWalletCard";
 import { OrderTimelineCard } from "./details/OrderTimelineCard";
@@ -34,13 +33,7 @@ export default function TransactionDetails() {
     skip: !orderId,
   });
 
-  const { data: statsData } = useQuery(GET_ORDER_PAYMENT_STATS, {
-    variables: { orderId: orderId || "" },
-    skip: !orderId,
-  });
-
   const order = orderData?.getOrder;
-  const paymentStats = statsData?.getOrderPaymentStats;
 
   if (orderLoading) {
     return (
@@ -81,7 +74,12 @@ export default function TransactionDetails() {
   const orderIdText = maskText(rawOrderId, 4).toUpperCase();
 
   const totalSubmitted = resolveNumber(order.totalPaymentsSubmitted || 0);
-  const verifiedAmount = resolveNumber(paymentStats?.verifiedAmount || 0);
+  const verifiedAmount = (order.payments || []).reduce((sum, p) => {
+    if (p?.status === "verified") {
+      return sum + resolveNumber(p.amount);
+    }
+    return sum;
+  }, 0);
 
   return (
     <View className="w-full gap-8 pb-12">
@@ -125,9 +123,6 @@ export default function TransactionDetails() {
 
       {/* Recipient Wallet Section */}
       <RecipientWalletCard walletAddress={order.user?.walletAddress} />
-
-      {/* Deposit Admin Bank Section */}
-      <DepositBankCard bank={order.adminBank} />
 
       {/* User Bank Section */}
       <UserBankCard userBank={order.userBank} />

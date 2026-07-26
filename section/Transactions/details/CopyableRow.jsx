@@ -20,13 +20,12 @@ export const CopyableRow = ({ label, value, displayValue, isMonospace = false })
   };
 
   return (
-    <View className="flex-row justify-between items-center py-2 border-b border-white/[0.04] last:border-b-0">
+    <View className="flex-row justify-between items-center py-2 last:border-b-0">
       <View className="flex-1 mr-4">
         <Text className="text-gray-400 font-noir text-[13px]">{label}</Text>
         <Text
-          className={`text-white font-noir text-[14px] mt-0.5 ${
-            isMonospace ? "tracking-wider uppercase" : ""
-          }`}
+          className={`text-white font-noir text-[14px] mt-0.5 ${isMonospace ? "tracking-wider uppercase" : ""
+            }`}
           numberOfLines={1}
           ellipsizeMode="middle"
         >

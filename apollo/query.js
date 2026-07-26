@@ -86,76 +86,37 @@ export const GET_ORDER = gql`
   query GetOrder($orderId: ID!) {
     getOrder(orderId: $orderId) {
       id
-      side
-      asset
-      chain
-      fiatCurrency
+      orderId
       amountRequested
+      cryptoAmountEstimated
+      rate
+      totalPaymentsSubmitted
+      status
+      user {
+        walletAddress
+      }
       blockchainTx {
         hash
-        from
         to
         amount
-        blockNumber
         confirmedAt
       }
-      cryptoAmountEstimated
-      totalPaymentsSubmitted
-      rate
-      orderId
-      fee
-      history {
-        fromStatus
-        toStatus
-        reason
-        createdAt
-        metadata
-      }
-      status
       payments {
         id
         paymentIndex
         amount
-        currency
         utr
         title
-        screenshotKey
-        submittedAt
         screenshotUrl
         status
-        verifiedAt
         rejectionReason
-        notes
-      }
-      createdAt
-      updatedAt
-      adminBank {
-        id
-        label
-        bankName
-        accountHolderName
-        accountNumber
-        branch
-        ifscCode
       }
       userBank {
-        id
-        label
         bankName
         accountHolderName
         accountNumber
-        branch
         ifscCode
       }
-    }
-  }
-`;
-
-export const GET_ORDER_PAYMENT_STATS = gql`
-  query GetOrderPaymentStats($orderId: ID!) {
-    getOrderPaymentStats(orderId: $orderId) {
-      totalPaymentsSubmitted
-      verifiedAmount
     }
   }
 `;
