@@ -13,7 +13,6 @@ import * as SecureStore from "../../utils/secureStore";
 import { SYNC_GOOGLE_USER } from "../../apollo/mutation";
 import { useToast } from "heroui-native";
 import { useRouter } from "expo-router";
-import { GET_USER } from "../../apollo/query";
 
 
 export default function GoogleAuth({ isLoggingIn, setIsLoggingIn }) {
@@ -129,16 +128,15 @@ export default function GoogleAuth({ isLoggingIn, setIsLoggingIn }) {
           disabled={isLoggingIn || loading}
           hapticType="medium"
           activeOpacity={0.85}
-          className="w-full flex-row items-center justify-center gap-3 py-5 rounded-2xl border border-white/[0.08] bg-white/[0.04]"
+          className={`w-full py-5 rounded-full bg-white/10 border border-white/15 flex-row items-center justify-center gap-3 ${isLoggingIn || loading ? "opacity-50" : ""
+            }`}
         >
           {isLoggingIn || loading ? (
-            <ActivityIndicator size="small" color="rgba(255,255,255,0.6)" />
+            <ActivityIndicator size="small" color="#ffffff" />
           ) : (
             <>
-              <View className="w-5 h-5 items-center justify-center">
-                <Ionicons name="logo-google" size={18} color="#ffffff" />
-              </View>
-              <Text className="text-white/80 font-noir-medium text-sm tracking-wide">
+              <Ionicons name="logo-google" size={20} color="#ffffff" />
+              <Text className="text-white font-noir-medium text-lg tracking-wide">
                 Continue with Google
               </Text>
             </>
