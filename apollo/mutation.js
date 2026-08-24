@@ -25,6 +25,7 @@ export const CREATE_ORDER = gql`
     createOrder(input: $input) {
       id
       orderId
+      status
       amountRequested
       cryptoAmountEstimated
       createdAt

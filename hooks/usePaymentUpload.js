@@ -93,8 +93,14 @@ export function usePaymentUpload() {
   const { toast } = useToast();
 
   const [createOrder] = useMutation(CREATE_ORDER, {
-    update(cache, { data: { createOrder: newOrder } }) {
+    update(cache, { data }) {
+      const newOrder = data?.createOrder;
       if (!newOrder) return;
+
+      const orderToWrite = {
+        status: "PENDING",
+        ...newOrder,
+      };
       
       // 1. Update the PENDING orders count query used on the Home screen
       try {
@@ -111,8 +117,8 @@ export function usePaymentUpload() {
                 ...pendingData.listOrders,
                 total: (pendingData.listOrders.total || 0) + 1,
                 items: pendingData.listOrders.items
-                  ? [newOrder, ...pendingData.listOrders.items]
-                  : [newOrder],
+                  ? [orderToWrite, ...pendingData.listOrders.items]
+                  : [orderToWrite],
               },
             },
           });
@@ -138,7 +144,7 @@ export function usePaymentUpload() {
               listOrders: {
                 ...defaultData.listOrders,
                 total: (defaultData.listOrders.total || 0) + 1,
-                items: [newOrder, ...(defaultData.listOrders.items || [])],
+                items: [orderToWrite, ...(defaultData.listOrders.items || [])],
               },
             },
           });

@@ -12,6 +12,8 @@ export default function TransactionsOverview() {
     dateFrom: null,
     dateTo: null,
   });
+  const [page, setPage] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const queryVariables = {
     page: 1,
@@ -24,7 +26,7 @@ export default function TransactionsOverview() {
     queryVariables.dateTo = filters.dateTo;
   }
 
-  const { data, loading, error } = useQuery(LIST_ORDERS, {
+  const { data, loading, error, fetchMore } = useQuery(LIST_ORDERS, {
     variables: queryVariables,
   });
 
@@ -33,10 +35,12 @@ export default function TransactionsOverview() {
   const hasActiveFilters = !!filters.search || !!filters.status || (!!filters.dateFrom && !!filters.dateTo);
 
   const handleSearchSubmit = (val) => {
+    setPage(1);
     setFilters((prev) => ({ ...prev, search: val }));
   };
 
   const handleApplyFilters = (newFilters) => {
+    setPage(1);
     setFilters((prev) => ({
       ...prev,
       status: newFilters.status,
@@ -46,6 +50,7 @@ export default function TransactionsOverview() {
   };
 
   const handleClearFilters = () => {
+    setPage(1);
     setFilters({
       search: "",
       status: null,
@@ -53,6 +58,43 @@ export default function TransactionsOverview() {
       dateTo: null,
     });
   };
+
+  const handleLoadMore = async () => {
+    if (loadingMore || ordersList.length >= totalCount) return;
+    setLoadingMore(true);
+    try {
+      const nextPage = page + 1;
+      await fetchMore({
+        variables: {
+          ...queryVariables,
+          page: nextPage,
+        },
+        updateQuery: (prevResult, { fetchMoreResult }) => {
+          if (!fetchMoreResult || !fetchMoreResult.listOrders) return prevResult;
+
+          const existingIds = new Set(prevResult.listOrders?.items?.map((item) => item.id || item.orderId) || []);
+          const newItems = (fetchMoreResult.listOrders?.items || []).filter(
+            (item) => !existingIds.has(item.id || item.orderId)
+          );
+
+          return {
+            listOrders: {
+              ...fetchMoreResult.listOrders,
+              total: fetchMoreResult.listOrders.total,
+              items: [...(prevResult.listOrders?.items || []), ...newItems],
+            },
+          };
+        },
+      });
+      setPage(nextPage);
+    } catch (e) {
+      console.error("Error fetching more transactions:", e);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  const hasMore = ordersList.length > 0 && ordersList.length < totalCount;
 
   return (
     <View className="flex-1 w-full">
@@ -70,12 +112,15 @@ export default function TransactionsOverview() {
       />
 
       {/* List of transactions */}
-      <View>
+      <View className="flex-1">
         <TransactionList
           ordersList={ordersList}
           loading={loading}
           error={error}
           hasActiveFilters={hasActiveFilters}
+          hasMore={hasMore}
+          loadingMore={loadingMore}
+          onLoadMore={handleLoadMore}
         />
       </View>
     </View>

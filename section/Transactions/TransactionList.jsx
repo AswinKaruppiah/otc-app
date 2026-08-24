@@ -1,8 +1,10 @@
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, ActivityIndicator } from "react-native";
 import { Skeleton } from "heroui-native";
 import Feather from "@expo/vector-icons/Feather";
 import TransactionCard from "./TransactionCard";
 import Show from "../../components/Show";
+import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
+import { ThinArrowDown } from "../../utils/icons";
 
 function EmptyState({ hasActiveFilters }) {
   return (
@@ -26,7 +28,15 @@ function EmptyState({ hasActiveFilters }) {
   );
 }
 
-export default function TransactionList({ ordersList = [], loading, error, hasActiveFilters }) {
+export default function TransactionList({
+  ordersList = [],
+  loading,
+  error,
+  hasActiveFilters,
+  hasMore = false,
+  loadingMore = false,
+  onLoadMore,
+}) {
   return (
     <Show>
       <Show.If isTrue={loading && ordersList.length === 0}>
@@ -103,6 +113,25 @@ export default function TransactionList({ ordersList = [], loading, error, hasAc
           maxToRenderPerBatch={10}
           windowSize={5}
           removeClippedSubviews={true}
+          ListFooterComponent={
+            hasMore ? (
+              <View className="items-center justify-center pt-3">
+                <HapticTouchableOpacity
+                  onPress={onLoadMore}
+                  disabled={loadingMore}
+                  activeOpacity={0.7}
+                  hapticType="light"
+                  className="w-16 aspect-square rounded-full bg-white/[0.06] border border-white/10 items-center justify-center active:bg-white/[0.12]"
+                >
+                  {loadingMore ? (
+                    <ActivityIndicator size="small" color="#baffd8" />
+                  ) : (
+                    <ThinArrowDown size={28} color="#baffd8" strokeWidth={1.2} />
+                  )}
+                </HapticTouchableOpacity>
+              </View>
+            ) : null
+          }
         />
       </Show.Else>
     </Show>
