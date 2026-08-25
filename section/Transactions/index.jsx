@@ -26,10 +26,12 @@ export default function TransactionsOverview() {
     queryVariables.dateTo = filters.dateTo;
   }
 
-  const { data, loading, error, fetchMore } = useQuery(LIST_ORDERS, {
+  const { data, loading, error, fetchMore, networkStatus } = useQuery(LIST_ORDERS, {
     variables: queryVariables,
+    notifyOnNetworkStatusChange: true,
   });
 
+  const isFetchingMore = loadingMore || networkStatus === 3;
   const totalCount = data?.listOrders?.total || 0;
   const ordersList = data?.listOrders?.items || [];
   const hasActiveFilters = !!filters.search || !!filters.status || (!!filters.dateFrom && !!filters.dateTo);
@@ -60,7 +62,7 @@ export default function TransactionsOverview() {
   };
 
   const handleLoadMore = async () => {
-    if (loadingMore || ordersList.length >= totalCount) return;
+    if (isFetchingMore || ordersList.length >= totalCount) return;
     setLoadingMore(true);
     try {
       const nextPage = page + 1;
@@ -119,7 +121,7 @@ export default function TransactionsOverview() {
           error={error}
           hasActiveFilters={hasActiveFilters}
           hasMore={hasMore}
-          loadingMore={loadingMore}
+          loadingMore={isFetchingMore}
           onLoadMore={handleLoadMore}
         />
       </View>

@@ -129,23 +129,29 @@ export default function TransactionList({
           removeClippedSubviews={true}
           ListFooterComponent={
             <View className="items-center justify-center min-h-[100px] -mb-3">
-              {hasMore ? (
-                <HapticTouchableOpacity
-                  onPress={onLoadMore}
-                  disabled={loadingMore}
-                  activeOpacity={0.7}
-                  hapticType="light"
-                  className="w-16 aspect-square rounded-full bg-white/[0.06] border border-white/10 items-center justify-center active:bg-white/[0.12]"
-                >
-                  {loadingMore ? (
-                    <ActivityIndicator size="small" color="#baffd8" />
-                  ) : (
-                    <ThinArrowDown size={28} color="#baffd8" strokeWidth={1.2} />
-                  )}
-                </HapticTouchableOpacity>
-              ) : (
-                <EndState />
-              )}
+              <Show>
+                <Show.If isTrue={hasMore}>
+                  <HapticTouchableOpacity
+                    onPress={onLoadMore}
+                    disabled={loadingMore}
+                    activeOpacity={0.7}
+                    hapticType="light"
+                    className="w-16 aspect-square rounded-full bg-white/[0.06] border border-white/10 items-center justify-center active:bg-white/[0.12]"
+                  >
+                    <Show>
+                      <Show.If isTrue={loadingMore}>
+                        <ActivityIndicator size="small" color="#baffd8" />
+                      </Show.If>
+                      <Show.Else>
+                        <ThinArrowDown size={28} color="#baffd8" strokeWidth={1.2} />
+                      </Show.Else>
+                    </Show>
+                  </HapticTouchableOpacity>
+                </Show.If>
+                <Show.Else>
+                  <EndState />
+                </Show.Else>
+              </Show>
             </View>
           }
         />
