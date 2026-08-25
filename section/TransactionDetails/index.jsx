@@ -29,12 +29,22 @@ export default function TransactionDetails() {
 
   if (orderLoading) {
     return (
-      <View className="w-full gap-6 py-4 px-5">
-        <Skeleton className="w-full h-14 rounded-2xl" />
-        <Skeleton className="w-full h-56 rounded-3xl" />
-        <Skeleton className="w-full h-36 rounded-2xl" />
-        <Skeleton className="w-full h-44 rounded-2xl" />
-      </View>
+      <PageContainer>
+        <View className="w-full gap-6">
+          {/* Header Bar Skeleton */}
+          <View className="flex-row items-center justify-between pl-1">
+            <View className="gap-1.5">
+              <Skeleton className="w-28 h-3.5 rounded-md" />
+              <Skeleton className="w-36 h-6 rounded-md" />
+            </View>
+            <Skeleton className="w-20 h-7 rounded-full" />
+          </View>
+
+          <Skeleton className="w-full h-56 rounded-3xl" />
+          <Skeleton className="w-full h-36 rounded-2xl" />
+          <Skeleton className="w-full h-44 rounded-2xl" />
+        </View>
+      </PageContainer>
     );
   }
 
