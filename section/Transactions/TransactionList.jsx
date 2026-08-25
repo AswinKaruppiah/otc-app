@@ -1,4 +1,4 @@
-import { View, Text, FlatList, ActivityIndicator } from "react-native";
+import { View, Text, FlatList, ActivityIndicator, RefreshControl } from "react-native";
 import { Skeleton } from "heroui-native";
 import Feather from "@expo/vector-icons/Feather";
 import TransactionCard from "./TransactionCard";
@@ -83,6 +83,8 @@ export default function TransactionList({
   hasMore = false,
   loadingMore = false,
   onLoadMore,
+  refreshing = false,
+  onRefresh,
 }) {
   return (
     <Show>
@@ -121,7 +123,17 @@ export default function TransactionList({
           data={ordersList}
           keyExtractor={(item) => item.id || item.orderId}
           renderItem={({ item }) => <TransactionCard item={item} />}
-          scrollEnabled={false}
+          refreshControl={
+            onRefresh ? (
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor="#baffd8"
+                colors={["#baffd8"]}
+                progressBackgroundColor="#181e25"
+              />
+            ) : undefined
+          }
           contentContainerStyle={{ paddingBottom: 24 }}
           initialNumToRender={10}
           maxToRenderPerBatch={10}

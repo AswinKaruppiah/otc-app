@@ -26,12 +26,13 @@ export default function TransactionsOverview() {
     queryVariables.dateTo = filters.dateTo;
   }
 
-  const { data, loading, error, fetchMore, networkStatus } = useQuery(LIST_ORDERS, {
+  const { data, loading, error, fetchMore, networkStatus, refetch } = useQuery(LIST_ORDERS, {
     variables: queryVariables,
     notifyOnNetworkStatusChange: true,
   });
 
   const isFetchingMore = loadingMore || networkStatus === 3;
+  const isRefreshing = networkStatus === 4;
   const totalCount = data?.listOrders?.total || 0;
   const ordersList = data?.listOrders?.items || [];
   const hasActiveFilters = !!filters.search || !!filters.status || (!!filters.dateFrom && !!filters.dateTo);
@@ -59,6 +60,18 @@ export default function TransactionsOverview() {
       dateFrom: null,
       dateTo: null,
     });
+  };
+
+  const handleRefresh = async () => {
+    setPage(1);
+    try {
+      await refetch({
+        ...queryVariables,
+        page: 1,
+      });
+    } catch (e) {
+      console.error("Error refreshing transactions:", e);
+    }
   };
 
   const handleLoadMore = async () => {
@@ -123,6 +136,8 @@ export default function TransactionsOverview() {
           hasMore={hasMore}
           loadingMore={isFetchingMore}
           onLoadMore={handleLoadMore}
+          refreshing={isRefreshing}
+          onRefresh={handleRefresh}
         />
       </View>
     </View>
