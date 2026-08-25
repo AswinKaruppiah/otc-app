@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import FilterSheet from "./FilterSheet";
-import Show from "../../components/Show";
+import Show from "../../../components/Show";
 
 export default function TransactionsHeader({
   totalCount = 0,
@@ -25,7 +25,7 @@ export default function TransactionsHeader({
   }, [search]);
 
   return (
-    <View className="w-full pb-4">
+    <View className="w-full">
       {/* Top Row: Title, Count & Filter Button */}
       <View className="flex-row justify-between items-center mb-4">
         <View>

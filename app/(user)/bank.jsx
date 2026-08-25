@@ -3,6 +3,7 @@ import { Text, View, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
 import { maskAccountNumber } from "../../utils/helper";
+import PageContainer from "../../components/PageContainer";
 
 /**
  * Bank Screen — Linked bank accounts, details, and transfer limits.
@@ -37,7 +38,8 @@ export default function Bank() {
   ];
 
   return (
-    <View className="w-full pb-8">
+    <PageContainer>
+      <View className="w-full pb-8">
       {/* Header Badge */}
       <View className="items-center mb-6">
         <View className="bg-noirMint/10 border border-noirMint/25 px-4 py-1.5 rounded-full mb-3 flex-row items-center gap-1.5">
@@ -146,5 +148,6 @@ export default function Bank() {
         </TouchableOpacity>
       </View>
     </View>
-  );
+  </PageContainer>
+);
 }

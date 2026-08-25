@@ -35,8 +35,6 @@ const HIDE_TOP_BAR_ROUTES = [];
 const HIDE_BOTTOM_BAR_ROUTES = ["/onboarding", "/order"];
 
 function UserLayoutContent() {
-  const scrollY = useScrollY();
-  const scrollViewRef = useScrollViewRef();
   const insets = useSafeAreaInsets();
   const { isAuth } = useUser();
   const pathname = usePathname();
@@ -64,6 +62,7 @@ function UserLayoutContent() {
 
   // TopBar height is 60. Add 20px spacing so content starts below TopBar.
   const paddingTop = (showTopBar ? 60 : 0) + insets.top + 20;
+  const paddingBottom = (showTabBar ? 84 : 20) + insets.bottom + keyboardHeight;
 
   return (
     <KeyboardAvoidingView
@@ -71,27 +70,9 @@ function UserLayoutContent() {
       style={{ flex: 1 }}
     >
       {showTopBar && <TopBar />}
-      <Animated.ScrollView
-        ref={scrollViewRef}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: true },
-        )}
-        scrollEventThrottle={16}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-        automaticallyAdjustKeyboardInsets={Platform.OS === "ios"}
-        keyboardDismissMode="interactive"
-        contentContainerStyle={{
-          flexGrow: 1,
-          paddingHorizontal: 20,
-          paddingBottom: (showTabBar ? 84 : 20) + insets.bottom + keyboardHeight,
-          paddingTop,
-          gap: 20,
-        }}
-      >
+      <View style={{ flex: 1 }}>
         <Slot />
-      </Animated.ScrollView>
+      </View>
       {showTabBar && <BottomTabBar />}
     </KeyboardAvoidingView>
   );

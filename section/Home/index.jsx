@@ -1,6 +1,7 @@
 import { View } from "react-native";
 import { ExchangeCard } from "./Exchange";
 import { Button } from "heroui-native";
+import PageContainer from "../../components/PageContainer";
 
 /**
  * Home/Index Screen — Main dashboard of the Quotex application.
@@ -12,8 +13,10 @@ import { Button } from "heroui-native";
 
 export default function HomeOverview() {
   return (
-    <View className="w-full">
-      <ExchangeCard />
-    </View>
+    <PageContainer>
+      <View className="w-full">
+        <ExchangeCard />
+      </View>
+    </PageContainer>
   );
 }

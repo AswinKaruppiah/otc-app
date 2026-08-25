@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { View } from "react-native";
+import { View, RefreshControl } from "react-native";
 import { useQuery } from "@apollo/client/react";
 import { LIST_ORDERS } from "../../apollo/query";
-import TransactionsHeader from "./TransactionsHeader";
-import TransactionList from "./TransactionList";
+import TransactionsHeader from "./components/TransactionsHeader";
+import TransactionList from "./components/TransactionList";
+import PageContainer from "../../components/PageContainer";
+import { useScreenPadding } from "../../context/ScrollContext";
 
 export default function TransactionsOverview() {
+  const { paddingTop } = useScreenPadding();
   const [filters, setFilters] = useState({
     search: "",
     status: null,
@@ -112,8 +115,18 @@ export default function TransactionsOverview() {
   const hasMore = ordersList.length > 0 && ordersList.length < totalCount;
 
   return (
-    <View className="flex-1 w-full">
-      {/* Header component with search, title and filter icon */}
+    <PageContainer
+      refreshControl={
+        <RefreshControl
+          refreshing={isRefreshing}
+          onRefresh={handleRefresh}
+          tintColor="#baffd8"
+          colors={["#baffd8"]}
+          progressBackgroundColor="#181e25"
+          progressViewOffset={paddingTop - 10}
+        />
+      }
+    >
       <TransactionsHeader
         totalCount={totalCount}
         search={filters.search}
@@ -125,21 +138,15 @@ export default function TransactionsOverview() {
         onClearFilters={handleClearFilters}
         loading={loading}
       />
-
-      {/* List of transactions */}
-      <View className="flex-1">
-        <TransactionList
-          ordersList={ordersList}
-          loading={loading}
-          error={error}
-          hasActiveFilters={hasActiveFilters}
-          hasMore={hasMore}
-          loadingMore={isFetchingMore}
-          onLoadMore={handleLoadMore}
-          refreshing={isRefreshing}
-          onRefresh={handleRefresh}
-        />
-      </View>
-    </View>
+      <TransactionList
+        ordersList={ordersList}
+        loading={loading}
+        error={error}
+        hasActiveFilters={hasActiveFilters}
+        hasMore={hasMore}
+        loadingMore={isFetchingMore}
+        onLoadMore={handleLoadMore}
+      />
+    </PageContainer>
   );
 }

@@ -1,10 +1,10 @@
-import { View, Text, FlatList, ActivityIndicator, RefreshControl } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
 import { Skeleton } from "heroui-native";
 import Feather from "@expo/vector-icons/Feather";
 import TransactionCard from "./TransactionCard";
-import Show from "../../components/Show";
-import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
-import { ThinArrowDown, DesertDuneSVG } from "../../utils/icons";
+import Show from "../../../components/Show";
+import HapticTouchableOpacity from "../../../components/HapticTouchableOpacity";
+import { ThinArrowDown, DesertDuneSVG } from "../../../utils/icons";
 
 function EndState() {
   return (
@@ -83,12 +83,10 @@ export default function TransactionList({
   hasMore = false,
   loadingMore = false,
   onLoadMore,
-  refreshing = false,
-  onRefresh,
 }) {
   return (
     <Show>
-      <Show.If isTrue={loading && ordersList.length === 0}>
+      <Show.If isTrue={loading && !loadingMore}>
         <View className="w-full">
           {new Array(10).fill(0).map((_, i) => (
             <TransactionSkeletonCard key={`init-${i}`} />
@@ -119,54 +117,36 @@ export default function TransactionList({
       </Show.ElseIf>
 
       <Show.Else>
-        <FlatList
-          data={ordersList}
-          keyExtractor={(item) => item.id || item.orderId}
-          renderItem={({ item }) => <TransactionCard item={item} />}
-          refreshControl={
-            onRefresh ? (
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                tintColor="#baffd8"
-                colors={["#baffd8"]}
-                progressBackgroundColor="#181e25"
-              />
-            ) : undefined
-          }
-          contentContainerStyle={{ paddingBottom: 24 }}
-          initialNumToRender={10}
-          maxToRenderPerBatch={10}
-          windowSize={5}
-          removeClippedSubviews={true}
-          ListFooterComponent={
-            <View className="items-center justify-center min-h-[100px] -mb-3">
-              <Show>
-                <Show.If isTrue={hasMore}>
-                  <HapticTouchableOpacity
-                    onPress={onLoadMore}
-                    disabled={loadingMore}
-                    activeOpacity={0.7}
-                    hapticType="light"
-                    className="w-16 aspect-square rounded-full bg-white/[0.06] border border-white/10 items-center justify-center active:bg-white/[0.12]"
-                  >
-                    <Show>
-                      <Show.If isTrue={loadingMore}>
-                        <ActivityIndicator size="small" color="#baffd8" />
-                      </Show.If>
-                      <Show.Else>
-                        <ThinArrowDown size={28} color="#baffd8" strokeWidth={1.2} />
-                      </Show.Else>
-                    </Show>
-                  </HapticTouchableOpacity>
-                </Show.If>
-                <Show.Else>
-                  <EndState />
-                </Show.Else>
-              </Show>
-            </View>
-          }
-        />
+        <View className="w-full">
+          {ordersList.map((item) => (
+            <TransactionCard key={item.id || item.orderId} item={item} />
+          ))}
+          <View className="items-center justify-center min-h-[100px] mt-4">
+            <Show>
+              <Show.If isTrue={hasMore}>
+                <HapticTouchableOpacity
+                  onPress={onLoadMore}
+                  disabled={loadingMore}
+                  activeOpacity={0.7}
+                  hapticType="light"
+                  className="w-16 aspect-square rounded-full bg-white/[0.06] border border-white/10 items-center justify-center active:bg-white/[0.12]"
+                >
+                  <Show>
+                    <Show.If isTrue={loadingMore}>
+                      <ActivityIndicator size="small" color="#baffd8" />
+                    </Show.If>
+                    <Show.Else>
+                      <ThinArrowDown size={28} color="#baffd8" strokeWidth={1.2} />
+                    </Show.Else>
+                  </Show>
+                </HapticTouchableOpacity>
+              </Show.If>
+              <Show.ElseIf isTrue={ordersList.length > 10}>
+                <EndState />
+              </Show.ElseIf>
+            </Show>
+          </View>
+        </View>
       </Show.Else>
     </Show>
   );

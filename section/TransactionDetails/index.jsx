@@ -7,6 +7,7 @@ import { getOrderStatusStyle } from "../../utils/constants";
 import { maskText } from "../../utils/helper";
 import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
 import { Skeleton } from "heroui-native";
+import PageContainer from "../../components/PageContainer";
 
 import { TransactionHeroCard } from "./components/TransactionHeroCard";
 import { PaymentBreakdownCard } from "./components/PaymentBreakdownCard";
@@ -28,7 +29,7 @@ export default function TransactionDetails() {
 
   if (orderLoading) {
     return (
-      <View className="w-full gap-6 py-4">
+      <View className="w-full gap-6 py-4 px-5">
         <Skeleton className="w-full h-14 rounded-2xl" />
         <Skeleton className="w-full h-56 rounded-3xl" />
         <Skeleton className="w-full h-36 rounded-2xl" />
@@ -62,45 +63,47 @@ export default function TransactionDetails() {
   const orderIdText = maskText(rawOrderId, 4).toUpperCase();
 
   return (
-    <View className="w-full gap-8 pb-12">
-      {/* Page Header Bar */}
-      <View className="flex-row items-center justify-between pl-1">
-        <View className="gap-0.5">
-          <Text className="text-gray-400 font-noir-medium text-xs tracking-wider uppercase">
-            Transaction Details
-          </Text>
-          <Text className="text-white font-noir-medium text-xl font-bold tracking-tight">
-            Order #{orderIdText}
-          </Text>
-        </View>
+    <PageContainer>
+      <View className="w-full gap-8 pb-12">
+        {/* Page Header Bar */}
+        <View className="flex-row items-center justify-between pl-1">
+          <View className="gap-0.5">
+            <Text className="text-gray-400 font-noir-medium text-xs tracking-wider uppercase">
+              Transaction Details
+            </Text>
+            <Text className="text-white font-noir-medium text-xl font-bold tracking-tight">
+              Order #{orderIdText}
+            </Text>
+          </View>
 
-        <View
-          className="rounded-full px-3.5 py-1.5 border border-white/10"
-          style={{ backgroundColor: statusStyle.bg }}
-        >
-          <Text
-            className="text-xs font-noir-medium font-semibold"
-            style={{ color: statusStyle.color }}
+          <View
+            className="rounded-full px-3.5 py-1.5 border border-white/10"
+            style={{ backgroundColor: statusStyle.bg }}
           >
-            {statusStyle.label}
-          </Text>
+            <Text
+              className="text-xs font-noir-medium font-semibold"
+              style={{ color: statusStyle.color }}
+            >
+              {statusStyle.label}
+            </Text>
+          </View>
         </View>
+
+        {/* Hero Exchange Card */}
+        <TransactionHeroCard order={order} />
+
+        {/* Payment Breakdown Card */}
+        <PaymentBreakdownCard order={order} />
+
+        {/* User Bank Section */}
+        <UserBankCard userBank={order.userBank} />
+
+        {/* Order Timeline Progress Card */}
+        <OrderTimelineCard history={order.history} payments={order.payments} />
+
+        {/* Blockchain Metadata Card */}
+        <BlockchainMetadataCard blockchainTx={order.blockchainTx} />
       </View>
-
-      {/* Hero Exchange Card */}
-      <TransactionHeroCard order={order} />
-
-      {/* Payment Breakdown Card */}
-      <PaymentBreakdownCard order={order} />
-
-      {/* User Bank Section */}
-      <UserBankCard userBank={order.userBank} />
-
-      {/* Order Timeline Progress Card */}
-      <OrderTimelineCard history={order.history} payments={order.payments} />
-
-      {/* Blockchain Metadata Card */}
-      <BlockchainMetadataCard blockchainTx={order.blockchainTx} />
-    </View>
+    </PageContainer>
   );
 }

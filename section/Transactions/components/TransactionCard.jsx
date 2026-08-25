@@ -1,9 +1,9 @@
 import { View, Text, Image } from "react-native";
-import { formatDate, maskText } from "../../utils/helper";
-import { getOrderStatusStyle } from "../../utils/constants";
+import { formatDate, maskText } from "../../../utils/helper";
+import { getOrderStatusStyle } from "../../../utils/constants";
 import Feather from "@expo/vector-icons/Feather";
 import { useRouter } from "expo-router";
-import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
+import HapticTouchableOpacity from "../../../components/HapticTouchableOpacity";
 
 export default function TransactionCard({ item }) {
   const router = useRouter();
@@ -36,7 +36,7 @@ export default function TransactionCard({ item }) {
             </View>
             <View className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border border-[#111418] overflow-hidden bg-noirCard items-center justify-center">
               <Image
-                source={require("../../assets/images/Flag_of_India.png")}
+                source={require("../../../assets/images/Flag_of_India.png")}
                 style={{ width: 12, height: 12, borderRadius: 6 }}
                 resizeMode="cover"
               />

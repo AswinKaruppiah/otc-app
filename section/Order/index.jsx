@@ -12,6 +12,7 @@ import OrderSuccess from "./OrderSuccess";
 import Button from "../../components/Button";
 import { useUser } from "../../hooks/useUser";
 import { usePaymentUpload } from "../../hooks/usePaymentUpload";
+import PageContainer from "../../components/PageContainer";
 
 /**
  * Order Screen — A premium order preview screen that displays the chosen bank account,
@@ -70,61 +71,63 @@ export default function OrderOverview() {
     }
 
     return (
-        <View className="flex-1">
-            <View className="w-full gap-10">
-                <OrderDetailsCard
-                    inrAmount={inrAmount}
-                    usdtAmount={usdtAmount}
-                    exchangeRate={exchangeRate}
-                />
+        <PageContainer className="w-full flex-1">
+            <View className="flex-1">
+                <View className="w-full gap-10">
+                    <OrderDetailsCard
+                        inrAmount={inrAmount}
+                        usdtAmount={usdtAmount}
+                        exchangeRate={exchangeRate}
+                    />
 
-                {assignedAdminBank && (
-                    <AdminBankAccountCard bank={assignedAdminBank} />
-                )}
+                    {assignedAdminBank && (
+                        <AdminBankAccountCard bank={assignedAdminBank} />
+                    )}
 
-                <CryptoAddressCard />
+                    <CryptoAddressCard />
 
-                <BankAccountCard
-                    bankName={bankName}
-                    type={type}
-                    accountNumber={accountNumber}
-                    accountHolderName={accountHolderName}
-                    ifscCode={ifscCode}
-                    branch={branch}
-                />
+                    <BankAccountCard
+                        bankName={bankName}
+                        type={type}
+                        accountNumber={accountNumber}
+                        accountHolderName={accountHolderName}
+                        ifscCode={ifscCode}
+                        branch={branch}
+                    />
 
-                <PaymentProofUploader
-                    onProofsChanged={setProofsList}
-                    initialSenderName={accountHolderName}
-                    initialSenderBank={bankName}
-                    requiredAmount={requiredAmount}
-                    totalUploadedAmount={totalUploadedAmount}
-                />
+                    <PaymentProofUploader
+                        onProofsChanged={setProofsList}
+                        initialSenderName={accountHolderName}
+                        initialSenderBank={bankName}
+                        requiredAmount={requiredAmount}
+                        totalUploadedAmount={totalUploadedAmount}
+                    />
 
-                {/* Confirm Payment Action Button */}
-                <View className="mt-12">
-                    <Button
-                        onPress={handleConfirmPayment}
-                        primary={true}
-                        disabled={!isFormValid || isSubmitting}
-                    >
-                        {isSubmitting ? (
-                            <ActivityIndicator color="#111418" />
-                        ) : isFormValid ? (
-                            "Confirm"
-                        ) : (
-                            `Confirm (${requiredAmount > 0 ? Math.round((totalUploadedAmount / requiredAmount) * 100) : 0}%)`
-                        )}
-                    </Button>
+                    {/* Confirm Payment Action Button */}
+                    <View className="mt-12">
+                        <Button
+                            onPress={handleConfirmPayment}
+                            primary={true}
+                            disabled={!isFormValid || isSubmitting}
+                        >
+                            {isSubmitting ? (
+                                <ActivityIndicator color="#111418" />
+                            ) : isFormValid ? (
+                                "Confirm"
+                            ) : (
+                                `Confirm (${requiredAmount > 0 ? Math.round((totalUploadedAmount / requiredAmount) * 100) : 0}%)`
+                            )}
+                        </Button>
+                    </View>
                 </View>
-            </View>
 
-            {/* Exit confirmation dialog */}
-            <ConfirmExitDialog
-                isOpen={isOpen}
-                onOpenChange={setIsOpen}
-                onConfirm={confirmExit}
-            />
-        </View>
+                {/* Exit confirmation dialog */}
+                <ConfirmExitDialog
+                    isOpen={isOpen}
+                    onOpenChange={setIsOpen}
+                    onConfirm={confirmExit}
+                />
+            </View>
+        </PageContainer>
     );
 }
