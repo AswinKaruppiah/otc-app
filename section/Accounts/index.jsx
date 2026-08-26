@@ -1,31 +1,23 @@
 import React, { useState } from "react";
-import { View, RefreshControl } from "react-native";
+import { View } from "react-native";
 import { useQuery } from "@apollo/client/react";
 import PageContainer from "../../components/PageContainer";
 import Show from "../../components/Show";
 import { MY_BANK_ACCOUNTS } from "../../apollo/query";
-import { useScreenPadding } from "../../context/ScrollContext";
 import AccountsHeader from "./components/AccountsHeader";
 import AccountsSegmentTabs from "./components/AccountsSegmentTabs";
 import LinkedAccountsList from "./components/LinkedAccountsList";
 import LinkedWalletsList from "./components/LinkedWalletsList";
 
 /**
- * AccountsOverview — Main section overview supporting pull-to-refresh reload.
+ * AccountsOverview — Main section overview displaying linked bank accounts and whitelisted wallets.
  */
 export default function AccountsOverview() {
-  const { paddingTop } = useScreenPadding();
   const [activeTab, setActiveTab] = useState("banks");
 
   // Fetch Bank Accounts via GraphQL Query
-  const { data, loading, error, refetch, networkStatus } = useQuery(
-    MY_BANK_ACCOUNTS,
-    {
-      notifyOnNetworkStatusChange: true,
-    }
-  );
+  const { data, loading, error, refetch } = useQuery(MY_BANK_ACCOUNTS);
 
-  const isRefreshing = networkStatus === 4;
   const bankAccountsList = data?.myBankAccounts || [];
 
   // Whitelisted Crypto Wallets sample data
@@ -53,18 +45,7 @@ export default function AccountsOverview() {
   ];
 
   return (
-    <PageContainer
-      refreshControl={
-        <RefreshControl
-          refreshing={isRefreshing}
-          onRefresh={() => refetch()}
-          tintColor="#baffd8"
-          colors={["#baffd8"]}
-          progressBackgroundColor="#181e25"
-          progressViewOffset={paddingTop - 10}
-        />
-      }
-    >
+    <PageContainer>
       <View className="w-full pb-8">
         {/* Tab Switcher */}
         <AccountsSegmentTabs
@@ -75,12 +56,11 @@ export default function AccountsOverview() {
         {/* Dynamic Header */}
         <AccountsHeader activeTab={activeTab} />
 
-        {/* Accounts List Group with pull-to-refresh */}
+        {/* Accounts List Group */}
         <Show>
           <Show.If isTrue={activeTab === "banks"}>
             <LinkedAccountsList
               loading={loading}
-              isRefreshing={isRefreshing}
               error={error}
               accounts={bankAccountsList}
               refetch={refetch}

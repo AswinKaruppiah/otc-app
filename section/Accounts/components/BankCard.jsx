@@ -52,6 +52,7 @@ export default function BankCard({ bank = {}, index = 0 }) {
       : "-";
 
   const bankName = bank.bankName || "-";
+  const ifscCode = (bank.ifscCode || bank.ifsc || "").toUpperCase();
 
   return (
     <LinearGradient
@@ -83,19 +84,30 @@ export default function BankCard({ bank = {}, index = 0 }) {
         {cardNumFormatted}
       </Text>
 
-      {/* Bottom Row: Card Holder Name */}
+      {/* Bottom Row: Account Holder & Optional IFSC */}
       <View className="flex-row justify-between items-end">
-        <View className="flex-1 pr-2">
-          <Text className="text-white/80 font-noir text-[11px] font-normal mb-0.5">
-            Card Holder Name
+        <View className="flex-1 pr-3">
+          <Text className="text-white/60 font-noir text-[9.5px] font-medium tracking-widest uppercase mb-1">
+            ACCOUNT HOLDER
           </Text>
           <Text
-            className="text-white font-noir font-semibold text-[13px] tracking-wide"
+            className="text-white font-noir text-[14px] font-medium tracking-[0.8px] uppercase"
             numberOfLines={1}
           >
             {cardHolder}
           </Text>
         </View>
+
+        {!!ifscCode && (
+          <View className="items-end">
+            <Text className="text-white/60 font-noir text-[9.5px] font-medium tracking-widest uppercase mb-1">
+              IFSC CODE
+            </Text>
+            <Text className="text-white/95 font-noir text-[12px] font-normal tracking-wider">
+              {ifscCode}
+            </Text>
+          </View>
+        )}
       </View>
     </LinearGradient>
   );

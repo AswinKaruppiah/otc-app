@@ -10,7 +10,6 @@ import BankCard from "./BankCard";
  */
 export default function LinkedAccountsList({
   loading = false,
-  isRefreshing = false,
   error = null,
   accounts = [],
   refetch,
@@ -18,33 +17,17 @@ export default function LinkedAccountsList({
   return (
     <View className="w-full">
       <Show>
-        {/* 1. Loading State */}
-        <Show.If isTrue={loading && !isRefreshing && accounts.length === 0}>
+        {/* 1. Loading State — Single Minimal Card Skeleton */}
+        <Show.If isTrue={loading}>
           <View className="w-full gap-5">
-            {[1, 2].map((key) => (
-              <View
-                key={key}
-                className="w-full aspect-[1.65/1] bg-noirCard rounded-2xl p-6 border border-white/[0.06] justify-between"
-              >
-                <View className="flex-row justify-between items-center">
-                  <Skeleton className="w-28 h-5 rounded-md" />
-                  <Skeleton className="w-16 h-5 rounded-full" />
-                </View>
-                <Skeleton className="w-10 h-7 rounded-md my-1" />
-                <Skeleton className="w-full h-7 rounded-lg mb-2" />
-                <View className="flex-row justify-between items-end">
-                  <View className="gap-1.5">
-                    <Skeleton className="w-20 h-3 rounded-sm" />
-                    <Skeleton className="w-32 h-4 rounded-md" />
-                  </View>
-                </View>
-              </View>
-            ))}
+            <Skeleton className="w-full aspect-[1.65/1] rounded-2xl" />
+            <Skeleton className="w-full aspect-[1.65/1] rounded-2xl" />
+            <Skeleton className="w-full aspect-[1.65/1] rounded-2xl" />
           </View>
         </Show.If>
 
         {/* 2. Error State */}
-        <Show.ElseIf isTrue={!!error && accounts.length === 0}>
+        <Show.ElseIf isTrue={!!error}>
           <EmptyState
             type="error"
             title="Failed to load bank accounts"
