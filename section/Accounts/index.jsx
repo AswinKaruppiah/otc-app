@@ -1,19 +1,21 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { useRouter } from "expo-router";
-import Feather from "@expo/vector-icons/Feather";
+import React, { useState } from "react";
+import { View } from "react-native";
 import PageContainer from "../../components/PageContainer";
+import Show from "../../components/Show";
 import { maskAccountNumber } from "../../utils/helper";
 import AccountsHeader from "./components/AccountsHeader";
+import AccountsSegmentTabs from "./components/AccountsSegmentTabs";
 import LinkedAccountsList from "./components/LinkedAccountsList";
-import TransferLimitsCard from "./components/TransferLimitsCard";
+import LinkedWalletsList from "./components/LinkedWalletsList";
 
 /**
- * AccountsOverview — Main component for managing bank accounts and funding sources.
+ * AccountsOverview — Main section overview allowing users to toggle between
+ * Bank Accounts and Crypto Wallets tabs.
  */
 export default function AccountsOverview() {
-  const router = useRouter();
+  const [activeTab, setActiveTab] = useState("banks");
 
+  // Linked Bank Accounts sample data
   const linkedBanks = [
     {
       id: "1",
@@ -37,33 +39,53 @@ export default function AccountsOverview() {
     },
   ];
 
+  // Whitelisted Crypto Wallets sample data
+  const linkedWallets = [
+    {
+      id: "1",
+      label: "Main Treasury Wallet",
+      network: "ERC-20",
+      networkName: "Ethereum Mainnet",
+      address: "0x52590e71d21f81bb59d006f42437730bd1c76e31",
+      status: "Verified",
+      icon: "cpu",
+      iconColor: "#baffd8",
+    },
+    {
+      id: "2",
+      label: "Payout Polygon Wallet",
+      network: "Polygon",
+      networkName: "Polygon POS",
+      address: "0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7",
+      status: "Verified",
+      icon: "shield",
+      iconColor: "#96dded",
+    },
+  ];
+
   return (
     <PageContainer>
       <View className="w-full pb-8">
-        <AccountsHeader />
-        <LinkedAccountsList linkedBanks={linkedBanks} />
-        <TransferLimitsCard
-          dailyLimit="$5,000.00 max"
-          remainingLimit="$1,200.00 left"
-          progressPercent="76%"
+        {/* Tab Switcher */}
+        <AccountsSegmentTabs
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
         />
 
-        {/* Actions */}
-        <View className="w-full gap-3">
-          <TouchableOpacity className="w-full bg-noirMint py-4 rounded-xl flex-row items-center justify-center gap-2">
-            <Feather name="plus" size={16} color="#111418" />
-            <Text className="text-noirBg font-noir text-[15px]">
-              Link Another Bank
-            </Text>
-          </TouchableOpacity>
+        {/* Dynamic Header */}
+        <AccountsHeader activeTab={activeTab} />
 
-          <TouchableOpacity
-            onPress={() => router.back()}
-            className="w-full bg-white/5 border border-white/[0.04] py-4 rounded-xl flex-row items-center justify-center gap-2"
-          >
-            <Text className="text-noirText font-noir text-[15px]">Back</Text>
-          </TouchableOpacity>
-        </View>
+        {/* Accounts List Group */}
+        <Show>
+          <Show.If isTrue={activeTab === "banks"}>
+            <LinkedAccountsList linkedBanks={linkedBanks} />
+          </Show.If>
+          <Show.Else>
+            <LinkedWalletsList linkedWallets={linkedWallets} />
+          </Show.Else>
+        </Show>
+
+
       </View>
     </PageContainer>
   );
