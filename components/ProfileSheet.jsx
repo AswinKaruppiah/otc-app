@@ -94,7 +94,7 @@ export default function ProfileSheet({
             <Pressable
               onPress={() => {
                 onOpenChange(false);
-                router.push("/bank");
+                router.push("/accounts");
               }}
               className="w-full bg-white/5 border border-white/[0.04] py-4 px-5 rounded-full flex-row items-center justify-between active:opacity-75"
             >

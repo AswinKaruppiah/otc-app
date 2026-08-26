@@ -158,7 +158,7 @@ export default function SelectBank({
               onPress={() => {
                 haptic.light();
                 onOpenChange?.(false);
-                router.push("/bank");
+                router.push("/accounts");
               }}
               className="w-full bg-white/5 border border-dashed border-white/10 py-3 pl-3 pr-5 rounded-xl flex-row items-center justify-between active:opacity-75 mt-1"
             >

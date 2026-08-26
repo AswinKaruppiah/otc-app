@@ -14,8 +14,8 @@ const TABS = [
     icon: "arrow-down-right",
   },
   {
-    name: "Bank",
-    route: "/bank",
+    name: "Accounts",
+    route: "/accounts",
     icon: "credit-card",
   },
   {
