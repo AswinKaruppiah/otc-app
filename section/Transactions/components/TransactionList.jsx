@@ -3,6 +3,7 @@ import { Skeleton } from "heroui-native";
 import Feather from "@expo/vector-icons/Feather";
 import TransactionCard from "./TransactionCard";
 import Show from "../../../components/Show";
+import EmptyState from "../../../components/EmptyState";
 import HapticTouchableOpacity from "../../../components/HapticTouchableOpacity";
 import { ThinArrowDown, DesertDuneSVG } from "../../../utils/icons";
 
@@ -17,27 +18,7 @@ function EndState() {
   );
 }
 
-function EmptyState({ hasActiveFilters }) {
-  return (
-    <View className="items-center justify-center py-16 px-6">
-      <View className="mb-6 items-center justify-center">
-        <Feather
-          name={hasActiveFilters ? "search" : "inbox"}
-          size={156}
-          color="rgba(186, 255, 216, 0.2)"
-        />
-      </View>
-      <Text className="text-lg text-noirText font-noir font-bold mb-2 text-center">
-        {hasActiveFilters ? "No results found" : "No transactions yet"}
-      </Text>
-      <Text className="text-sm text-gray-400 font-noir text-center max-w-[280px] leading-5">
-        {hasActiveFilters
-          ? "We couldn't find any trades matching your filter criteria."
-          : "Your trade transactions history will show up here once you start."}
-      </Text>
-    </View>
-  );
-}
+
 
 function TransactionSkeletonCard() {
   return (
@@ -95,25 +76,23 @@ export default function TransactionList({
       </Show.If>
 
       <Show.ElseIf isTrue={error && ordersList.length === 0}>
-        <View className="items-center justify-center py-16 px-6">
-          <View className="mb-6 items-center justify-center">
-            <Feather
-              name="alert-circle"
-              size={156}
-              color="rgba(255, 123, 123, 0.2)"
-            />
-          </View>
-          <Text className="text-lg text-noirText font-noir font-bold mb-2 text-center">
-            Failed to load transactions
-          </Text>
-          <Text className="text-sm text-gray-400 font-noir text-center max-w-[280px] leading-5">
-            {error?.message || "Something went wrong. Please try again later."}
-          </Text>
-        </View>
+        <EmptyState
+          type="error"
+          title="Failed to load transactions"
+          description={error?.message || "Something went wrong. Please try again later."}
+        />
       </Show.ElseIf>
 
       <Show.ElseIf isTrue={ordersList.length === 0}>
-        <EmptyState hasActiveFilters={hasActiveFilters} />
+        <EmptyState
+          type={hasActiveFilters ? "search" : "empty"}
+          title={hasActiveFilters ? "No results found" : "No transactions yet"}
+          description={
+            hasActiveFilters
+              ? "We couldn't find any trades matching your filter criteria."
+              : "Your trade transactions history will show up here once you start."
+          }
+        />
       </Show.ElseIf>
 
       <Show.Else>

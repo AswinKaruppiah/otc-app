@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { View } from "react-native";
+import { View, RefreshControl } from "react-native";
+import { useQuery } from "@apollo/client/react";
 import PageContainer from "../../components/PageContainer";
 import Show from "../../components/Show";
-import { maskAccountNumber } from "../../utils/helper";
+import { MY_BANK_ACCOUNTS } from "../../apollo/query";
 import AccountsHeader from "./components/AccountsHeader";
 import AccountsSegmentTabs from "./components/AccountsSegmentTabs";
 import LinkedAccountsList from "./components/LinkedAccountsList";
@@ -10,34 +11,21 @@ import LinkedWalletsList from "./components/LinkedWalletsList";
 
 /**
  * AccountsOverview — Main section overview allowing users to toggle between
- * Bank Accounts and Crypto Wallets tabs.
+ * Bank Accounts and Crypto Wallets tabs with Apollo GraphQL API queries.
  */
 export default function AccountsOverview() {
   const [activeTab, setActiveTab] = useState("banks");
 
-  // Linked Bank Accounts sample data
-  const linkedBanks = [
+  // Fetch Bank Accounts via GraphQL Query
+  const { data, loading, error, refetch, networkStatus } = useQuery(
+    MY_BANK_ACCOUNTS,
     {
-      id: "1",
-      bankName: "Chase Bank",
-      type: "Checking Account",
-      accountNum: maskAccountNumber("8821"),
-      routingNum: "021000021",
-      status: "Primary",
-      icon: "home",
-      iconColor: "#baffd8",
-    },
-    {
-      id: "2",
-      bankName: "Wells Fargo",
-      type: "Savings Account",
-      accountNum: maskAccountNumber("4302"),
-      routingNum: "121000248",
-      status: "Secondary",
-      icon: "briefcase",
-      iconColor: "#96dded",
-    },
-  ];
+      notifyOnNetworkStatusChange: true,
+    }
+  );
+
+  const isRefreshing = networkStatus === 4;
+  const bankAccountsList = data?.myBankAccounts || [];
 
   // Whitelisted Crypto Wallets sample data
   const linkedWallets = [
@@ -64,7 +52,17 @@ export default function AccountsOverview() {
   ];
 
   return (
-    <PageContainer>
+    <PageContainer
+      refreshControl={
+        <RefreshControl
+          refreshing={isRefreshing}
+          onRefresh={() => refetch()}
+          tintColor="#baffd8"
+          colors={["#baffd8"]}
+          progressBackgroundColor="#181e25"
+        />
+      }
+    >
       <View className="w-full pb-8">
         {/* Tab Switcher */}
         <AccountsSegmentTabs
@@ -75,17 +73,20 @@ export default function AccountsOverview() {
         {/* Dynamic Header */}
         <AccountsHeader activeTab={activeTab} />
 
-        {/* Accounts List Group */}
+        {/* Accounts List Group with 4-state handling */}
         <Show>
           <Show.If isTrue={activeTab === "banks"}>
-            <LinkedAccountsList linkedBanks={linkedBanks} />
+            <LinkedAccountsList
+              loading={loading}
+              error={error}
+              accounts={bankAccountsList}
+              refetch={refetch}
+            />
           </Show.If>
           <Show.Else>
             <LinkedWalletsList linkedWallets={linkedWallets} />
           </Show.Else>
         </Show>
-
-
       </View>
     </PageContainer>
   );

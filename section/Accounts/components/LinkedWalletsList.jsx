@@ -1,6 +1,8 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
+import Show from "../../../components/Show";
+import EmptyState from "../../../components/EmptyState";
 
 /**
  * LinkedWalletsList — Renders whitelisted crypto wallet addresses with details.
@@ -16,7 +18,17 @@ export default function LinkedWalletsList({ linkedWallets = [] }) {
       <Text className="text-[17px] text-noirText font-noir mb-3 tracking-[0.2px]">
         Whitelisted Wallets
       </Text>
-      <View className="w-full gap-4">
+      <Show>
+        <Show.If isTrue={!linkedWallets || linkedWallets.length === 0}>
+          <EmptyState
+            type="empty"
+            icon="shield"
+            title="No Whitelisted Wallets"
+            description="You haven't added any whitelisted crypto payout addresses yet. Tap the plus button above to add one."
+          />
+        </Show.If>
+        <Show.Else>
+          <View className="w-full gap-4">
         {linkedWallets.map((wallet) => (
           <View
             key={wallet.id}
@@ -75,7 +87,9 @@ export default function LinkedWalletsList({ linkedWallets = [] }) {
             </View>
           </View>
         ))}
-      </View>
+          </View>
+        </Show.Else>
+      </Show>
     </View>
   );
 }

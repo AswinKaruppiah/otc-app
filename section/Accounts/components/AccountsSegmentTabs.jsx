@@ -1,9 +1,10 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { LinearGradient } from "expo-linear-gradient";
+import HapticTouchableOpacity from "../../../components/HapticTouchableOpacity";
 
 /**
- * AccountsSegmentTabs — Capsule tab bar with active LinearGradient highlight for switching sub-views.
+ * AccountsSegmentTabs — Capsule tab bar with active LinearGradient highlight & haptic feedback on tab change.
  */
 export default function AccountsSegmentTabs({ activeTab, onTabChange }) {
   const tabs = [
@@ -16,9 +17,10 @@ export default function AccountsSegmentTabs({ activeTab, onTabChange }) {
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
         return (
-          <TouchableOpacity
+          <HapticTouchableOpacity
             key={tab.id}
             onPress={() => onTabChange(tab.id)}
+            hapticType="selection"
             activeOpacity={0.8}
             className="flex-1 overflow-hidden rounded-full"
           >
@@ -42,7 +44,7 @@ export default function AccountsSegmentTabs({ activeTab, onTabChange }) {
                 </Text>
               </View>
             )}
-          </TouchableOpacity>
+          </HapticTouchableOpacity>
         );
       })}
     </View>
