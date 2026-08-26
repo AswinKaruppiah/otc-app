@@ -4,16 +4,17 @@ import { useQuery } from "@apollo/client/react";
 import PageContainer from "../../components/PageContainer";
 import Show from "../../components/Show";
 import { MY_BANK_ACCOUNTS } from "../../apollo/query";
+import { useScreenPadding } from "../../context/ScrollContext";
 import AccountsHeader from "./components/AccountsHeader";
 import AccountsSegmentTabs from "./components/AccountsSegmentTabs";
 import LinkedAccountsList from "./components/LinkedAccountsList";
 import LinkedWalletsList from "./components/LinkedWalletsList";
 
 /**
- * AccountsOverview — Main section overview allowing users to toggle between
- * Bank Accounts and Crypto Wallets tabs with Apollo GraphQL API queries.
+ * AccountsOverview — Main section overview supporting pull-to-refresh reload.
  */
 export default function AccountsOverview() {
+  const { paddingTop } = useScreenPadding();
   const [activeTab, setActiveTab] = useState("banks");
 
   // Fetch Bank Accounts via GraphQL Query
@@ -60,6 +61,7 @@ export default function AccountsOverview() {
           tintColor="#baffd8"
           colors={["#baffd8"]}
           progressBackgroundColor="#181e25"
+          progressViewOffset={paddingTop - 10}
         />
       }
     >
@@ -73,11 +75,12 @@ export default function AccountsOverview() {
         {/* Dynamic Header */}
         <AccountsHeader activeTab={activeTab} />
 
-        {/* Accounts List Group with 4-state handling */}
+        {/* Accounts List Group with pull-to-refresh */}
         <Show>
           <Show.If isTrue={activeTab === "banks"}>
             <LinkedAccountsList
               loading={loading}
+              isRefreshing={isRefreshing}
               error={error}
               accounts={bankAccountsList}
               refetch={refetch}

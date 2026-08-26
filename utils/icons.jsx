@@ -1,4 +1,4 @@
-import Svg, { Path, Circle, Rect, G } from "react-native-svg";
+import Svg, { Path, Circle, Rect, G, Defs, LinearGradient, Stop } from "react-native-svg";
 
 export function ThinArrowDown({ size = 28, color = "#baffd8", strokeWidth = 1.2 }) {
   return (
@@ -61,6 +61,88 @@ export function DesertDuneSVG({ size = 240 }) {
         <Rect x="217.5" y="113" width="5" height="11" rx="2.5" fill="#FFA033" />
         <Path d="M 240 110 C 248 110, 248 122, 240 122" stroke="#FFA033" strokeWidth="5" strokeLinecap="round" />
       </G>
+    </Svg>
+  );
+}
+
+/**
+ * EMVChipSVG — Exact vector copy of Chip 3 from standard golden card chip sheet.
+ */
+export function EMVChipSVG({ width = 42, height = 29 }) {
+  return (
+    <Svg width={width} height={height} viewBox="0 0 100 70" fill="none">
+      <Defs>
+        <LinearGradient id="goldChipGrad" x1="0" y1="0" x2="1" y2="1">
+          <Stop offset="0%" stopColor="#FCE092" />
+          <Stop offset="50%" stopColor="#F5CB65" />
+          <Stop offset="100%" stopColor="#E2B446" />
+        </LinearGradient>
+      </Defs>
+
+      {/* Outer Chip Body */}
+      <Rect
+        x="1.5"
+        y="1.5"
+        width="97"
+        height="67"
+        rx="10"
+        ry="10"
+        fill="url(#goldChipGrad)"
+        stroke="#B88A2E"
+        strokeWidth="2"
+      />
+
+      {/* Center Rect Contact Block */}
+      <Rect
+        x="37"
+        y="21"
+        width="26"
+        height="28"
+        rx="4"
+        fill="none"
+        stroke="#B88A2E"
+        strokeWidth="1.8"
+      />
+
+      {/* Middle Horizontal Lines */}
+      <Path
+        d="M 1.5 35 H 37 M 63 35 H 98.5"
+        stroke="#B88A2E"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+
+      {/* Left Symmetrical Stepped Lines */}
+      <Path
+        d="M 22 1.5 C 22 18, 37 21, 37 21"
+        stroke="#B88A2E"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <Path
+        d="M 22 68.5 C 22 52, 37 49, 37 49"
+        stroke="#B88A2E"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        fill="none"
+      />
+
+      {/* Right Symmetrical Stepped Lines */}
+      <Path
+        d="M 78 1.5 C 78 18, 63 21, 63 21"
+        stroke="#B88A2E"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <Path
+        d="M 78 68.5 C 78 52, 63 49, 63 49"
+        stroke="#B88A2E"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        fill="none"
+      />
     </Svg>
   );
 }

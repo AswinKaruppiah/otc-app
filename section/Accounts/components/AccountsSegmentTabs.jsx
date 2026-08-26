@@ -13,7 +13,7 @@ export default function AccountsSegmentTabs({ activeTab, onTabChange }) {
   ];
 
   return (
-    <View className="w-full bg-white/5 p-1.5 rounded-full flex-row mb-6">
+    <View className="w-full bg-white/5 p-1.5 rounded-full flex-row mb-7">
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
         return (

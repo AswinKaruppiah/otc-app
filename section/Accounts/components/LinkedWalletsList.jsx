@@ -15,9 +15,6 @@ export default function LinkedWalletsList({ linkedWallets = [] }) {
 
   return (
     <View className="w-full mb-6">
-      <Text className="text-[17px] text-noirText font-noir mb-3 tracking-[0.2px]">
-        Whitelisted Wallets
-      </Text>
       <Show>
         <Show.If isTrue={!linkedWallets || linkedWallets.length === 0}>
           <EmptyState
