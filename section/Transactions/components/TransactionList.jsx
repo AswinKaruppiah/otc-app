@@ -75,7 +75,7 @@ export default function TransactionList({
         </View>
       </Show.If>
 
-      <Show.ElseIf isTrue={error && ordersList.length === 0}>
+      <Show.ElseIf isTrue={!!error}>
         <EmptyState
           type="error"
           title="Failed to load transactions"
