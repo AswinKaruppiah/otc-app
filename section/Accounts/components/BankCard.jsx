@@ -51,7 +51,9 @@ export default function BankCard({ bank = {}, index = 0 }) {
       ? String(bank.accountType || bank.type).toUpperCase()
       : "-";
 
-  const bankName = bank.bankName || "-";
+  const bankName = bank.bankName
+    ? String(bank.bankName).toUpperCase()
+    : "-";
   const ifscCode = (bank.ifscCode || bank.ifsc || "").toUpperCase();
 
   return (
@@ -64,7 +66,7 @@ export default function BankCard({ bank = {}, index = 0 }) {
     >
       {/* Top Row: Bank Name & Account Type Badge */}
       <View className="flex-row justify-between items-center">
-        <Text className="text-white font-noir text-[18px] tracking-wide font-medium">
+        <Text className="text-white font-noir text-[18px] tracking-wide font-medium uppercase">
           {bankName}
         </Text>
         <View className="px-2.5 py-1 rounded-full bg-white/15 border border-white/20">
@@ -103,7 +105,7 @@ export default function BankCard({ bank = {}, index = 0 }) {
             <Text className="text-white/60 font-noir text-[9.5px] font-medium tracking-widest uppercase mb-1">
               IFSC CODE
             </Text>
-            <Text className="text-white/95 font-noir text-[12px] font-normal tracking-wider">
+            <Text className="text-white/95 font-noir text-[12px] font-normal tracking-wider uppercase">
               {ifscCode}
             </Text>
           </View>
