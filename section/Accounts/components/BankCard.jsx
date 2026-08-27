@@ -65,11 +65,19 @@ export default function BankCard({ bank = {}, index = 0 }) {
       className="w-full aspect-[1.65/1] rounded-2xl p-6 shadow-2xl justify-between relative overflow-hidden"
     >
       {/* Top Row: Bank Name & Account Type Badge */}
-      <View className="flex-row justify-between items-center">
-        <Text className="text-white font-noir text-[18px] tracking-wide font-medium uppercase">
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+        <Text
+          style={{ flex: 1, flexShrink: 1, marginRight: 8 }}
+          className="text-white font-noir text-[18px] tracking-wide font-medium uppercase"
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
           {bankName}
         </Text>
-        <View className="px-2.5 py-1 rounded-full bg-white/15 border border-white/20">
+        <View
+          style={{ flexShrink: 0 }}
+          className="px-2.5 py-1 rounded-full bg-white/15 border border-white/20"
+        >
           <Text className="text-white font-noir text-[10px] font-medium tracking-wider uppercase">
             {accountType}
           </Text>
@@ -87,25 +95,31 @@ export default function BankCard({ bank = {}, index = 0 }) {
       </Text>
 
       {/* Bottom Row: Account Holder & Optional IFSC */}
-      <View className="flex-row justify-between items-end">
-        <View className="flex-1 pr-3">
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
+        <View style={{ flex: 1, flexShrink: 1, paddingRight: 8 }}>
           <Text className="text-white/60 font-noir text-[9.5px] font-medium tracking-widest uppercase mb-1">
             ACCOUNT HOLDER
           </Text>
           <Text
+            style={{ flexShrink: 1 }}
             className="text-white font-noir text-[14px] font-medium tracking-[0.8px] uppercase"
             numberOfLines={1}
+            ellipsizeMode="tail"
           >
             {cardHolder}
           </Text>
         </View>
 
         {!!ifscCode && (
-          <View className="items-end">
+          <View style={{ flexShrink: 0, alignItems: "flex-end" }}>
             <Text className="text-white/60 font-noir text-[9.5px] font-medium tracking-widest uppercase mb-1">
               IFSC CODE
             </Text>
-            <Text className="text-white/95 font-noir text-[12px] font-normal tracking-wider uppercase">
+            <Text
+              style={{ flexShrink: 0 }}
+              className="text-white/95 font-noir text-[12px] font-normal tracking-wider uppercase"
+              numberOfLines={1}
+            >
               {ifscCode}
             </Text>
           </View>
