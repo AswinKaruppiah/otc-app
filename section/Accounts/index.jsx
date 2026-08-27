@@ -8,12 +8,14 @@ import AccountsHeader from "./components/AccountsHeader";
 import AccountsSegmentTabs from "./components/AccountsSegmentTabs";
 import LinkedAccountsList from "./components/LinkedAccountsList";
 import LinkedWalletsList from "./components/LinkedWalletsList";
+import AddBankAccountSheet from "./components/AddBankAccountSheet";
 
 /**
  * AccountsOverview — Main section overview displaying linked bank accounts and whitelisted wallets.
  */
 export default function AccountsOverview() {
   const [activeTab, setActiveTab] = useState("banks");
+  const [isAddBankOpen, setIsAddBankOpen] = useState(false);
 
   // Fetch Bank Accounts via GraphQL Query
   const { data, loading, error, refetch } = useQuery(MY_BANK_ACCOUNTS);
@@ -44,6 +46,12 @@ export default function AccountsOverview() {
     },
   ];
 
+  const handleAddPress = () => {
+    if (activeTab === "banks") {
+      setIsAddBankOpen(true);
+    }
+  };
+
   return (
     <PageContainer>
       <View className="w-full pb-8">
@@ -54,7 +62,7 @@ export default function AccountsOverview() {
         />
 
         {/* Dynamic Header */}
-        <AccountsHeader activeTab={activeTab} />
+        <AccountsHeader activeTab={activeTab} onAddPress={handleAddPress} />
 
         {/* Accounts List Group */}
         <Show>
@@ -70,6 +78,13 @@ export default function AccountsOverview() {
             <LinkedWalletsList linkedWallets={linkedWallets} />
           </Show.Else>
         </Show>
+
+        {/* Add Bank Account Sheet */}
+        <AddBankAccountSheet
+          isOpen={isAddBankOpen}
+          onOpenChange={setIsAddBankOpen}
+          refetchAccounts={refetch}
+        />
       </View>
     </PageContainer>
   );

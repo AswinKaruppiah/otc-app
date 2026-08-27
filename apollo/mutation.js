@@ -33,5 +33,19 @@ export const CREATE_ORDER = gql`
   }
 `;
 
+export const ADD_BANK_ACCOUNT = gql`
+  mutation AddBankAccount($input: AddBankAccountInput!) {
+    addBankAccount(input: $input) {
+      id
+      accountHolderName
+      accountNumber
+      bankName
+      branch
+      ifscCode
+      accountType
+    }
+  }
+`;
+
 
 
