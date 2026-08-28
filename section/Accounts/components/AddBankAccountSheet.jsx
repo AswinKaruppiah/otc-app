@@ -5,10 +5,11 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   ActivityIndicator,
-  Keyboard
+  Keyboard,
+  TextInput,
 } from "react-native";
 import { BottomSheet, useToast } from "heroui-native";
-import { BottomSheetScrollView, BottomSheetTextInput } from "@gorhom/bottom-sheet";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useMutation } from "@apollo/client/react";
 import Feather from "@expo/vector-icons/Feather";
 import { LinearGradient } from "expo-linear-gradient";
@@ -18,13 +19,7 @@ import { MY_BANK_ACCOUNTS } from "../../../apollo/query";
 import { BANK_OPTIONS, ACCOUNT_TYPE_OPTIONS } from "../../../constants/banks";
 import SelectBankDialog from "../../../components/dialog/SelectBankDialog";
 
-const INITIAL_FORM = {
-  bankName: "",
-  accountType: "savings",
-  accountHolderName: "",
-  accountNumber: "",
-  ifscCode: "",
-};
+
 
 /**
  * AddBankAccountSheet — Bottom sheet form to collect new bank account details from user.
@@ -37,17 +32,20 @@ export default function AddBankAccountSheet({
   const { toast } = useToast();
   const [addBankAccount, { loading }] = useMutation(ADD_BANK_ACCOUNT);
 
-  // Form State Object
-  const [form, setForm] = useState(INITIAL_FORM);
-  const { bankName, accountType, accountHolderName, accountNumber, ifscCode } = form;
-
-  const updateForm = (key, value) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  };
+  // Individual Form Field States (Optimized to prevent re-render glitches during rapid typing/deleting)
+  const [bankName, setBankName] = useState("");
+  const [accountType, setAccountType] = useState("savings");
+  const [accountHolderName, setAccountHolderName] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
+  const [ifscCode, setIfscCode] = useState("");
 
   const resetForm = () => {
     Keyboard.dismiss();
-    setForm(INITIAL_FORM);
+    setBankName("");
+    setAccountType("savings");
+    setAccountHolderName("");
+    setAccountNumber("");
+    setIfscCode("");
   };
 
   const handleClose = () => {
@@ -191,7 +189,7 @@ export default function AddBankAccountSheet({
                   </Text>
                   <BankSelect
                     value={bankName}
-                    onValueChange={(val) => updateForm("bankName", val)}
+                    onValueChange={setBankName}
                   />
                 </View>
 
@@ -206,7 +204,7 @@ export default function AddBankAccountSheet({
                       return (
                         <TouchableOpacity
                           key={opt.key}
-                          onPress={() => updateForm("accountType", opt.key)}
+                          onPress={() => setAccountType(opt.key)}
                           activeOpacity={0.8}
                           className={`rounded-lg overflow-hidden border ${isSelected ? "border-transparent" : "border-white/10 bg-white/5"
                             }`}
@@ -243,9 +241,9 @@ export default function AddBankAccountSheet({
                   <Text className="text-xs font-noir font-semibold text-gray-300">
                     Account Holder Name *
                   </Text>
-                  <BottomSheetTextInput
+                  <TextInput
                     value={accountHolderName}
-                    onChangeText={(val) => updateForm("accountHolderName", val)}
+                    onChangeText={setAccountHolderName}
                     placeholder="Enter full name as per bank records"
                     placeholderTextColor="#6B7280"
                     className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 font-noir text-sm text-white"
@@ -257,9 +255,9 @@ export default function AddBankAccountSheet({
                   <Text className="text-xs font-noir font-semibold text-gray-300">
                     Account Number *
                   </Text>
-                  <BottomSheetTextInput
+                  <TextInput
                     value={accountNumber}
-                    onChangeText={(val) => updateForm("accountNumber", val)}
+                    onChangeText={setAccountNumber}
                     keyboardType="number-pad"
                     placeholder="Enter account number"
                     placeholderTextColor="#6B7280"
@@ -272,9 +270,9 @@ export default function AddBankAccountSheet({
                   <Text className="text-xs font-noir font-semibold text-gray-300">
                     IFSC Code *
                   </Text>
-                  <BottomSheetTextInput
+                  <TextInput
                     value={ifscCode}
-                    onChangeText={(val) => updateForm("ifscCode", val.toUpperCase())}
+                    onChangeText={setIfscCode}
                     autoCapitalize="characters"
                     maxLength={11}
                     placeholder="e.g. SBIN0001234"
