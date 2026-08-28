@@ -10,13 +10,14 @@ import GoogleAuth from "./GoogleAuth";
 import { useUser } from "../../hooks/useUser";
 import { useLatestPrice } from "../../hooks/useLatestPrice";
 import Show from "../../components/Show";
-import { Skeleton } from "heroui-native";
+import { Skeleton, useToast } from "heroui-native";
 import { useQuery } from "@apollo/client/react";
 import { LIST_ORDERS } from "../../apollo/query";
 import { useRouter } from "expo-router";
 
 export const ExchangeCard = () => {
   const router = useRouter();
+  const { toast } = useToast();
   const { latestPrice, loading: latestPriceLoading, error: latestPriceError, networkStatus: latestPriceNetworkStatus } = useLatestPrice();
   const exchangeRate = latestPrice?.sellPrice ? parseFloat(latestPrice.sellPrice) : 0;
 
@@ -50,6 +51,19 @@ export const ExchangeCard = () => {
     const usdtVal = inrVal / exchangeRate;
     return Number(usdtVal.toFixed(2)).toString();
   }, [inputValue, isBaseInr, exchangeRate]);
+
+  const handleBuyPress = () => {
+    const numInr = parseFloat(inrAmount) || 0;
+    if (numInr < 100) {
+      toast?.show({
+        label: "Minimum Amount Required",
+        description: "Minimum purchase amount is 100 INR.",
+        variant: "danger",
+      });
+      return;
+    }
+    setIsBankSheetOpen(true);
+  };
 
   const handleInrChange = (val) => {
     const cleanInr = sanitizeAmount(val);
@@ -208,7 +222,9 @@ export const ExchangeCard = () => {
           </Button>
         </Show.ElseIf>
         <Show.ElseIf isTrue={isAuth && !isLoggingIn && user}>
-          <Button onPress={() => setIsBankSheetOpen(true)}>Buy USDT</Button>
+          <Button onPress={handleBuyPress}>
+            Buy USDT
+          </Button>
         </Show.ElseIf>
         <Show.Else>
           <GoogleAuth isLoggingIn={isLoggingIn} setIsLoggingIn={setIsLoggingIn} />
