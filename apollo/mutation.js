@@ -37,12 +37,18 @@ export const ADD_BANK_ACCOUNT = gql`
   mutation AddBankAccount($input: AddBankAccountInput!) {
     addBankAccount(input: $input) {
       id
-      accountHolderName
-      accountNumber
+      label
       bankName
-      branch
+      accountHolderName
+      accountNumberMasked
+      accountNumber
       ifscCode
+      branch
       accountType
+      isActive
+      status
+      createdAt
+      updatedAt
     }
   }
 `;

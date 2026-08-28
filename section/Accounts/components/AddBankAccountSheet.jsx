@@ -33,7 +33,6 @@ const INITIAL_FORM = {
 export default function AddBankAccountSheet({
   isOpen,
   onOpenChange,
-  refetchAccounts,
 }) {
   const { toast } = useToast();
   const [addBankAccount, { loading }] = useMutation(ADD_BANK_ACCOUNT);
@@ -61,27 +60,27 @@ export default function AddBankAccountSheet({
     // Validation
     if (!bankName) {
       toast?.show({
-        title: "Missing Bank Name",
+        label: "Missing Bank Name",
         description: "Please select your bank.",
-        type: "danger",
+        variant: "danger",
       });
       return;
     }
 
     if (!accountHolderName.trim()) {
       toast?.show({
-        title: "Missing Holder Name",
+        label: "Missing Holder Name",
         description: "Please enter the account holder name.",
-        type: "danger",
+        variant: "danger",
       });
       return;
     }
 
     if (!accountNumber || accountNumber.length < 6 || accountNumber.length > 18) {
       toast?.show({
-        title: "Invalid Account Number",
+        label: "Invalid Account Number",
         description: "Account number must be between 6 and 18 digits.",
-        type: "danger",
+        variant: "danger",
       });
       return;
     }
@@ -90,9 +89,9 @@ export default function AddBankAccountSheet({
     const cleanIfsc = ifscCode.trim().toUpperCase();
     if (!ifscRegex.test(cleanIfsc)) {
       toast?.show({
-        title: "Invalid IFSC Code",
+        label: "Invalid IFSC Code",
         description: "Please enter a valid 11-digit IFSC code (e.g. SBIN0001234).",
-        type: "danger",
+        variant: "danger",
       });
       return;
     }
@@ -111,29 +110,41 @@ export default function AddBankAccountSheet({
             ifscCode: cleanIfsc,
           },
         },
-        refetchQueries: [{ query: MY_BANK_ACCOUNTS }],
+        update(cache, { data }) {
+          const newBankAccount = data?.addBankAccount;
+          if (!newBankAccount) return;
+
+          try {
+            const existingData = cache.readQuery({
+              query: MY_BANK_ACCOUNTS,
+            });
+
+            if (existingData?.myBankAccounts) {
+              cache.writeQuery({
+                query: MY_BANK_ACCOUNTS,
+                data: {
+                  myBankAccounts: [newBankAccount, ...existingData.myBankAccounts],
+                },
+              });
+            }
+          } catch (err) {
+            // Safe fallback if query not in cache yet
+          }
+        },
       });
 
       toast?.show({
-        title: "Success",
+        label: "Success",
         description: "Bank account added successfully!",
-        type: "success",
+        variant: "success",
       });
-
-      if (refetchAccounts) {
-        await refetchAccounts();
-      }
 
       handleClose();
     } catch (error) {
-      let errMsg = error?.message || "Failed to add bank account.";
-      if (errMsg.toLowerCase().includes("is being processed")) {
-        errMsg = "Verification provider is temporarily unavailable. Please try again later.";
-      }
       toast?.show({
-        title: "Error",
-        description: errMsg,
-        type: "danger",
+        label: "Error",
+        description: error?.message || "Failed to add bank account.",
+        variant: "danger",
       });
     }
   };
@@ -167,7 +178,7 @@ export default function AddBankAccountSheet({
                 Add Bank Account
               </BottomSheet.Title>
               <BottomSheet.Description className="text-center font-noir text-xs text-gray-400">
-                Enter bank details for verified fiat settlements
+                Enter bank details for verified fiat settlements (Max 3 accounts)
               </BottomSheet.Description>
             </View>
 

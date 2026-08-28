@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { View } from "react-native";
 import { useQuery } from "@apollo/client/react";
+import { useToast } from "heroui-native";
 import PageContainer from "../../components/PageContainer";
 import Show from "../../components/Show";
 import { MY_BANK_ACCOUNTS } from "../../apollo/query";
@@ -16,6 +17,7 @@ import AddBankAccountSheet from "./components/AddBankAccountSheet";
 export default function AccountsOverview() {
   const [activeTab, setActiveTab] = useState("banks");
   const [isAddBankOpen, setIsAddBankOpen] = useState(false);
+  const { toast } = useToast();
 
   // Fetch Bank Accounts via GraphQL Query
   const { data, loading, error, refetch } = useQuery(MY_BANK_ACCOUNTS);
@@ -48,6 +50,14 @@ export default function AccountsOverview() {
 
   const handleAddPress = () => {
     if (activeTab === "banks") {
+      if (bankAccountsList.length >= 3) {
+        toast?.show({
+          label: "Account Limit Reached",
+          description: "You can only link a maximum of 3 bank accounts.",
+          variant: "danger",
+        });
+        return;
+      }
       setIsAddBankOpen(true);
     }
   };
@@ -62,7 +72,12 @@ export default function AccountsOverview() {
         />
 
         {/* Dynamic Header */}
-        <AccountsHeader activeTab={activeTab} onAddPress={handleAddPress} />
+        <AccountsHeader
+          activeTab={activeTab}
+          onAddPress={handleAddPress}
+          bankCount={bankAccountsList.length}
+          maxBanks={3}
+        />
 
         {/* Accounts List Group */}
         <Show>
@@ -83,7 +98,6 @@ export default function AccountsOverview() {
         <AddBankAccountSheet
           isOpen={isAddBankOpen}
           onOpenChange={setIsAddBankOpen}
-          refetchAccounts={refetch}
         />
       </View>
     </PageContainer>
