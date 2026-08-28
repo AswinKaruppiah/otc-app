@@ -50,9 +50,18 @@ export default function LinkedAccountsList({
         {/* 4. Data State */}
         <Show.Else>
           <View className="w-full gap-5">
-            {accounts.map((bank, index) => (
-              <BankCard key={bank.id || index} bank={bank} index={index} />
-            ))}
+            {accounts.map((bank, index) => {
+              // Backend returns newest first (.sort({ createdAt: -1 })).
+              // Reversing the index ensures existing cards keep their colors when new cards arrive.
+              const colorIndex = accounts.length - 1 - index;
+              return (
+                <BankCard
+                  key={bank.id || bank.accountNumber || index}
+                  bank={bank}
+                  index={colorIndex}
+                />
+              );
+            })}
           </View>
         </Show.Else>
       </Show>
