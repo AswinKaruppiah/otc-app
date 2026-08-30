@@ -63,9 +63,17 @@ export default function WalletCard({
         style={{ borderRadius: 24, padding: 22 }}
         className="w-full relative overflow-hidden border border-white/10"
       >
-        {/* Subtle Background Radial Glow */}
+        {/* Subtle Multi-Layer Background Radial Glow Circles */}
         <View
-          className="absolute -top-12 -right-12 w-44 h-44 rounded-full opacity-20"
+          className="absolute -top-24 -right-24 w-64 h-64 rounded-full opacity-[1%] pointer-events-none"
+          style={{ backgroundColor: statusMeta.accentColor }}
+        />
+        <View
+          className="absolute -top-16 -right-16 w-44 h-44 rounded-full opacity-[1.5%] pointer-events-none"
+          style={{ backgroundColor: statusMeta.accentColor }}
+        />
+        <View
+          className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-[2%] pointer-events-none"
           style={{ backgroundColor: statusMeta.accentColor }}
         />
 

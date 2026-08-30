@@ -72,8 +72,8 @@ export default function LinkedWalletsList({
         {/* 1. Loading State */}
         <Show.If isTrue={loading}>
           <View className="w-full gap-4">
-            <Skeleton className="w-full h-32 rounded-2xl" />
-            <Skeleton className="w-full h-32 rounded-2xl" />
+            <Skeleton className="w-full h-56 rounded-3xl" />
+            <Skeleton className="w-full h-56 rounded-3xl" />
           </View>
         </Show.If>
 
