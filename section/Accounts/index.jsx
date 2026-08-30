@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { View } from "react-native";
+import { useState, useEffect, useCallback } from "react";
+import { View, BackHandler } from "react-native";
 import { useQuery } from "@apollo/client/react";
 import { useToast } from "heroui-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router";
 import PageContainer from "../../components/PageContainer";
 import Show from "../../components/Show";
 import { MY_BANK_ACCOUNTS, GET_USER_WHITELISTED_ADDRESSES } from "../../apollo/query";
@@ -11,13 +11,64 @@ import AccountsSegmentTabs from "./components/AccountsSegmentTabs";
 import LinkedAccountsList from "./components/LinkedAccountsList";
 import LinkedWalletsList from "./components/LinkedWalletsList";
 
+// In-memory tab persistence across screen pushes, pops, and back swipes
+let memoryActiveTab = "banks";
+
 /**
  * AccountsOverview — Main section overview displaying linked bank accounts and whitelisted wallets.
+ * Handles back press: switching from "wallets" tab back to "banks" tab before popping to Home.
  */
 export default function AccountsOverview() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("banks");
+  const params = useLocalSearchParams();
+
+  // 1. Resolve active tab: URL query param -> memory tab -> default "banks"
+  const urlTab =
+    params?.tab === "wallets" || params?.tab === "wallet"
+      ? "wallets"
+      : params?.tab === "banks" || params?.tab === "bank"
+      ? "banks"
+      : null;
+
+  const currentTab = urlTab || memoryActiveTab || "banks";
+  const [activeTab, setActiveTab] = useState(currentTab);
   const { toast } = useToast();
+
+  // 2. Keep memory active tab in sync whenever urlTab or activeTab changes
+  useEffect(() => {
+    const nextTab = urlTab || activeTab;
+    memoryActiveTab = nextTab;
+    if (activeTab !== nextTab) {
+      setActiveTab(nextTab);
+    }
+  }, [urlTab, activeTab]);
+
+  // 3. Handle manual tab change
+  const handleTabChange = (newTab) => {
+    memoryActiveTab = newTab;
+    setActiveTab(newTab);
+    router.setParams({ tab: newTab });
+  };
+
+  // 4. Intercept mobile back press: If on "wallets" tab, go back to "banks" tab first instead of exiting to Home!
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (activeTab === "wallets") {
+          handleTabChange("banks");
+          return true; // Prevents exit to Home page
+        }
+        return false; // On "banks" tab, allows default exit to Home page
+      };
+
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress
+      );
+
+      return () => subscription.remove();
+    }, [activeTab])
+  );
 
   // Fetch Bank Accounts via GraphQL Query
   const {
@@ -48,7 +99,7 @@ export default function AccountsOverview() {
         });
         return;
       }
-      router.push("/accounts/add-bank");
+      router.push({ pathname: "/accounts/add-bank", params: { tab: "banks" } });
     } else {
       if (whitelistedWallets.length >= 5) {
         toast?.show({
@@ -58,7 +109,7 @@ export default function AccountsOverview() {
         });
         return;
       }
-      router.push("/accounts/add-wallet");
+      router.push({ pathname: "/accounts/add-wallet", params: { tab: "wallets" } });
     }
   };
 
@@ -68,7 +119,7 @@ export default function AccountsOverview() {
         {/* Tab Switcher */}
         <AccountsSegmentTabs
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={handleTabChange}
         />
 
         {/* Dynamic Header */}
