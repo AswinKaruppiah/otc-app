@@ -28,8 +28,8 @@ export default function AddWalletSection() {
             query: GET_USER_WHITELISTED_ADDRESSES,
             data: {
               getUserWhitelistedAddresses: [
-                newWallet,
                 ...existing.getUserWhitelistedAddresses.filter((item) => item.id !== newWallet.id),
+                newWallet,
               ],
             },
           });

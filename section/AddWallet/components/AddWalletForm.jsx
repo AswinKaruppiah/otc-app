@@ -7,8 +7,8 @@ import { useScrollViewRef } from "../../../context/ScrollContext";
 
 function detectNetwork(address) {
   if (!address) return null;
-  const clean = address.trim();
-  if (/^T[1-9A-HJ-NP-Za-km-z]{33}$/.test(clean)) return "tron";
+  const clean = address.replace(/[^a-zA-Z0-9]/g, "").trim();
+  if (/^T[a-zA-Z0-9]{30,34}$/.test(clean)) return "tron";
   return null;
 }
 
@@ -54,9 +54,15 @@ export default function AddWalletForm({
     }, 150);
   };
 
-  const network = useMemo(() => detectNetwork(address), [address]);
+  const handleAddressChange = (val) => {
+    // Strip invisible formatting characters, spaces, and linebreaks from paste
+    setAddress(val.replace(/[\s\u200B-\u200D\uFEFF]/g, ""));
+  };
+
+  const cleanAddress = address.replace(/[^a-zA-Z0-9]/g, "").trim();
+  const network = useMemo(() => detectNetwork(cleanAddress), [cleanAddress]);
   const netMeta = network ? NETWORK_META[network] : null;
-  const isInvalidFormat = address.trim().length > 5 && !network;
+  const isInvalidFormat = cleanAddress.length >= 33 && !network;
   const canSubmit = label.trim().length > 0 && network !== null && !loading;
 
   return (
@@ -89,7 +95,7 @@ export default function AddWalletForm({
           <View className="w-full relative justify-center">
             <TextInput
               value={address}
-              onChangeText={setAddress}
+              onChangeText={handleAddressChange}
               onFocus={handleInputFocus}
               autoCapitalize="none"
               autoCorrect={false}
