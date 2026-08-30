@@ -4,8 +4,8 @@ import { useRouter } from "expo-router";
 import { useQuery, useMutation } from "@apollo/client/react";
 import { useToast } from "heroui-native";
 import { useScreenPadding } from "../../context/ScrollContext";
+import { useUser } from "../../hooks/useUser";
 import {
-  GET_USER,
   GET_USER_WHITELISTED_ADDRESSES,
   GET_MY_WITHDRAWALS,
 } from "../../apollo/query";
@@ -26,12 +26,12 @@ export default function WithdrawSection() {
 
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
 
-  // 1. Fetch User Balance
+  // 1. Fetch User Profile & Balance using useUser hook
   const {
-    data: userData,
+    user,
     loading: userLoading,
     refetch: refetchUser,
-  } = useQuery(GET_USER);
+  } = useUser();
 
   // 2. Fetch Whitelisted Destination Addresses
   const {
@@ -45,7 +45,6 @@ export default function WithdrawSection() {
     refetch: refetchWithdrawals,
   } = useQuery(GET_MY_WITHDRAWALS, {
     variables: { page: 1, limit: 10 },
-    fetchPolicy: "cache-and-network",
   });
 
   // 4. Request Withdrawal Mutation
@@ -71,9 +70,8 @@ export default function WithdrawSection() {
     }
   );
 
-  const me = userData?.userMe;
-  const walletBalance = me?.wallet?.walletBalance ?? 0;
-  const walletHold = me?.walletHold ?? 0;
+  const walletBalance = user?.wallet?.walletBalance ?? 0;
+  const walletHold = user?.walletHold ?? 0;
 
   const whitelistedAddresses = walletData?.getUserWhitelistedAddresses || [];
   const recentWithdrawals = withdrawalData?.getMyWithdrawals?.items || [];
