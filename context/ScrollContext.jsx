@@ -5,7 +5,7 @@ import { usePathname } from "expo-router";
 import { useUser } from "../hooks/useUser";
 
 export const HIDE_TOP_BAR_ROUTES = [];
-export const HIDE_BOTTOM_BAR_ROUTES = ["/onboarding", "/order", "/accounts/add-bank"];
+export const HIDE_BOTTOM_BAR_ROUTES = ["/onboarding", "/order", "/accounts/add-bank", "/accounts/add-wallet"];
 
 const ScrollContext = createContext(null);
 

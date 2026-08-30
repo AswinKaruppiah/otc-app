@@ -1,5 +1,7 @@
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import * as SecureStore from "./secureStore";
+import * as Clipboard from "expo-clipboard";
+import { haptic } from "./haptics";
 
 /**
  * Sanitizes input to allow only digits and a single decimal point
@@ -199,4 +201,31 @@ export const maskText = (text, visibleLen = 4) => {
   const str = String(text);
   if (str.length <= visibleLen * 2) return str;
   return `${str.slice(0, visibleLen)}...${str.slice(-visibleLen)}`;
+};
+
+/**
+ * Copies text to system clipboard with light haptic feedback and optional toast.
+ */
+export const copyToClipboard = async (
+  text,
+  toast = null,
+  label = "Copied to Clipboard",
+  description = "Copied to clipboard."
+) => {
+  if (!text) return false;
+  try {
+    haptic.light();
+    await Clipboard.setStringAsync(String(text));
+    if (toast?.show) {
+      toast.show({
+        label,
+        description,
+        variant: "success",
+      });
+    }
+    return true;
+  } catch (err) {
+    console.warn("copyToClipboard error:", err);
+    return false;
+  }
 };

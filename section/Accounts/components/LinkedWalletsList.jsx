@@ -1,89 +1,117 @@
-import React from "react";
-import { View, Text } from "react-native";
-import Feather from "@expo/vector-icons/Feather";
+import { useState } from "react";
+import { View, Alert } from "react-native";
+import { Skeleton, useToast } from "heroui-native";
+import { useMutation } from "@apollo/client/react";
+import { useRouter } from "expo-router";
 import Show from "../../../components/Show";
 import EmptyState from "../../../components/EmptyState";
+import { REMOVE_WHITELISTED_ADDRESS } from "../../../apollo/mutation";
+import { GET_USER_WHITELISTED_ADDRESSES } from "../../../apollo/query";
+import { copyToClipboard } from "../../../utils/helper";
+import WalletCard from "./WalletCard";
 
 /**
- * LinkedWalletsList — Renders whitelisted crypto wallet addresses with details.
+ * LinkedWalletsList — Renders whitelisted crypto wallet addresses list using WalletCard.
+ * Handles Loading, Error, Empty, and Data states.
  */
-export default function LinkedWalletsList({ linkedWallets = [] }) {
-  const maskAddress = (addr) => {
-    if (!addr || addr.length < 10) return addr;
-    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+export default function LinkedWalletsList({
+  loading = false,
+  error = null,
+  wallets = [],
+  refetch,
+}) {
+  const router = useRouter();
+  const { toast } = useToast();
+  const [removingId, setRemovingId] = useState(null);
+
+  const [removeWalletAddress] = useMutation(REMOVE_WHITELISTED_ADDRESS, {
+    refetchQueries: [{ query: GET_USER_WHITELISTED_ADDRESSES }],
+  });
+
+  const handleCopy = (address) => {
+    copyToClipboard(address);
+  };
+
+  const handleRemove = (id, label) => {
+    Alert.alert(
+      "Remove Wallet",
+      `Are you sure you want to remove "${label || "this wallet"}"?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Remove",
+          style: "destructive",
+          onPress: async () => {
+            setRemovingId(id);
+            try {
+              await removeWalletAddress({ variables: { addressId: id } });
+              toast?.show({
+                label: "Wallet Removed",
+                description: "Whitelisted address removed successfully.",
+                variant: "success",
+              });
+              refetch?.();
+            } catch (err) {
+              toast?.show({
+                label: "Failed to Remove",
+                description: err?.message || "Could not remove wallet address.",
+                variant: "danger",
+              });
+            } finally {
+              setRemovingId(null);
+            }
+          },
+        },
+      ]
+    );
   };
 
   return (
-    <View className="w-full mb-6">
+    <View className="w-full">
       <Show>
-        <Show.If isTrue={!linkedWallets || linkedWallets.length === 0}>
+        {/* 1. Loading State */}
+        <Show.If isTrue={loading}>
+          <View className="w-full gap-4">
+            <Skeleton className="w-full h-32 rounded-2xl" />
+            <Skeleton className="w-full h-32 rounded-2xl" />
+          </View>
+        </Show.If>
+
+        {/* 2. Error State */}
+        <Show.ElseIf isTrue={!!error}>
+          <EmptyState
+            type="error"
+            title="Failed to load crypto wallets"
+            description={error?.message || "Something went wrong while fetching details."}
+            actionLabel="Retry"
+            onAction={refetch}
+          />
+        </Show.ElseIf>
+
+        {/* 3. Empty State */}
+        <Show.ElseIf isTrue={!wallets || wallets.length === 0}>
           <EmptyState
             type="empty"
             icon="shield"
             title="No Whitelisted Wallets"
-            description="You haven't added any whitelisted crypto payout addresses yet. Tap the plus button above to add one."
+            description="You haven't added any whitelisted crypto payout addresses yet. Tap the button below or plus icon above to add one."
+            actionLabel="Add Wallet Address"
+            onAction={() => router.push("/accounts/add-wallet")}
           />
-        </Show.If>
+        </Show.ElseIf>
+
+        {/* 4. Data State */}
         <Show.Else>
           <View className="w-full gap-4">
-        {linkedWallets.map((wallet) => (
-          <View
-            key={wallet.id}
-            className="w-full bg-noirCard rounded-2xl p-5 border border-white/[0.04] relative overflow-hidden"
-          >
-            {/* Header: Wallet Label & Status */}
-            <View className="flex-row justify-between items-center mb-4">
-              <View className="flex-row items-center gap-3">
-                <View
-                  className="w-10 h-10 rounded-xl items-center justify-center"
-                  style={{ backgroundColor: `${wallet.iconColor || "#baffd8"}15` }}
-                >
-                  <Feather
-                    name={wallet.icon || "cpu"}
-                    size={18}
-                    color={wallet.iconColor || "#baffd8"}
-                  />
-                </View>
-                <View>
-                  <Text className="text-noirText font-noir text-[16px]">
-                    {wallet.label}
-                  </Text>
-                  <Text className="text-gray-400 font-noir text-[12px]">
-                    {wallet.network}
-                  </Text>
-                </View>
-              </View>
-              <View className="px-2.5 py-0.5 rounded-full border border-white/5 bg-white/5">
-                <Text className="text-noirMint font-noir text-[11px]">
-                  {wallet.status}
-                </Text>
-              </View>
-            </View>
-
-            {/* Wallet Address Details */}
-            <View className="border-t border-white/[0.04] pt-4 gap-2.5">
-              <View className="flex-row justify-between items-center">
-                <Text className="text-gray-400 font-noir text-[13px]">
-                  Network
-                </Text>
-                <Text className="text-noirText font-noir text-[14px]">
-                  {wallet.networkName || "Ethereum (ERC-20)"}
-                </Text>
-              </View>
-              <View className="flex-row justify-between items-center">
-                <Text className="text-gray-400 font-noir text-[13px]">
-                  Wallet Address
-                </Text>
-                <View className="flex-row items-center gap-1.5">
-                  <Text className="text-noirCyan font-noir text-[14px]">
-                    {maskAddress(wallet.address)}
-                  </Text>
-                  <Feather name="copy" size={12} color="#96dded" />
-                </View>
-              </View>
-            </View>
-          </View>
-        ))}
+            {wallets.map((wallet) => (
+              <WalletCard
+                key={wallet.id || wallet.address}
+                wallet={wallet}
+                onCopy={handleCopy}
+                onRemove={handleRemove}
+                isRemoving={removingId === wallet.id}
+              />
+            ))}
           </View>
         </Show.Else>
       </Show>

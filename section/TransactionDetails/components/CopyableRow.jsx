@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { View, Text, Pressable } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
-import * as Clipboard from "expo-clipboard";
-import { haptic } from "../../../utils/haptics";
+import { copyToClipboard } from "../../../utils/helper";
 
 export const CopyableRow = ({
   label,
@@ -15,14 +14,11 @@ export const CopyableRow = ({
   if (!value) return null;
 
   const handleCopy = async () => {
-    haptic.light();
-    try {
-      await Clipboard.setStringAsync(String(value));
-    } catch (e) {
-      console.log("Clipboard error:", e);
+    const success = await copyToClipboard(value);
+    if (success) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   return (

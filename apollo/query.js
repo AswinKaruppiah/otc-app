@@ -124,3 +124,17 @@ export const GET_ORDER = gql`
     }
   }
 `;
+
+export const GET_USER_WHITELISTED_ADDRESSES = gql`
+  query GetUserWhitelistedAddresses {
+    getUserWhitelistedAddresses {
+      id
+      label
+      address
+      network
+      isDefault
+      createdAt
+      status
+    }
+  }
+`;

@@ -5,7 +5,7 @@ import { useToast } from "heroui-native";
 import { useRouter } from "expo-router";
 import PageContainer from "../../components/PageContainer";
 import Show from "../../components/Show";
-import { MY_BANK_ACCOUNTS } from "../../apollo/query";
+import { MY_BANK_ACCOUNTS, GET_USER_WHITELISTED_ADDRESSES } from "../../apollo/query";
 import AccountsHeader from "./components/AccountsHeader";
 import AccountsSegmentTabs from "./components/AccountsSegmentTabs";
 import LinkedAccountsList from "./components/LinkedAccountsList";
@@ -20,33 +20,23 @@ export default function AccountsOverview() {
   const { toast } = useToast();
 
   // Fetch Bank Accounts via GraphQL Query
-  const { data, loading, error, refetch } = useQuery(MY_BANK_ACCOUNTS);
+  const {
+    data: bankData,
+    loading: bankLoading,
+    error: bankError,
+    refetch: refetchBanks,
+  } = useQuery(MY_BANK_ACCOUNTS);
 
-  const bankAccountsList = data?.myBankAccounts || [];
+  // Fetch Whitelisted Crypto Wallets via GraphQL Query
+  const {
+    data: walletData,
+    loading: walletLoading,
+    error: walletError,
+    refetch: refetchWallets,
+  } = useQuery(GET_USER_WHITELISTED_ADDRESSES);
 
-  // Whitelisted Crypto Wallets sample data
-  const linkedWallets = [
-    {
-      id: "1",
-      label: "Main Treasury Wallet",
-      network: "ERC-20",
-      networkName: "Ethereum Mainnet",
-      address: "0x52590e71d21f81bb59d006f42437730bd1c76e31",
-      status: "Verified",
-      icon: "cpu",
-      iconColor: "#baffd8",
-    },
-    {
-      id: "2",
-      label: "Payout Polygon Wallet",
-      network: "Polygon",
-      networkName: "Polygon POS",
-      address: "0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7",
-      status: "Verified",
-      icon: "shield",
-      iconColor: "#96dded",
-    },
-  ];
+  const bankAccountsList = bankData?.myBankAccounts || [];
+  const whitelistedWallets = walletData?.getUserWhitelistedAddresses || [];
 
   const handleAddPress = () => {
     if (activeTab === "banks") {
@@ -59,6 +49,16 @@ export default function AccountsOverview() {
         return;
       }
       router.push("/accounts/add-bank");
+    } else {
+      if (whitelistedWallets.length >= 5) {
+        toast?.show({
+          label: "Wallet Limit Reached",
+          description: "You can only link a maximum of 5 wallet addresses.",
+          variant: "danger",
+        });
+        return;
+      }
+      router.push("/accounts/add-wallet");
     }
   };
 
@@ -77,20 +77,27 @@ export default function AccountsOverview() {
           onAddPress={handleAddPress}
           bankCount={bankAccountsList.length}
           maxBanks={3}
+          walletCount={whitelistedWallets.length}
+          maxWallets={5}
         />
 
         {/* Accounts List Group */}
         <Show>
           <Show.If isTrue={activeTab === "banks"}>
             <LinkedAccountsList
-              loading={loading}
-              error={error}
+              loading={bankLoading}
+              error={bankError}
               accounts={bankAccountsList}
-              refetch={refetch}
+              refetch={refetchBanks}
             />
           </Show.If>
           <Show.Else>
-            <LinkedWalletsList linkedWallets={linkedWallets} />
+            <LinkedWalletsList
+              loading={walletLoading}
+              error={walletError}
+              wallets={whitelistedWallets}
+              refetch={refetchWallets}
+            />
           </Show.Else>
         </Show>
       </View>

@@ -53,5 +53,27 @@ export const ADD_BANK_ACCOUNT = gql`
   }
 `;
 
+export const ADD_WHITELISTED_ADDRESS = gql`
+  mutation AddUserWalletAddress($label: String!, $address: String!) {
+    addUserWalletAddress(label: $label, address: $address) {
+      id
+      label
+      address
+      network
+      isDefault
+      status
+      createdAt
+    }
+  }
+`;
+
+export const REMOVE_WHITELISTED_ADDRESS = gql`
+  mutation RemoveUserWalletAddress($addressId: ID!) {
+    removeUserWalletAddress(addressId: $addressId) {
+      message
+    }
+  }
+`;
+
 
 
