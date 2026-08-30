@@ -1,33 +1,30 @@
-import { useState, useEffect } from "react";
-import { ScrollView } from "react-native";
+import { useState } from "react";
+import { View, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { useQuery, useMutation } from "@apollo/client/react";
 import { useToast } from "heroui-native";
-import PageContainer from "../../components/PageContainer";
+import { useScreenPadding } from "../../context/ScrollContext";
 import {
   GET_USER,
   GET_USER_WHITELISTED_ADDRESSES,
   GET_MY_WITHDRAWALS,
 } from "../../apollo/query";
 import { REQUEST_FYSTACK_WITHDRAWAL } from "../../apollo/mutation";
-import SelectAddressDialog from "../../components/dialog/SelectAddressDialog";
 
-import WithdrawHeader from "./components/WithdrawHeader";
 import WithdrawBalanceCard from "./components/WithdrawBalanceCard";
-import WithdrawAmountForm from "./components/WithdrawAmountForm";
 import WithdrawRecentHistory from "./components/WithdrawRecentHistory";
+import WithdrawModal from "./components/WithdrawModal";
 
 /**
- * WithdrawSection — Dedicated feature container for USDT withdrawals.
+ * WithdrawSection — Main feature container for USDT withdrawals.
  * Located in section/Withdraw/index.jsx.
  */
 export default function WithdrawSection() {
   const router = useRouter();
   const { toast } = useToast();
+  const { paddingBottom } = useScreenPadding();
 
-  const [amount, setAmount] = useState("");
-  const [selectedAddress, setSelectedAddress] = useState(null);
-  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
 
   // 1. Fetch User Balance
   const {
@@ -57,11 +54,10 @@ export default function WithdrawSection() {
     {
       onCompleted() {
         toast?.show({
-          label: "Withdrawal Requested",
+          label: "Withdrawal Submitted",
           description: "Your USDT withdrawal request has been submitted successfully.",
           variant: "success",
         });
-        setAmount("");
         refetchUser?.();
         refetchWithdrawals?.();
       },
@@ -82,65 +78,17 @@ export default function WithdrawSection() {
   const whitelistedAddresses = walletData?.getUserWhitelistedAddresses || [];
   const recentWithdrawals = withdrawalData?.getMyWithdrawals?.items || [];
 
-  // Pre-select default or first whitelisted address
-  useEffect(() => {
-    if (whitelistedAddresses.length > 0 && !selectedAddress) {
-      const defaultAddr =
-        whitelistedAddresses.find((a) => a.isDefault) || whitelistedAddresses[0];
-      setSelectedAddress(defaultAddr);
-    }
-  }, [whitelistedAddresses]);
-
-  const handleQuickPercent = (percent) => {
-    const calc = (walletBalance * percent).toFixed(2);
-    setAmount(calc > 0 ? calc.toString() : "");
-  };
-
-  const numAmount = parseFloat(amount) || 0;
-  const isExceeding = numAmount > walletBalance;
-  const canSubmit =
-    numAmount > 0 &&
-    !isExceeding &&
-    Boolean(selectedAddress?.address) &&
-    !submitting;
-
-  const handleConfirmWithdraw = async () => {
-    if (!selectedAddress?.address) {
-      toast?.show({
-        label: "Missing Address",
-        description: "Please select a whitelisted destination address.",
-        variant: "danger",
-      });
-      return;
-    }
-
-    if (numAmount <= 0) {
-      toast?.show({
-        label: "Invalid Amount",
-        description: "Please enter a valid amount to withdraw.",
-        variant: "danger",
-      });
-      return;
-    }
-
-    if (isExceeding) {
-      toast?.show({
-        label: "Insufficient Balance",
-        description: `Your available balance is ${walletBalance.toFixed(2)} USDT.`,
-        variant: "danger",
-      });
-      return;
-    }
-
+  const handleSubmitWithdrawal = async ({ amount, recipientAddress, onSuccess }) => {
     try {
       await requestWithdrawal({
         variables: {
-          amount: amount.trim(),
-          recipientAddress: selectedAddress.address,
+          amount,
+          recipientAddress,
         },
       });
+      onSuccess?.();
     } catch (e) {
-      // Handled in onError
+      // Error handled in mutation onError
     }
   };
 
@@ -149,38 +97,18 @@ export default function WithdrawSection() {
   };
 
   return (
-    <PageContainer>
+    <View className="w-full flex-1">
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerStyle={{ paddingBottom }}
         className="w-full"
       >
-        {/* Header */}
-        <WithdrawHeader />
-
-        {/* Balance Card */}
+        {/* Balance Card with Withdraw CTA */}
         <WithdrawBalanceCard
           walletBalance={walletBalance}
           walletHold={walletHold}
           loading={userLoading}
-        />
-
-        {/* Amount Input & Destination Selector Form */}
-        <WithdrawAmountForm
-          amount={amount}
-          setAmount={setAmount}
-          walletBalance={walletBalance}
-          selectedAddress={selectedAddress}
-          whitelistedAddresses={whitelistedAddresses}
-          walletLoading={walletLoading}
-          onOpenAddressModal={() => setIsAddressModalOpen(true)}
-          onAddAddressPress={handleAddAddressPress}
-          onQuickPercent={handleQuickPercent}
-          isExceeding={isExceeding}
-          canSubmit={canSubmit}
-          submitting={submitting}
-          onSubmit={handleConfirmWithdraw}
-          onCancel={() => router.back()}
+          onWithdrawPress={() => setIsWithdrawModalOpen(true)}
         />
 
         {/* Recent Withdrawal History */}
@@ -190,14 +118,17 @@ export default function WithdrawSection() {
         />
       </ScrollView>
 
-      {/* Select Address Dialog Modal */}
-      <SelectAddressDialog
-        isOpen={isAddressModalOpen}
-        onOpenChange={setIsAddressModalOpen}
-        addresses={whitelistedAddresses}
-        selectedId={selectedAddress?.id}
-        onSelect={setSelectedAddress}
+      {/* Modal Dialog for Amount Input, Address Selection & Confirmation */}
+      <WithdrawModal
+        isOpen={isWithdrawModalOpen}
+        onOpenChange={setIsWithdrawModalOpen}
+        walletBalance={walletBalance}
+        whitelistedAddresses={whitelistedAddresses}
+        walletLoading={walletLoading}
+        submitting={submitting}
+        onSubmit={handleSubmitWithdrawal}
+        onAddAddress={handleAddAddressPress}
       />
-    </PageContainer>
+    </View>
   );
 }

@@ -36,6 +36,29 @@ export const formatNumber = (val) => {
 };
 
 /**
+ * Truncates a number/numeric string to specified decimal places without rounding.
+ * e.g., truncateDecimal(244.209, 2) => "244.20"
+ */
+export const truncateDecimal = (val, decimals = 2) => {
+  if (val === null || val === undefined || val === "") return "0.00";
+  const strVal = String(val).trim();
+  if (!strVal || isNaN(Number(strVal))) return "0.00";
+
+  const parts = strVal.split(".");
+  const rawInt = parts[0] || "0";
+  const intPart = rawInt.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  let decPart = parts[1] || "";
+  if (decPart.length >= decimals) {
+    decPart = decPart.slice(0, decimals);
+  } else {
+    decPart = decPart.padEnd(decimals, "0");
+  }
+
+  return `${intPart}.${decPart}`;
+};
+
+/**
  * Returns the initials of a name, up to two letters.
  * Defaults to "U" if name is falsy.
  */
