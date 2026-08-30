@@ -2,6 +2,7 @@ import { useState } from "react";
 import { View } from "react-native";
 import { useQuery } from "@apollo/client/react";
 import { useToast } from "heroui-native";
+import { useRouter } from "expo-router";
 import PageContainer from "../../components/PageContainer";
 import Show from "../../components/Show";
 import { MY_BANK_ACCOUNTS } from "../../apollo/query";
@@ -9,14 +10,13 @@ import AccountsHeader from "./components/AccountsHeader";
 import AccountsSegmentTabs from "./components/AccountsSegmentTabs";
 import LinkedAccountsList from "./components/LinkedAccountsList";
 import LinkedWalletsList from "./components/LinkedWalletsList";
-import AddBankAccountSheet from "./components/AddBankAccountSheet";
 
 /**
  * AccountsOverview — Main section overview displaying linked bank accounts and whitelisted wallets.
  */
 export default function AccountsOverview() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("banks");
-  const [isAddBankOpen, setIsAddBankOpen] = useState(false);
   const { toast } = useToast();
 
   // Fetch Bank Accounts via GraphQL Query
@@ -58,7 +58,7 @@ export default function AccountsOverview() {
         });
         return;
       }
-      setIsAddBankOpen(true);
+      router.push("/accounts/add-bank");
     }
   };
 
@@ -93,12 +93,6 @@ export default function AccountsOverview() {
             <LinkedWalletsList linkedWallets={linkedWallets} />
           </Show.Else>
         </Show>
-
-        {/* Add Bank Account Sheet */}
-        <AddBankAccountSheet
-          isOpen={isAddBankOpen}
-          onOpenChange={setIsAddBankOpen}
-        />
       </View>
     </PageContainer>
   );
