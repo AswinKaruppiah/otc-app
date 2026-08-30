@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Alert } from "react-native";
+import { View } from "react-native";
 import { Skeleton, useToast } from "heroui-native";
 import { useMutation } from "@apollo/client/react";
 import { useRouter } from "expo-router";
@@ -9,10 +9,11 @@ import { REMOVE_WHITELISTED_ADDRESS } from "../../../apollo/mutation";
 import { GET_USER_WHITELISTED_ADDRESSES } from "../../../apollo/query";
 import { copyToClipboard } from "../../../utils/helper";
 import WalletCard from "./WalletCard";
+import DeleteWalletDialog from "../../../components/dialog/DeleteWalletDialog";
 
 /**
  * LinkedWalletsList — Renders whitelisted crypto wallet addresses list using WalletCard.
- * Handles Loading, Error, Empty, and Data states.
+ * Uses HeroUI DeleteWalletDialog for deletion confirmation.
  */
 export default function LinkedWalletsList({
   loading = false,
@@ -22,6 +23,7 @@ export default function LinkedWalletsList({
 }) {
   const router = useRouter();
   const { toast } = useToast();
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [removingId, setRemovingId] = useState(null);
 
   const [removeWalletAddress] = useMutation(REMOVE_WHITELISTED_ADDRESS, {
@@ -32,38 +34,32 @@ export default function LinkedWalletsList({
     copyToClipboard(address);
   };
 
-  const handleRemove = (id, label) => {
-    Alert.alert(
-      "Remove Wallet",
-      `Are you sure you want to remove "${label || "this wallet"}"?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Remove",
-          style: "destructive",
-          onPress: async () => {
-            setRemovingId(id);
-            try {
-              await removeWalletAddress({ variables: { addressId: id } });
-              toast?.show({
-                label: "Wallet Removed",
-                description: "Whitelisted address removed successfully.",
-                variant: "success",
-              });
-              refetch?.();
-            } catch (err) {
-              toast?.show({
-                label: "Failed to Remove",
-                description: err?.message || "Could not remove wallet address.",
-                variant: "danger",
-              });
-            } finally {
-              setRemovingId(null);
-            }
-          },
-        },
-      ]
-    );
+  const handleRemovePress = (id, label) => {
+    setDeleteTarget({ id, label });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget?.id) return;
+    const targetId = deleteTarget.id;
+    setRemovingId(targetId);
+    try {
+      await removeWalletAddress({ variables: { addressId: targetId } });
+      toast?.show({
+        label: "Wallet Removed",
+        description: "Whitelisted address removed successfully.",
+        variant: "success",
+      });
+      setDeleteTarget(null);
+      refetch?.();
+    } catch (err) {
+      toast?.show({
+        label: "Failed to Remove",
+        description: err?.message || "Could not remove wallet address.",
+        variant: "danger",
+      });
+    } finally {
+      setRemovingId(null);
+    }
   };
 
   return (
@@ -108,13 +104,24 @@ export default function LinkedWalletsList({
                 key={wallet.id || wallet.address}
                 wallet={wallet}
                 onCopy={handleCopy}
-                onRemove={handleRemove}
+                onRemove={handleRemovePress}
                 isRemoving={removingId === wallet.id}
               />
             ))}
           </View>
         </Show.Else>
       </Show>
+
+      {/* HeroUI Delete Confirmation Dialog */}
+      <DeleteWalletDialog
+        isOpen={!!deleteTarget}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) setDeleteTarget(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        walletLabel={deleteTarget?.label}
+        loading={!!removingId}
+      />
     </View>
   );
 }
