@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, Animated, KeyboardAvoidingView, Platform, Keyboard } from "react-native";
+import { View, KeyboardAvoidingView, Platform, Keyboard } from "react-native";
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
@@ -8,9 +8,13 @@ import { StatusBar } from "expo-status-bar";
 import { Slot, usePathname } from "expo-router";
 import ScreenBackground from "../../components/ScreenBackground";
 import TopBar from "../../components/TopBar";
-import { ScrollProvider, useScrollY, useScrollViewRef } from "../../context/ScrollContext";
 import BottomTabBar from "../../components/BottomTabBar";
 import { useUser } from "../../hooks/useUser";
+import {
+  ScrollProvider,
+  HIDE_TOP_BAR_ROUTES,
+  HIDE_BOTTOM_BAR_ROUTES,
+} from "../../context/ScrollContext";
 
 /**
  * Layout for all (user) screens.
@@ -29,10 +33,6 @@ export default function UserLayout() {
     </SafeAreaProvider>
   );
 }
-
-// Routes where the Top Bar or Bottom Tab Bar should be hidden
-const HIDE_TOP_BAR_ROUTES = [];
-const HIDE_BOTTOM_BAR_ROUTES = ["/onboarding", "/order"];
 
 function UserLayoutContent() {
   const insets = useSafeAreaInsets();
