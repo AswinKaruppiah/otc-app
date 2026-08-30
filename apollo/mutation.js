@@ -75,5 +75,16 @@ export const REMOVE_WHITELISTED_ADDRESS = gql`
   }
 `;
 
+export const REQUEST_FYSTACK_WITHDRAWAL = gql`
+  mutation RequestFystackWithdrawal($amount: String!, $recipientAddress: String!, $assetId: String) {
+    requestFystackWithdrawal(amount: $amount, recipientAddress: $recipientAddress, assetId: $assetId) {
+      id
+      amount
+      status
+      createdAt
+    }
+  }
+`;
+
 
 

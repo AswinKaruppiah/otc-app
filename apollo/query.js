@@ -138,3 +138,21 @@ export const GET_USER_WHITELISTED_ADDRESSES = gql`
     }
   }
 `;
+
+export const GET_MY_WITHDRAWALS = gql`
+  query GetMyWithdrawals($page: Int, $limit: Int, $status: String) {
+    getMyWithdrawals(page: $page, limit: $limit, status: $status) {
+      items {
+        id
+        amount
+        recipientAddress
+        network
+        status
+        failureReason
+        createdAt
+      }
+      total
+      totalPages
+    }
+  }
+`;
