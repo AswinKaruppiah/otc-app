@@ -65,46 +65,58 @@ export default function WithdrawBalanceCard({
         {/* 3. Bottom Section: Available & On-Hold Stats + Withdraw CTA */}
         <View className="w-full mt-6 gap-4">
           {/* Split Stats Row */}
-          <View className="flex-row gap-3">
-            {/* Available Box */}
-            <View className="flex-1 bg-white/[0.05] border border-white/10 rounded-2xl p-3.5 flex-row items-center gap-3">
-              <Feather name="arrow-up-right" size={24} color="#baffd8" />
-              <View className="flex-1 min-w-0">
-                <Text className="text-[10px] font-noir font-medium text-gray-400 uppercase tracking-wider">Available</Text>
-                <View className="flex-row items-baseline gap-1 mt-0.5">
-                  <Text className="text-base font-noir font-bold text-white tracking-tight">
-                    {truncateDecimal(walletBalance, 2)}
-                  </Text>
-                  <Text className="text-[10px] font-noir font-medium text-noirMint">
-                    USDT
-                  </Text>
-                </View>
+          <Show>
+            <Show.If isTrue={loading}>
+              <View className="flex-row gap-3">
+                <Skeleton className="flex-1 h-[68px] rounded-2xl bg-white/10" />
+                <Skeleton className="flex-1 h-[68px] rounded-2xl bg-white/10" />
               </View>
-            </View>
+            </Show.If>
+            <Show.Else>
+              <View className="flex-row gap-3">
+                {/* Available Box */}
+                <View className="flex-1 bg-white/[0.05] border border-white/10 rounded-2xl p-3.5 flex-row items-center gap-3">
+                  <Feather name="arrow-up-right" size={24} color="#baffd8" />
+                  <View className="flex-1 min-w-0">
+                    <Text className="text-[10px] font-noir font-medium text-gray-400 uppercase tracking-wider">Available</Text>
+                    <View className="flex-row items-baseline gap-1 mt-0.5">
+                      <Text className="text-base font-noir font-bold text-white tracking-tight">
+                        {truncateDecimal(walletBalance, 2)}
+                      </Text>
+                      <Text className="text-[10px] font-noir font-medium text-noirMint">
+                        USDT
+                      </Text>
+                    </View>
+                  </View>
+                </View>
 
-            {/* On Hold Box */}
-            <View className="flex-1 bg-white/[0.05] border border-white/10 rounded-2xl p-3.5 flex-row items-center gap-3">
-              <Feather name="clock" size={24} color="#fbbf24" />
-              <View className="flex-1 min-w-0">
-                <Text className="text-[10px] font-noir font-medium text-gray-400 uppercase tracking-wider">On Hold</Text>
-                <View className="flex-row items-baseline gap-1 mt-0.5">
-                  <Text className="text-base font-noir font-bold text-white tracking-tight">
-                    {truncateDecimal(walletHold, 2)}
-                  </Text>
-                  <Text className="text-[10px] font-noir font-medium text-amber-400">
-                    USDT
-                  </Text>
+                {/* On Hold Box */}
+                <View className="flex-1 bg-white/[0.05] border border-white/10 rounded-2xl p-3.5 flex-row items-center gap-3">
+                  <Feather name="clock" size={24} color="#fbbf24" />
+                  <View className="flex-1 min-w-0">
+                    <Text className="text-[10px] font-noir font-medium text-gray-400 uppercase tracking-wider">On Hold</Text>
+                    <View className="flex-row items-baseline gap-1 mt-0.5">
+                      <Text className="text-base font-noir font-bold text-white tracking-tight">
+                        {truncateDecimal(walletHold, 2)}
+                      </Text>
+                      <Text className="text-[10px] font-noir font-medium text-amber-400">
+                        USDT
+                      </Text>
+                    </View>
+                  </View>
                 </View>
               </View>
-            </View>
-          </View>
+            </Show.Else>
+          </Show>
 
           {/* Withdraw USDT CTA Button */}
           <View style={{ marginHorizontal: -paddingHorizontal + 12 }}>
             <TouchableOpacity
               onPress={onWithdrawPress}
+              disabled={loading}
               activeOpacity={0.85}
-              className="w-full py-5 bg-noirMint rounded-full flex-row items-center justify-center gap-2"
+              className={`w-full py-5 rounded-full flex-row items-center justify-center gap-2 ${loading ? "bg-noirMint/50" : "bg-noirMint"
+                }`}
             >
               <Feather name="upload" size={20} color="#111418" />
               <Text className="font-noir font-bold text-sm text-noirBg">
