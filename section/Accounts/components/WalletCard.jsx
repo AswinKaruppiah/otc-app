@@ -54,14 +54,17 @@ export default function WalletCard({
   };
 
   return (
-    <View className="w-full mb-5 shadow-2xl">
+    <View
+      style={{ borderRadius: 24, overflow: "hidden" }}
+      className="w-full mb-5 shadow-2xl border border-white/10"
+    >
       {/* Hero Card Container */}
       <LinearGradient
         colors={statusMeta.gradientColors}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={{ borderRadius: 24, padding: 22 }}
-        className="w-full relative overflow-hidden border border-white/10"
+        style={{ padding: 22 }}
+        className="w-full relative"
       >
         {/* Subtle Multi-Layer Background Radial Glow Circles */}
         <View
