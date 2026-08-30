@@ -31,25 +31,18 @@ export default function LinkedWalletsList({
       const addressId = variables?.addressId;
       if (!addressId) return;
 
-      // Evict deleted wallet address from Apollo cache
+      // Safely filter out the deleted wallet from cache query array using cache.modify
+      cache.modify({
+        fields: {
+          getUserWhitelistedAddresses(existing = [], { readField }) {
+            return existing.filter((ref) => readField("id", ref) !== addressId);
+          },
+        },
+      });
+
+      // Evict deleted entity and garbage collect
       cache.evict({ id: `UserWalletAddress:${addressId}` });
       cache.gc();
-
-      try {
-        const existing = cache.readQuery({ query: GET_USER_WHITELISTED_ADDRESSES });
-        if (existing?.getUserWhitelistedAddresses) {
-          cache.writeQuery({
-            query: GET_USER_WHITELISTED_ADDRESSES,
-            data: {
-              getUserWhitelistedAddresses: existing.getUserWhitelistedAddresses.filter(
-                (item) => item.id !== addressId
-              ),
-            },
-          });
-        }
-      } catch (e) {
-        // Cache read fallback
-      }
     },
   });
 
