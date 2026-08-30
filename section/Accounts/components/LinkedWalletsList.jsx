@@ -6,7 +6,6 @@ import { useRouter } from "expo-router";
 import Show from "../../../components/Show";
 import EmptyState from "../../../components/EmptyState";
 import { REMOVE_WHITELISTED_ADDRESS } from "../../../apollo/mutation";
-import { GET_USER_WHITELISTED_ADDRESSES } from "../../../apollo/query";
 import { copyToClipboard } from "../../../utils/helper";
 import WalletCard from "./WalletCard";
 import DeleteWalletDialog from "../../../components/dialog/DeleteWalletDialog";
@@ -26,9 +25,7 @@ export default function LinkedWalletsList({
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [removingId, setRemovingId] = useState(null);
 
-  const [removeWalletAddress] = useMutation(REMOVE_WHITELISTED_ADDRESS, {
-    refetchQueries: [{ query: GET_USER_WHITELISTED_ADDRESSES }],
-  });
+  const [removeWalletAddress] = useMutation(REMOVE_WHITELISTED_ADDRESS);
 
   const handleCopy = (address) => {
     copyToClipboard(address);
@@ -50,7 +47,6 @@ export default function LinkedWalletsList({
         variant: "success",
       });
       setDeleteTarget(null);
-      refetch?.();
     } catch (err) {
       toast?.show({
         label: "Failed to Remove",
