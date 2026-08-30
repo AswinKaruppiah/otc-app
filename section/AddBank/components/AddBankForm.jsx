@@ -44,6 +44,14 @@ export default function AddBankForm({
     }, 150);
   };
 
+  const canSubmit =
+    Boolean(selectedBankObj) &&
+    Boolean(accountType) &&
+    accountHolderName.trim().length > 0 &&
+    accountNumber.trim().length > 0 &&
+    ifscCode.trim().length > 0 &&
+    !loading;
+
   return (
     <View className="w-full flex-1 justify-between">
       {/* Form Inputs Group */}
@@ -176,8 +184,12 @@ export default function AddBankForm({
 
         <TouchableOpacity
           onPress={onSubmit}
-          disabled={loading}
-          className="flex-1 py-4 bg-noirMint rounded-full flex-row items-center justify-center gap-2 shadow-lg shadow-noirMint/20 active:opacity-80"
+          disabled={!canSubmit}
+          className={`flex-1 py-4 rounded-full flex-row items-center justify-center gap-2 ${
+            canSubmit
+              ? "bg-noirMint shadow-lg shadow-noirMint/20 active:opacity-80"
+              : "bg-noirMint/20 opacity-40"
+          }`}
         >
           <Show>
             <Show.If isTrue={loading}>
