@@ -11,12 +11,34 @@ import AddWalletForm from "./components/AddWalletForm";
 
 /**
  * AddWalletSection — Main feature container for adding a whitelisted crypto wallet address.
- * Located in section/AddWallet/index.jsx.
+ * Located in section/AddWallet/index.jsx. Updates Apollo cache directly upon creation.
  */
 export default function AddWalletSection() {
   const router = useRouter();
   const { toast } = useToast();
-  const [addWalletAddress, { loading }] = useMutation(ADD_WHITELISTED_ADDRESS);
+  const [addWalletAddress, { loading }] = useMutation(ADD_WHITELISTED_ADDRESS, {
+    update(cache, { data }) {
+      const newWallet = data?.addUserWalletAddress;
+      if (!newWallet) return;
+
+      try {
+        const existing = cache.readQuery({ query: GET_USER_WHITELISTED_ADDRESSES });
+        if (existing?.getUserWhitelistedAddresses) {
+          cache.writeQuery({
+            query: GET_USER_WHITELISTED_ADDRESSES,
+            data: {
+              getUserWhitelistedAddresses: [
+                newWallet,
+                ...existing.getUserWhitelistedAddresses.filter((item) => item.id !== newWallet.id),
+              ],
+            },
+          });
+        }
+      } catch (e) {
+        // Cache read fallback
+      }
+    },
+  });
 
   const [label, setLabel] = useState("");
   const [address, setAddress] = useState("");
@@ -30,12 +52,11 @@ export default function AddWalletSection() {
           label: label.trim(),
           address: address.trim(),
         },
-        refetchQueries: [{ query: GET_USER_WHITELISTED_ADDRESSES }],
       });
 
       toast?.show({
-        label: "Address Submitted",
-        description: "Your wallet address has been submitted for review.",
+        label: "Address Added",
+        description: "Your wallet address has been whitelisted successfully.",
         variant: "success",
       });
 

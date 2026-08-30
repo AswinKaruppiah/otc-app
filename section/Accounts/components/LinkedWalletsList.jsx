@@ -6,6 +6,7 @@ import { useRouter } from "expo-router";
 import Show from "../../../components/Show";
 import EmptyState from "../../../components/EmptyState";
 import { REMOVE_WHITELISTED_ADDRESS } from "../../../apollo/mutation";
+import { GET_USER_WHITELISTED_ADDRESSES } from "../../../apollo/query";
 import { copyToClipboard } from "../../../utils/helper";
 import WalletCard from "./WalletCard";
 import DeleteWalletDialog from "../../../components/dialog/DeleteWalletDialog";
@@ -25,7 +26,32 @@ export default function LinkedWalletsList({
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [removingId, setRemovingId] = useState(null);
 
-  const [removeWalletAddress] = useMutation(REMOVE_WHITELISTED_ADDRESS);
+  const [removeWalletAddress] = useMutation(REMOVE_WHITELISTED_ADDRESS, {
+    update(cache, _, { variables }) {
+      const addressId = variables?.addressId;
+      if (!addressId) return;
+
+      // Evict deleted wallet address from Apollo cache
+      cache.evict({ id: `UserWalletAddress:${addressId}` });
+      cache.gc();
+
+      try {
+        const existing = cache.readQuery({ query: GET_USER_WHITELISTED_ADDRESSES });
+        if (existing?.getUserWhitelistedAddresses) {
+          cache.writeQuery({
+            query: GET_USER_WHITELISTED_ADDRESSES,
+            data: {
+              getUserWhitelistedAddresses: existing.getUserWhitelistedAddresses.filter(
+                (item) => item.id !== addressId
+              ),
+            },
+          });
+        }
+      } catch (e) {
+        // Cache read fallback
+      }
+    },
+  });
 
   const handleCopy = (address) => {
     copyToClipboard(address);
