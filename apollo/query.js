@@ -143,7 +143,7 @@ export const GET_MY_WITHDRAWALS = gql`
   query GetMyWithdrawals($page: Int, $limit: Int, $status: String) {
     getMyWithdrawals(page: $page, limit: $limit, status: $status) {
       items {
-        id
+        _id
         amount
         recipientAddress
         network

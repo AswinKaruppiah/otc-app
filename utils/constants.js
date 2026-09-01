@@ -128,3 +128,49 @@ export const TIMELINE_STEP_CONFIG = {
     lineColor: "bg-red-500/40",
   },
 };
+
+/**
+ * Withdrawal History Status Filter Tabs
+ */
+export const WITHDRAWAL_STATUS_TABS = [
+  { label: "All Status", value: "" },
+  { label: "Pending", value: "pending" },
+  { label: "Processing", value: "processing" },
+  { label: "Completed", value: "completed" },
+  { label: "Failed", value: "failed" },
+];
+
+/**
+ * Withdrawal History Item Status UI Configuration
+ */
+export const WITHDRAWAL_STATUS_CONFIG = {
+  completed: {
+    label: "Completed",
+    textClass: "text-noirMint",
+    bgClass: "bg-noirMint/10 border-noirMint/25",
+    iconName: "check-circle",
+    iconColor: "#baffd8",
+  },
+  processing: {
+    label: "Processing",
+    textClass: "text-cyan-400",
+    bgClass: "bg-cyan-500/10 border-cyan-500/25",
+    iconName: "refresh-cw",
+    iconColor: "#22d3ee",
+  },
+  pending: {
+    label: "Pending",
+    textClass: "text-amber-400",
+    bgClass: "bg-amber-500/10 border-amber-500/25",
+    iconName: "clock",
+    iconColor: "#fbbf24",
+  },
+  failed: {
+    label: "Failed",
+    textClass: "text-red-400",
+    bgClass: "bg-red-500/10 border-red-500/25",
+    iconName: "alert-circle",
+    iconColor: "#f87171",
+  },
+};
+
