@@ -217,7 +217,7 @@ export default function WithdrawSendSection() {
             </TouchableOpacity>
 
             {/* Quick Presets Row */}
-            <View className="flex-row items-center justify-between gap-2.5">
+            <View className="flex-row items-center justify-between gap-1">
               {[
                 { label: "25%", value: 0.25 },
                 { label: "50%", value: 0.5 },
@@ -245,9 +245,8 @@ export default function WithdrawSendSection() {
                 haptic.medium();
                 setStep("confirm");
               }}
-              className={`w-full py-4 rounded-full bg-noirMint items-center justify-center ${
-                canContinue ? "opacity-100" : "opacity-35"
-              }`}
+              className={`w-full py-4 rounded-full bg-noirMint items-center justify-center ${canContinue ? "opacity-100" : "opacity-35"
+                }`}
             >
               <Text className="font-noir font-bold text-base text-[#060E0B]">
                 Continue
