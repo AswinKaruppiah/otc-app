@@ -4,8 +4,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { usePathname } from "expo-router";
 import { useUser } from "../hooks/useUser";
 
-export const HIDE_TOP_BAR_ROUTES = [];
-export const HIDE_BOTTOM_BAR_ROUTES = ["/onboarding", "/order", "/accounts/add-bank", "/accounts/add-wallet"];
+export const HIDE_TOP_BAR_ROUTES = ["/withdraw/send"];
+export const HIDE_BOTTOM_BAR_ROUTES = [
+  "/onboarding",
+  "/order",
+  "/accounts/add-bank",
+  "/accounts/add-wallet",
+  "/withdraw/send",
+];
 
 const ScrollContext = createContext(null);
 
