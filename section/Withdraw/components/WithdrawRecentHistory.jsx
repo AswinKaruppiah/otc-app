@@ -7,36 +7,11 @@ import Show from "../../../components/Show";
 import EmptyState from "../../../components/EmptyState";
 import { useScreenPadding } from "../../../context/ScrollContext";
 import { GET_MY_WITHDRAWALS } from "../../../apollo/query";
-import { truncateDecimal } from "../../../utils/helper";
-
-/**
- * Elides wallet address for display readability: TQp8LmN2...6zU1
- */
-function elideAddress(addr) {
-  if (!addr) return "—";
-  if (addr.length <= 16) return addr;
-  return `${addr.slice(0, 8)}…${addr.slice(-5)}`;
-}
-
-/**
- * Formats ISO timestamp to readable date & time: 30 Aug • 02:15 PM
- */
-function formatDateTime(dateStr) {
-  if (!dateStr) return "";
-  const d = new Date(dateStr);
-  if (isNaN(d.getTime())) return dateStr;
-
-  const dateFormatted = d.toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-  });
-  const timeFormatted = d.toLocaleTimeString("en-IN", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  });
-  return `${dateFormatted} • ${timeFormatted}`;
-}
+import {
+  truncateDecimal,
+  maskText,
+  formatDateTime,
+} from "../../../utils/helper";
 
 const TABS = [
   { label: "All Status", value: "" },
@@ -257,7 +232,7 @@ export default function WithdrawRecentHistory({
                         </View>
                       </View>
                       <Text className="font-mono text-[11px] text-gray-400">
-                        {elideAddress(tx.recipientAddress)}
+                        {maskText(tx.recipientAddress, 6)}
                       </Text>
                     </View>
                   </View>

@@ -217,6 +217,26 @@ export const formatDate = (date) => {
 };
 
 /**
+ * Formats ISO timestamp to readable date & time: 30 Aug • 02:15 PM
+ */
+export const formatDateTime = (dateStr) => {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return String(dateStr);
+
+  const dateFormatted = d.toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+  });
+  const timeFormatted = d.toLocaleTimeString("en-IN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+  return `${dateFormatted} • ${timeFormatted}`;
+};
+
+/**
  * Masks a string showing first N and last N characters, e.g. "abcd...wxyz"
  */
 export const maskText = (text, visibleLen = 4) => {
