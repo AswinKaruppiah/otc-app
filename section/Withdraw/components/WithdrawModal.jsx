@@ -7,10 +7,14 @@ import {
   ActivityIndicator,
   ScrollView,
 } from "react-native";
-import { Dialog, Skeleton } from "heroui-native";
+import { useRouter } from "expo-router";
+import { useQuery, useMutation } from "@apollo/client/react";
+import { Dialog, Skeleton, useToast } from "heroui-native";
 import Feather from "@expo/vector-icons/Feather";
 import Show from "../../../components/Show";
 import SelectAddressDialog from "../../../components/dialog/SelectAddressDialog";
+import { GET_USER_WHITELISTED_ADDRESSES, GET_USER, GET_MY_WITHDRAWALS } from "../../../apollo/query";
+import { REQUEST_FYSTACK_WITHDRAWAL } from "../../../apollo/mutation";
 
 /**
  * Truncate address: TQp8LmN2...6zU1
@@ -28,15 +32,52 @@ export default function WithdrawModal({
   isOpen,
   onOpenChange,
   walletBalance = 0,
-  whitelistedAddresses = [],
-  walletLoading = false,
-  submitting = false,
-  onSubmit,
-  onAddAddress,
+  whitelistedAddresses: propAddresses,
+  walletLoading: propWalletLoading,
+  submitting: propSubmitting,
+  onSubmit: propOnSubmit,
+  onAddAddress: propOnAddAddress,
 }) {
+  const router = useRouter();
+  const { toast } = useToast();
+
   const [amount, setAmount] = useState("");
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isAddressPickerOpen, setIsAddressPickerOpen] = useState(false);
+
+  // 1. Fetch Whitelisted Destination Addresses internally if not passed
+  const { data: walletData, loading: internalWalletLoading } = useQuery(
+    GET_USER_WHITELISTED_ADDRESSES,
+    { skip: !!propAddresses }
+  );
+
+  const whitelistedAddresses = propAddresses || walletData?.getUserWhitelistedAddresses || [];
+  const walletLoading = propWalletLoading !== undefined ? propWalletLoading : internalWalletLoading;
+
+  // 2. Request Withdrawal Mutation internally if not passed
+  const [requestWithdrawal, { loading: internalSubmitting }] = useMutation(
+    REQUEST_FYSTACK_WITHDRAWAL,
+    {
+      refetchQueries: [{ query: GET_USER }, { query: GET_MY_WITHDRAWALS, variables: { page: 1, limit: 10 } }],
+      onCompleted() {
+        toast?.show({
+          label: "Withdrawal Submitted",
+          description: "Your USDT withdrawal request has been submitted successfully.",
+          variant: "success",
+        });
+        handleClose();
+      },
+      onError(err) {
+        toast?.show({
+          label: "Withdrawal Failed",
+          description: err?.message || "Could not process withdrawal request.",
+          variant: "danger",
+        });
+      },
+    }
+  );
+
+  const submitting = propSubmitting !== undefined ? propSubmitting : internalSubmitting;
 
   // Pre-select default or first whitelisted address when modal opens or addresses load
   useEffect(() => {
@@ -60,6 +101,15 @@ export default function WithdrawModal({
     setAmount(calc > 0 ? calc.toString() : "");
   };
 
+  const handleAddAddress = () => {
+    if (propOnAddAddress) {
+      propOnAddAddress();
+    } else {
+      handleClose();
+      router.push({ pathname: "/accounts/add-wallet", params: { tab: "wallets" } });
+    }
+  };
+
   const numAmount = parseFloat(amount) || 0;
   const isExceeding = numAmount > walletBalance;
   const canSubmit =
@@ -68,13 +118,27 @@ export default function WithdrawModal({
     Boolean(selectedAddress?.address) &&
     !submitting;
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!canSubmit || !selectedAddress?.address) return;
-    onSubmit?.({
-      amount: amount.trim(),
-      recipientAddress: selectedAddress.address,
-      onSuccess: handleClose,
-    });
+
+    if (propOnSubmit) {
+      propOnSubmit({
+        amount: amount.trim(),
+        recipientAddress: selectedAddress.address,
+        onSuccess: handleClose,
+      });
+    } else {
+      try {
+        await requestWithdrawal({
+          variables: {
+            amount: amount.trim(),
+            recipientAddress: selectedAddress.address,
+          },
+        });
+      } catch (e) {
+        // Handled by onError mutation option
+      }
+    }
   };
 
   return (
@@ -187,10 +251,7 @@ export default function WithdrawModal({
                       You must add a whitelisted TRON address before withdrawing.
                     </Text>
                     <TouchableOpacity
-                      onPress={() => {
-                        handleClose();
-                        onAddAddress?.();
-                      }}
+                      onPress={handleAddAddress}
                       className="w-full py-2 bg-amber-500/20 border border-amber-500/40 rounded-xl items-center"
                     >
                       <Text className="font-noir font-semibold text-[11px] text-amber-300">
