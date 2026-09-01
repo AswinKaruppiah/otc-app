@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { View, Text, Pressable, ScrollView, Keyboard } from "react-native";
+import { View, Text, Image, Pressable, ScrollView, Keyboard } from "react-native";
 import { BottomSheet } from "heroui-native";
 import Feather from "@expo/vector-icons/Feather";
 import { useRouter } from "expo-router";
@@ -92,10 +92,10 @@ export default function SelectAddressSheet({
                                   : "bg-white/[0.04] border border-white/[0.06]"
                               }`}
                             >
-                              <Feather
-                                name="shield"
-                                size={18}
-                                color={isSelected ? "#baffd8" : "#9CA3AF"}
+                              <Image
+                                source={require("../../../assets/images/tether-usdt-logo.png")}
+                                style={{ width: 22, height: 22, borderRadius: 11 }}
+                                resizeMode="contain"
                               />
                             </View>
                             <View className="flex-1 min-w-0">

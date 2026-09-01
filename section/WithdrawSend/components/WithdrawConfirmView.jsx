@@ -1,14 +1,17 @@
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, Image, TouchableOpacity, ActivityIndicator, ScrollView } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import Feather from "@expo/vector-icons/Feather";
 import { useMutation } from "@apollo/client/react";
 import { useToast } from "heroui-native";
 import { REQUEST_FYSTACK_WITHDRAWAL } from "../../../apollo/mutation";
 import { GET_USER, GET_MY_WITHDRAWALS } from "../../../apollo/query";
-import { maskText, truncateDecimal } from "../../../utils/helper";
+import { formatNumber } from "../../../utils/helper";
 import { haptic } from "../../../utils/haptics";
+import Button from "../../../components/Button";
 
 /**
  * WithdrawConfirmView — Confirmation screen for withdrawal flow.
+ * Styled matching the Order placement page design system.
  */
 export default function WithdrawConfirmView({
   amount,
@@ -46,7 +49,6 @@ export default function WithdrawConfirmView({
   );
 
   const numAmount = parseFloat(amount) || 0;
-  const formattedAmount = `${truncateDecimal(numAmount, 2)} USDT`;
 
   const handleConfirm = async () => {
     if (submitting || !selectedAddress?.address || numAmount <= 0) return;
@@ -65,9 +67,12 @@ export default function WithdrawConfirmView({
 
   return (
     <View className="w-full flex-1 justify-between">
-      <View className="w-full">
-        {/* Header */}
-        <View className="flex-row items-center justify-between mb-6">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 20 }}
+      >
+        {/* 1. Header (Centered title with Back button on left) */}
+        <View className="flex-row items-center justify-between mb-4 px-1">
           <TouchableOpacity
             onPress={onBack}
             activeOpacity={0.7}
@@ -83,14 +88,74 @@ export default function WithdrawConfirmView({
           <View className="w-11 h-11" />
         </View>
 
-        {/* Destination Card */}
-        <View className="w-full bg-white/[0.04] border border-white/10 rounded-2xl p-4 flex-row items-center justify-between mb-6">
-          <View className="flex-row items-center gap-3 flex-1">
-            <View className="w-10 h-10 rounded-xl bg-noirMint/10 border border-noirMint/25 items-center justify-center">
-              <Feather name="shield" size={18} color="#baffd8" />
+        {/* 2. Withdrawal Preview Card (Order Details Card Theme) */}
+        <View className="w-full mb-6">
+          <View className="pl-1 mb-2.5">
+            <Text className="text-gray-400 font-noir-medium text-sm tracking-wider uppercase">
+              Withdrawal Preview
+            </Text>
+          </View>
+
+          <LinearGradient
+            colors={[
+              "rgba(255,255,255,0.09)",
+              "rgba(255,255,255,0.04)",
+              "rgba(52,211,153,0.22)",
+            ]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={{ borderRadius: 28, padding: 1 }}
+          >
+            <View style={{ borderRadius: 27, overflow: "hidden" }}>
+              <LinearGradient
+                colors={["#060C0A", "#091310", "#0D2018"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                className="px-6 pt-6 pb-7"
+              >
+                <View className="flex-row items-center justify-between">
+                  <View className="flex-row items-center bg-white/5 py-1.5 pl-1.5 pr-3.5 rounded-full gap-2 border border-white/[0.06]">
+                    <Image
+                      source={require("../../../assets/images/tether-usdt-logo.png")}
+                      style={{ width: 24, height: 24, borderRadius: 12 }}
+                      resizeMode="cover"
+                    />
+                    <Text className="text-white -mb-0.5 font-noir text-base">
+                      USDT
+                    </Text>
+                  </View>
+
+                  <View className="bg-noirMint/10 px-2.5 py-1 rounded-full border border-noirMint/[0.12]">
+                    <Text className="text-noirMint font-noir-medium text-[10px] uppercase tracking-wider">
+                      You Withdraw
+                    </Text>
+                  </View>
+                </View>
+
+                <View className="mt-5 mb-1">
+                  <Text className="text-noirMint font-noir text-[44px] leading-none">
+                    {formatNumber(amount || "0")}
+                  </Text>
+                </View>
+              </LinearGradient>
             </View>
-            <View className="flex-1">
-              <View className="flex-row items-center gap-2">
+          </LinearGradient>
+        </View>
+
+        {/* 3. Recipient Crypto Address Card (Ref: CryptoAddressCard) */}
+        <View className="w-full mb-6">
+          <View className="pl-1 gap-1 mb-2.5">
+            <Text className="text-gray-400 font-noir-medium text-sm tracking-wider uppercase">
+              Recipient Crypto Address
+            </Text>
+            <Text className="text-gray-500 font-noir text-xs leading-normal">
+              USDT will be transferred to this whitelisted TRC-20 wallet.
+            </Text>
+          </View>
+
+          <View className="flex-row items-center justify-between bg-black/35 rounded-2xl p-4 border border-white/5 gap-3">
+            <View className="flex-1 min-w-0">
+              <View className="flex-row items-center gap-2 mb-1">
                 <Text className="font-noir font-semibold text-sm text-white">
                   {selectedAddress?.label || "Whitelisted Wallet"}
                 </Text>
@@ -100,87 +165,62 @@ export default function WithdrawConfirmView({
                   </Text>
                 </View>
               </View>
-              <Text className="font-mono text-xs text-gray-400 mt-0.5">
-                {maskText(selectedAddress?.address, 6)}
+              <Text
+                className="font-mono text-xs text-gray-300 tracking-wide"
+                numberOfLines={1}
+                ellipsizeMode="middle"
+              >
+                {selectedAddress?.address}
               </Text>
             </View>
+            <View className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 items-center justify-center">
+              <Image
+                source={require("../../../assets/images/tether-usdt-logo.png")}
+                style={{ width: 22, height: 22, borderRadius: 11 }}
+                resizeMode="contain"
+              />
+            </View>
           </View>
-          <Feather name="check" size={16} color="#baffd8" />
         </View>
 
-        {/* Withdraw Details Card */}
-        <View className="w-full bg-white/[0.03] border border-white/[0.06] rounded-3xl p-5 gap-3.5">
-          <Text className="text-xs font-noir font-semibold text-gray-400 uppercase tracking-wider mb-1">
-            Withdraw Details
-          </Text>
-
+        {/* 4. Transfer Summary Breakdown (No fees) */}
+        <View className="w-full bg-[#111417] border border-white/10 rounded-2xl p-4 gap-3">
           <View className="flex-row justify-between items-center">
-            <Text className="font-noir text-xs text-gray-400">From:</Text>
+            <Text className="font-noir text-xs text-gray-400">From</Text>
             <Text className="font-noir text-xs font-medium text-white">
               Available Balance
             </Text>
           </View>
 
           <View className="flex-row justify-between items-center">
-            <Text className="font-noir text-xs text-gray-400">Method:</Text>
+            <Text className="font-noir text-xs text-gray-400">Network</Text>
             <Text className="font-noir text-xs font-medium text-white">
-              USDT (TRC-20 Transfer)
+              TRON (TRC-20)
             </Text>
           </View>
 
           <View className="flex-row justify-between items-center">
-            <Text className="font-noir text-xs text-gray-400">Estimated Arrival:</Text>
+            <Text className="font-noir text-xs text-gray-400">Estimated Arrival</Text>
             <Text className="font-noir text-xs font-medium text-noirMint">
               Instant (1–3 Mins)
             </Text>
           </View>
-
-          <View className="flex-row justify-between items-center">
-            <Text className="font-noir text-xs text-gray-400">Amount:</Text>
-            <Text className="font-noir text-xs font-semibold text-white">
-              {formattedAmount}
-            </Text>
-          </View>
-
-          <View className="flex-row justify-between items-center">
-            <Text className="font-noir text-xs text-gray-400">Fee:</Text>
-            <Text className="font-noir text-xs font-semibold text-noirMint">
-              0.00 USDT (Free)
-            </Text>
-          </View>
-
-          <View className="h-px bg-white/10 my-1" />
-
-          <View className="flex-row justify-between items-center">
-            <Text className="font-noir font-semibold text-sm text-white">Total:</Text>
-            <Text className="font-noir font-bold text-base text-noirMint">
-              {formattedAmount}
-            </Text>
-          </View>
         </View>
-      </View>
+      </ScrollView>
 
-      {/* Action Button */}
-      <View className="w-full pt-6 pb-2">
-        <TouchableOpacity
-          activeOpacity={0.85}
-          disabled={submitting}
+      {/* 5. Confirm Action Button */}
+      <View className="w-full pt-4 pb-2">
+        <Button
           onPress={handleConfirm}
-          className={`w-full py-4 rounded-2xl bg-noirMint flex-row items-center justify-center gap-2.5 shadow-lg shadow-noirMint/25 ${
-            submitting ? "opacity-60" : ""
-          }`}
+          primary={true}
+          disabled={submitting || !selectedAddress?.address || numAmount <= 0}
         >
           {submitting ? (
-            <ActivityIndicator size="small" color="#060E0B" />
+            <ActivityIndicator color="#111418" />
           ) : (
-            <>
-              <Text className="font-noir font-bold text-base text-noirBg">
-                Confirm & Withdraw
-              </Text>
-              <Feather name="arrow-right" size={18} color="#060E0B" />
-            </>
+            "Confirm"
           )}
-        </TouchableOpacity>
+        </Button>
       </View>
     </View>
   );

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { View, Text, TextInput, TouchableOpacity, Keyboard } from "react-native";
+import { View, Text, TextInput, Image, TouchableOpacity, Keyboard } from "react-native";
 import { useRouter } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
 import { useQuery } from "@apollo/client/react";
@@ -177,7 +177,11 @@ export default function WithdrawSendSection() {
             >
               <View className="flex-row items-center gap-3 flex-1">
                 <View className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 items-center justify-center">
-                  <Feather name="shield" size={18} color="#baffd8" />
+                  <Image
+                    source={require("../../assets/images/tether-usdt-logo.png")}
+                    style={{ width: 22, height: 22, borderRadius: 11 }}
+                    resizeMode="contain"
+                  />
                 </View>
                 <View className="flex-1">
                   <Show>
