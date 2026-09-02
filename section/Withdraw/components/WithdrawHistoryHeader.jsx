@@ -42,7 +42,7 @@ export default function WithdrawHistoryHeader({
         <Select.Trigger variant="unstyled" asChild>
           <TouchableOpacity
             activeOpacity={0.8}
-            className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10"
+            className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 border border-white/10"
           >
             <Text className="font-noir text-xs font-medium text-noirMint">
               {activeTabObj.label}

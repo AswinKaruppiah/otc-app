@@ -152,7 +152,11 @@ export const GET_MY_WITHDRAWALS = gql`
         createdAt
       }
       total
+      page
+      limit
       totalPages
+      hasNextPage
+      hasPrevPage
     }
   }
 `;

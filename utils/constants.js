@@ -137,14 +137,31 @@ export const WITHDRAWAL_STATUS_TABS = [
   { label: "Pending", value: "pending" },
   { label: "Processing", value: "processing" },
   { label: "Completed", value: "completed" },
+  { label: "Cancelled", value: "cancelled" },
   { label: "Failed", value: "failed" },
 ];
 
 /**
  * Withdrawal History Item Status UI Configuration
+ * Synchronized with backend Mongoose WithdrawalTransaction model & Fystack SDK webhooks:
+ * ('pending', 'processing', 'completed', 'confirmed', 'success', 'executing', 'executed', 'failed', 'cancelled', 'canceled', 'rejected', 'approval_pending')
  */
 export const WITHDRAWAL_STATUS_CONFIG = {
   completed: {
+    label: "Completed",
+    textClass: "text-noirMint",
+    bgClass: "bg-noirMint/10 border-noirMint/25",
+    iconName: "check-circle",
+    iconColor: "#baffd8",
+  },
+  confirmed: {
+    label: "Completed",
+    textClass: "text-noirMint",
+    bgClass: "bg-noirMint/10 border-noirMint/25",
+    iconName: "check-circle",
+    iconColor: "#baffd8",
+  },
+  success: {
     label: "Completed",
     textClass: "text-noirMint",
     bgClass: "bg-noirMint/10 border-noirMint/25",
@@ -158,8 +175,36 @@ export const WITHDRAWAL_STATUS_CONFIG = {
     iconName: "refresh-cw",
     iconColor: "#22d3ee",
   },
+  executing: {
+    label: "Processing",
+    textClass: "text-cyan-400",
+    bgClass: "bg-cyan-500/10 border-cyan-500/25",
+    iconName: "refresh-cw",
+    iconColor: "#22d3ee",
+  },
+  executed: {
+    label: "Processing",
+    textClass: "text-cyan-400",
+    bgClass: "bg-cyan-500/10 border-cyan-500/25",
+    iconName: "refresh-cw",
+    iconColor: "#22d3ee",
+  },
   pending: {
     label: "Pending",
+    textClass: "text-amber-400",
+    bgClass: "bg-amber-500/10 border-amber-500/25",
+    iconName: "clock",
+    iconColor: "#fbbf24",
+  },
+  approval_pending: {
+    label: "Approval Pending",
+    textClass: "text-amber-400",
+    bgClass: "bg-amber-500/10 border-amber-500/25",
+    iconName: "clock",
+    iconColor: "#fbbf24",
+  },
+  awaiting_approval: {
+    label: "Awaiting Approval",
     textClass: "text-amber-400",
     bgClass: "bg-amber-500/10 border-amber-500/25",
     iconName: "clock",
@@ -172,5 +217,45 @@ export const WITHDRAWAL_STATUS_CONFIG = {
     iconName: "alert-circle",
     iconColor: "#f87171",
   },
+  rejected: {
+    label: "Rejected",
+    textClass: "text-red-400",
+    bgClass: "bg-red-500/10 border-red-500/25",
+    iconName: "x-circle",
+    iconColor: "#f87171",
+  },
+  cancelled: {
+    label: "Cancelled",
+    textClass: "text-gray-400",
+    bgClass: "bg-white/5 border-white/10",
+    iconName: "x-circle",
+    iconColor: "#9ca3af",
+  },
+  canceled: {
+    label: "Cancelled",
+    textClass: "text-gray-400",
+    bgClass: "bg-white/5 border-white/10",
+    iconName: "x-circle",
+    iconColor: "#9ca3af",
+  },
+};
+
+/**
+ * Safely resolves withdrawal status config with graceful fallback for unmapped statuses
+ */
+export const getWithdrawalStatusConfig = (status) => {
+  if (!status) return WITHDRAWAL_STATUS_CONFIG.pending;
+  const key = String(status).toLowerCase().trim();
+  return (
+    WITHDRAWAL_STATUS_CONFIG[key] || {
+      label: String(status)
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, (char) => char.toUpperCase()),
+      textClass: "text-gray-300",
+      bgClass: "bg-white/5 border-white/10",
+      iconName: "info",
+      iconColor: "#9ca3af",
+    }
+  );
 };
 

@@ -1,15 +1,14 @@
 import { View, Text } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { truncateDecimal, maskText, formatDateTime } from "../../../utils/helper";
-import { WITHDRAWAL_STATUS_CONFIG as STATUS_CONFIG } from "../../../utils/constants";
+import { getWithdrawalStatusConfig } from "../../../utils/constants";
 
 /**
  * WithdrawalItemCard — Renders a single withdrawal transaction row.
  */
 export default function WithdrawalItemCard({ tx }) {
-  const statusKey = (tx.status || "pending").toLowerCase();
-  const cfg = STATUS_CONFIG[statusKey] || STATUS_CONFIG.pending;
-  const rawAmount = tx.amount || "0";
+  const cfg = getWithdrawalStatusConfig(tx?.status);
+  const rawAmount = tx?.amount || "0";
 
   return (
     <View className="w-full bg-white/5 border border-white/10 rounded-2xl p-3.5 flex-row items-center justify-between">
@@ -28,7 +27,7 @@ export default function WithdrawalItemCard({ tx }) {
             </Text>
             <View className="px-1.5 py-0.2 rounded bg-red-500/15 border border-red-500/30">
               <Text className="text-[9px] font-noir-medium text-red-400">
-                {tx.network || "TRC-20"}
+                TRC-20
               </Text>
             </View>
           </View>

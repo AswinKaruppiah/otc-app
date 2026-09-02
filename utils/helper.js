@@ -38,10 +38,17 @@ export const formatNumber = (val) => {
 /**
  * Truncates a number/numeric string to specified decimal places without rounding.
  * e.g., truncateDecimal(244.209, 2) => "244.20"
+ * e.g., truncateDecimal({ $numberDecimal: "1" }, 2) => "1.00"
  */
 export const truncateDecimal = (val, decimals = 2) => {
   if (val === null || val === undefined || val === "") return "0.00";
-  const strVal = String(val).trim();
+
+  let raw = val;
+  if (typeof val === "object" && val !== null) {
+    raw = val.$numberDecimal ?? val.value ?? val.toString?.() ?? "";
+  }
+
+  const strVal = String(raw).trim();
   if (!strVal || isNaN(Number(strVal))) return "0.00";
 
   const parts = strVal.split(".");
