@@ -24,7 +24,7 @@ export default function TransactionCard({ item }) {
     <HapticTouchableOpacity
       onPress={() => router.push(`/transaction/${item.id || item.orderId}`)}
       activeOpacity={0.85}
-      className="w-full bg-white/[0.03] border border-white/[0.06] rounded-2xl p-4 mb-3 gap-3"
+      className="w-full bg-white/5 rounded-2xl p-4 mb-3 gap-3"
     >
       {/* Top Row: Icon + Order ID & Status Badge */}
       <View className="flex-row flex-wrap items-center justify-between">
