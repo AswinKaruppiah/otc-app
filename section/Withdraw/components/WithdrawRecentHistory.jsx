@@ -98,9 +98,12 @@ export default function WithdrawRecentHistory({
         {/* Loading Skeletons */}
         <Show.If isTrue={loading && recentWithdrawals.length === 0}>
           <View className="w-full gap-2.5">
-            <Skeleton className="w-full h-16 rounded-2xl bg-white/5" />
-            <Skeleton className="w-full h-16 rounded-2xl bg-white/5" />
-            <Skeleton className="w-full h-16 rounded-2xl bg-white/5" />
+            {Array.from({ length: 10 }).map((_, idx) => (
+              <Skeleton
+                key={idx}
+                className="w-full h-[76px] rounded-3xl bg-white/5"
+              />
+            ))}
           </View>
         </Show.If>
 
@@ -123,56 +126,44 @@ export default function WithdrawRecentHistory({
 
         {/* Transaction Cards List & Pagination Controls */}
         <Show.Else>
-          <View className="w-full gap-2.5">
+          <View className="w-full gap-2.5 min-h-[280px]">
             {recentWithdrawals.map((tx) => (
               <WithdrawalItemCard key={tx._id || tx.id} tx={tx} />
             ))}
           </View>
 
-          {/* Bottom Left and Right Edge Pagination Bar */}
-          <Show>
-            <Show.If isTrue={totalPages > 1}>
-              <View className="flex-row items-center justify-between mt-5 pt-1 mb-2">
-                {/* Previous Button (Left Edge) */}
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  disabled={!hasPrevPage || loading}
-                  onPress={handlePrevPage}
-                  className={`flex-row items-center gap-1.5 px-3.5 py-2.5 rounded-full bg-white/5 border border-white/10 ${
-                    hasPrevPage && !loading ? "opacity-100 active:bg-white/10" : "opacity-35"
-                  }`}
-                >
-                  <Feather name="chevron-left" size={16} color="#FFFFFF" />
-                  <Text className="text-xs font-noir font-medium text-white">
-                    Previous
-                  </Text>
-                </TouchableOpacity>
+          {/* Compact Clean Pagination Bar */}
+          {totalPages > 1 && (
+            <View className="flex-row items-center justify-between mt-4 px-1">
+              <TouchableOpacity
+                activeOpacity={0.7}
+                disabled={!hasPrevPage || loading}
+                onPress={handlePrevPage}
+                className={`flex-row items-center gap-1 px-3 py-2 rounded-xl bg-white/5 border border-white/10 ${
+                  hasPrevPage && !loading ? "active:bg-white/10" : "opacity-30"
+                }`}
+              >
+                <Feather name="chevron-left" size={15} color="#fff" />
+                <Text className="text-xs font-noir font-medium text-white">Prev</Text>
+              </TouchableOpacity>
 
-                {/* Page Indicator (Center) */}
-                <View className="px-3 py-1.5 rounded-full bg-white/[0.03]">
-                  <Text className="text-xs font-noir text-gray-400">
-                    Page <Text className="text-white font-bold">{page}</Text> of{" "}
-                    <Text className="text-white font-bold">{totalPages}</Text>
-                  </Text>
-                </View>
+              <Text className="text-xs font-noir text-gray-400">
+                <Text className="text-white font-medium">{page}</Text> of {totalPages}
+              </Text>
 
-                {/* Next Button (Right Edge) */}
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  disabled={!hasNextPage || loading}
-                  onPress={handleNextPage}
-                  className={`flex-row items-center gap-1.5 px-3.5 py-2.5 rounded-full bg-white/5 border border-white/10 ${
-                    hasNextPage && !loading ? "opacity-100 active:bg-white/10" : "opacity-35"
-                  }`}
-                >
-                  <Text className="text-xs font-noir font-medium text-white">
-                    Next
-                  </Text>
-                  <Feather name="chevron-right" size={16} color="#FFFFFF" />
-                </TouchableOpacity>
-              </View>
-            </Show.If>
-          </Show>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                disabled={!hasNextPage || loading}
+                onPress={handleNextPage}
+                className={`flex-row items-center gap-1 px-3 py-2 rounded-xl bg-white/5 border border-white/10 ${
+                  hasNextPage && !loading ? "active:bg-white/10" : "opacity-30"
+                }`}
+              >
+                <Text className="text-xs font-noir font-medium text-white">Next</Text>
+                <Feather name="chevron-right" size={15} color="#fff" />
+              </TouchableOpacity>
+            </View>
+          )}
         </Show.Else>
       </Show>
     </View>
