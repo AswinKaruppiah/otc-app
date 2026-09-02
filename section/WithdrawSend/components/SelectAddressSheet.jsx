@@ -78,7 +78,7 @@ export default function SelectAddressSheet({
                         <Pressable
                           key={item.id}
                           onPress={() => handleSelect(item)}
-                          className={`w-full py-3.5 pl-3.5 pr-4 rounded-2xl flex-row items-center justify-between border active:opacity-75 ${
+                          className={`w-full py-3.5 pl-3.5 pr-4 rounded-xl flex-row items-center justify-between border active:opacity-75 ${
                             isSelected
                               ? "bg-[#13171a] border-noirMint/35"
                               : "bg-[#13171a]/60 border-white/[0.06]"
@@ -86,7 +86,7 @@ export default function SelectAddressSheet({
                         >
                           <View className="flex-row items-center gap-3 flex-1 min-w-0 mr-2">
                             <View
-                              className={`w-11 h-11 rounded-xl items-center justify-center ${
+                              className={`w-11 h-11 rounded-lg items-center justify-center ${
                                 isSelected
                                   ? "bg-noirMint/10 border border-noirMint/25"
                                   : "bg-white/[0.04] border border-white/[0.06]"
