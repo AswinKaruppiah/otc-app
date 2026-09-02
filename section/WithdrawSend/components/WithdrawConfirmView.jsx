@@ -1,6 +1,5 @@
-import { View, Text, Image, TouchableOpacity, ActivityIndicator, ScrollView } from "react-native";
+import { View, Text, Image, ActivityIndicator, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import Feather from "@expo/vector-icons/Feather";
 import { useMutation } from "@apollo/client/react";
 import { useToast } from "heroui-native";
 import { REQUEST_FYSTACK_WITHDRAWAL } from "../../../apollo/mutation";
@@ -8,6 +7,7 @@ import { GET_USER, GET_MY_WITHDRAWALS } from "../../../apollo/query";
 import { formatNumber } from "../../../utils/helper";
 import { haptic } from "../../../utils/haptics";
 import Button from "../../../components/Button";
+import WithdrawSendHeader from "./WithdrawSendHeader";
 
 /**
  * WithdrawConfirmView — Confirmation screen for withdrawal flow.
@@ -39,9 +39,13 @@ export default function WithdrawConfirmView({
       },
       onError(err) {
         haptic.error();
+        const msg =
+          err?.graphQLErrors?.[0]?.message ||
+          err?.message ||
+          "Could not process withdrawal request.";
         toast?.show({
           label: "Withdrawal Failed",
-          description: err?.message || "Could not process withdrawal request.",
+          description: msg,
           variant: "danger",
         });
       },
@@ -72,21 +76,7 @@ export default function WithdrawConfirmView({
         contentContainerStyle={{ paddingBottom: 20 }}
       >
         {/* 1. Header (Centered title with Back button on left) */}
-        <View className="flex-row items-center justify-between mb-4 px-1">
-          <TouchableOpacity
-            onPress={onBack}
-            activeOpacity={0.7}
-            className="w-11 h-11 rounded-full bg-[#13171a] border border-white/10 items-center justify-center active:bg-[#1e252a]"
-          >
-            <Feather name="chevron-left" size={22} color="#FFFFFF" />
-          </TouchableOpacity>
-
-          <Text className="text-lg font-noir font-bold text-white tracking-wide">
-            Confirmation
-          </Text>
-
-          <View className="w-11 h-11" />
-        </View>
+        <WithdrawSendHeader title="Confirmation" onBack={onBack} />
 
         {/* 2. Withdrawal Preview Card (Order Details Card Theme) */}
         <View className="w-full mb-6">
