@@ -1,10 +1,11 @@
 import { View, ScrollView } from "react-native";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { useRouter } from "expo-router";
 import { useMutation } from "@apollo/client/react";
 import { useToast } from "heroui-native";
 import { REQUEST_FYSTACK_WITHDRAWAL } from "../../apollo/mutation";
 import { GET_USER, GET_MY_WITHDRAWALS } from "../../apollo/query";
 import { useScreenPadding } from "../../context/ScrollContext";
+import { useWithdraw } from "../../context/WithdrawContext";
 import { haptic } from "../../utils/haptics";
 import WithdrawConfirmHeader from "./components/WithdrawConfirmHeader";
 import WithdrawPreviewCard from "./components/WithdrawPreviewCard";
@@ -18,14 +19,13 @@ import WithdrawConfirmFooter from "./components/WithdrawConfirmFooter";
  */
 export default function WithdrawConfirmSection() {
   const router = useRouter();
-  const params = useLocalSearchParams();
   const { paddingBottom, paddingTop } = useScreenPadding();
   const { toast } = useToast();
+  const { amount, selectedAddress, resetWithdraw } = useWithdraw();
 
-  const amount = params.amount ? String(params.amount) : "";
-  const address = params.address ? String(params.address) : "";
-  const label = params.label ? String(params.label) : "Whitelisted Wallet";
-  const network = params.network ? String(params.network) : "TRC-20";
+  const address = selectedAddress?.address || "";
+  const label = selectedAddress?.label || "Whitelisted Wallet";
+  const network = selectedAddress?.network || "TRC-20";
 
   const [requestWithdrawal, { loading: submitting }] = useMutation(
     REQUEST_FYSTACK_WITHDRAWAL,
@@ -37,6 +37,7 @@ export default function WithdrawConfirmSection() {
       awaitRefetchQueries: true,
       onCompleted() {
         haptic.success();
+        resetWithdraw();
         toast?.show({
           label: "Withdrawal Submitted",
           description: "Your USDT withdrawal request has been submitted successfully.",
@@ -85,7 +86,6 @@ export default function WithdrawConfirmSection() {
       router.replace("/withdraw/send");
     }
   };
-
 
   return (
     <View

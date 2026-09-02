@@ -2,6 +2,7 @@ import { View, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { useUser } from "../../hooks/useUser";
 import { useScreenPadding } from "../../context/ScrollContext";
+import { useWithdraw } from "../../context/WithdrawContext";
 import { haptic } from "../../utils/haptics";
 import WithdrawBalanceCard from "./components/WithdrawBalanceCard";
 import WithdrawRecentHistory from "./components/WithdrawRecentHistory";
@@ -14,12 +15,14 @@ export default function WithdrawSection() {
   const router = useRouter();
   const { paddingBottom } = useScreenPadding();
   const { user, loading: userLoading } = useUser();
+  const { resetWithdraw } = useWithdraw();
 
   const walletBalance = user?.wallet?.walletBalance ?? 0;
   const walletHold = user?.walletHold ?? 0;
 
   const handleOpenWithdrawForm = () => {
     haptic.medium();
+    resetWithdraw();
     router.push("/withdraw/send");
   };
 

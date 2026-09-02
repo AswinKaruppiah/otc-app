@@ -5,6 +5,7 @@ import { useQuery } from "@apollo/client/react";
 import { GET_USER_WHITELISTED_ADDRESSES } from "../../apollo/query";
 import { useUser } from "../../hooks/useUser";
 import { useScreenPadding } from "../../context/ScrollContext";
+import { useWithdraw } from "../../context/WithdrawContext";
 import { haptic } from "../../utils/haptics";
 import WithdrawSendHeader from "./components/WithdrawSendHeader";
 import WithdrawAmountHero from "./components/WithdrawAmountHero";
@@ -21,10 +22,15 @@ export default function WithdrawSendSection() {
   const router = useRouter();
   const { paddingBottom, paddingTop } = useScreenPadding();
   const { user } = useUser();
+  const {
+    amount,
+    setAmount,
+    selectedAddress,
+    setSelectedAddress,
+  } = useWithdraw();
   const inputRef = useRef(null);
+  const initialSetRef = useRef(false);
 
-  const [amount, setAmount] = useState("");
-  const [selectedAddress, setSelectedAddress] = useState(null);
   const [isAddressPickerOpen, setIsAddressPickerOpen] = useState(false);
 
   const walletBalance = user?.wallet?.walletBalance ?? 0;
@@ -34,7 +40,7 @@ export default function WithdrawSendSection() {
   const whitelistedAddresses =
     walletData?.getUserWhitelistedAddresses || [];
 
-  // Auto-select default whitelisted address
+  // Auto-select default whitelisted address on mount
   useEffect(() => {
     if (whitelistedAddresses.length > 0 && !selectedAddress) {
       const defaultAddr =
@@ -43,9 +49,10 @@ export default function WithdrawSendSection() {
     }
   }, [whitelistedAddresses, selectedAddress]);
 
-  // Default select 25% on mount / balance load
+  // Default select 25% ONCE on initial mount if amount is empty
   useEffect(() => {
-    if (walletBalance > 0 && !amount) {
+    if (walletBalance > 0 && !initialSetRef.current && !amount) {
+      initialSetRef.current = true;
       const defaultVal = (walletBalance * 0.25).toFixed(2);
       if (parseFloat(defaultVal) > 0) {
         setAmount(defaultVal);
@@ -84,15 +91,7 @@ export default function WithdrawSendSection() {
 
   const handleContinue = () => {
     haptic.medium();
-    router.push({
-      pathname: "/withdraw/confirm",
-      params: {
-        amount,
-        address: selectedAddress?.address,
-        label: selectedAddress?.label || "Whitelisted Wallet",
-        network: selectedAddress?.network || "TRC-20",
-      },
-    });
+    router.push("/withdraw/confirm");
   };
 
   const numAmount = parseFloat(amount) || 0;

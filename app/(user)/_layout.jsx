@@ -15,6 +15,7 @@ import {
   HIDE_TOP_BAR_ROUTES,
   HIDE_BOTTOM_BAR_ROUTES,
 } from "../../context/ScrollContext";
+import { WithdrawProvider } from "../../context/WithdrawContext";
 
 /**
  * Layout for all (user) screens.
@@ -25,10 +26,12 @@ export default function UserLayout() {
   return (
     <SafeAreaProvider>
       <ScrollProvider>
-        <ScreenBackground>
-          <StatusBar style="light" />
-          <UserLayoutContent />
-        </ScreenBackground>
+        <WithdrawProvider>
+          <ScreenBackground>
+            <StatusBar style="light" />
+            <UserLayoutContent />
+          </ScreenBackground>
+        </WithdrawProvider>
       </ScrollProvider>
     </SafeAreaProvider>
   );
