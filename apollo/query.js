@@ -148,7 +148,6 @@ export const GET_MY_WITHDRAWALS = gql`
         recipientAddress
         network
         status
-        failureReason
         createdAt
       }
       total
