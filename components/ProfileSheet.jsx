@@ -2,7 +2,7 @@ import { Animated, Text, Pressable, View } from "react-native";
 import { Avatar, Skeleton, BottomSheet, Button } from "heroui-native";
 import Feather from "@expo/vector-icons/Feather";
 import { haptic } from "../utils/haptics";
-import { getInitials } from "../utils/helper";
+import { getInitials, getHighResProfileImage } from "../utils/helper";
 import { useRouter, usePathname } from "expo-router";
 import Show from "./Show";
 
@@ -27,6 +27,7 @@ export default function ProfileSheet({
   const pathname = usePathname();
 
   const isProfileDisabled = disabled || HIDE_PROFILE_SHEET_ROUTES.includes(pathname);
+  const profileImageUrl = getHighResProfileImage(user?.profileImage, 512);
 
   return (
     <BottomSheet isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -53,8 +54,8 @@ export default function ProfileSheet({
               </Show.If>
               <Show.ElseIf isTrue={user}>
                 <Avatar size="sm" className="ring ring-noirMint">
-                  {user?.profileImage ? (
-                    <Avatar.Image source={{ uri: user.profileImage }} />
+                  {profileImageUrl ? (
+                    <Avatar.Image source={{ uri: profileImageUrl }} />
                   ) : null}
                   <Avatar.Fallback>
                     <Text className="text-noirMint">
@@ -72,8 +73,8 @@ export default function ProfileSheet({
         <BottomSheet.Content>
           <View className="items-center mb-5">
             <Avatar className="ring h-24 w-24 ring-noirMint">
-              {user?.profileImage ? (
-                <Avatar.Image source={{ uri: user.profileImage }} />
+              {profileImageUrl ? (
+                <Avatar.Image source={{ uri: profileImageUrl }} />
               ) : null}
               <Avatar.Fallback>
                 <Text className="text-noirMint text-xl">
@@ -99,9 +100,9 @@ export default function ProfileSheet({
               className="w-full bg-white/5 border border-white/[0.04] py-4 px-5 rounded-full flex-row items-center justify-between active:opacity-75"
             >
               <View className="flex-row items-center gap-3">
-                <Feather name="plus-circle" size={26} color="#baffd8" />
+                <Feather name="plus-circle" size={24} color="#baffd8" />
                 <Text className="text-white font-noir text-base -mb-0.5">
-                  Add Wallet
+                  Accounts & Wallets
                 </Text>
               </View>
               <Feather
@@ -114,11 +115,32 @@ export default function ProfileSheet({
             <Pressable
               onPress={() => {
                 onOpenChange(false);
+                router.push("/kyc-guide");
               }}
               className="w-full bg-white/5 border border-white/[0.04] py-4 px-5 rounded-full flex-row items-center justify-between active:opacity-75"
             >
               <View className="flex-row items-center gap-3">
-                <Feather name="help-circle" size={26} color="#96dded" />
+                <Feather name="shield" size={24} color="#baffd8" />
+                <Text className="text-white font-noir text-base -mb-0.5">
+                  KYC Guide
+                </Text>
+              </View>
+              <Feather
+                name="chevron-right"
+                size={16}
+                color="rgba(255, 255, 255, 0.3)"
+              />
+            </Pressable>
+
+            <Pressable
+              onPress={() => {
+                onOpenChange(false);
+                router.push("/support");
+              }}
+              className="w-full bg-white/5 border border-white/[0.04] py-4 px-5 rounded-full flex-row items-center justify-between active:opacity-75"
+            >
+              <View className="flex-row items-center gap-3">
+                <Feather name="help-circle" size={24} color="#96dded" />
                 <Text className="text-white font-noir text-base -mb-0.5">
                   Support
                 </Text>
