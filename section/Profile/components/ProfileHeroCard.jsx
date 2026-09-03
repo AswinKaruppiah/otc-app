@@ -1,6 +1,7 @@
 import { View, Text, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import Feather from "@expo/vector-icons/Feather";
 import { Skeleton } from "heroui-native";
 import { getInitials, getHighResProfileImage } from "../../../utils/helper";
 import Show from "../../../components/Show";
@@ -8,10 +9,9 @@ import Show from "../../../components/Show";
 /**
  * ProfileHeroCard — Editorial portrait hero header matching the reference design:
  * 1. Large portrait rounded card (image or gradient monogram avatar)
- * 2. Bold Display Name with Verified checkmark badge
- * 3. Editorial bio / status description
- * 4. Horizontal stats row (Trades, Accounts, KYC)
- * 5. Full-width pill action button (+ Manage / Link Account)
+ * 2. Floating Account Type badge on photo card
+ * 3. Bold Display Name with Verified checkmark badge
+ * 4. Editorial bio / status description with Account Type
  */
 export default function ProfileHeroCard({
   user,
@@ -24,6 +24,11 @@ export default function ProfileHeroCard({
   const initials = getInitials(displayName);
   const isVerified = user?.kycStatus?.toUpperCase() === "APPROVED" || user?.kycStatus?.toUpperCase() === "VERIFIED";
   const profileImageUrl = getHighResProfileImage(user?.profileImage, 512);
+
+  const isCorporate = user?.profileType === "corporate";
+  const accountTypeLabel = isCorporate ? "Business Account" : "Individual Account";
+  const accountIcon = isCorporate ? "briefcase" : "user";
+  const accountColor = isCorporate ? "#96dded" : "#baffd8";
 
   return (
     <View className="w-full mb-6">
@@ -104,10 +109,16 @@ export default function ProfileHeroCard({
             </Show>
           </View>
 
-          {/* 3. Bio / Tagline */}
-          <Text className="text-gray-400 font-noir text-[13px] leading-5 mb-4">
-            Quotex OTC Trader
-          </Text>
+          {/* 3. Bio / Tagline with Account Info */}
+          <View className="flex-row items-center gap-2 mb-4">
+            <Text className="text-gray-300 font-noir text-[13px]">
+              {isCorporate && user?.companyName ? user.companyName : accountTypeLabel}
+            </Text>
+            <Text className="text-gray-600 font-noir text-[12px]">•</Text>
+            <Text className="text-gray-400 font-noir text-[13px]">
+              Quotex OTC Trader
+            </Text>
+          </View>
         </Show.Else>
       </Show>
     </View>
