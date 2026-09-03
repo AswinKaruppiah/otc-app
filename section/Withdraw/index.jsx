@@ -1,7 +1,8 @@
-import { View, ScrollView } from "react-native";
+import { useState, useRef } from "react";
+import { View, Animated, RefreshControl } from "react-native";
 import { useRouter } from "expo-router";
 import { useUser } from "../../hooks/useUser";
-import { useScreenPadding } from "../../context/ScrollContext";
+import { useScreenPadding, useScrollY, useScrollViewRef } from "../../context/ScrollContext";
 import { useWithdraw } from "../../context/WithdrawContext";
 import { haptic } from "../../utils/haptics";
 import WithdrawBalanceCard from "./components/WithdrawBalanceCard";
@@ -13,9 +14,13 @@ import WithdrawRecentHistory from "./components/WithdrawRecentHistory";
  */
 export default function WithdrawSection() {
   const router = useRouter();
-  const { paddingBottom } = useScreenPadding();
-  const { user, loading: userLoading } = useUser();
+  const { paddingTop, paddingBottom } = useScreenPadding();
+  const scrollY = useScrollY();
+  const scrollViewRef = useScrollViewRef();
+  const { user, loading: userLoading, refetch: refetchUser } = useUser();
   const { resetWithdraw } = useWithdraw();
+  const historyRef = useRef(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const walletBalance = user?.wallet?.walletBalance ?? 0;
   const walletHold = user?.walletHold ?? 0;
@@ -26,10 +31,40 @@ export default function WithdrawSection() {
     router.push("/withdraw/send");
   };
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await Promise.allSettled([
+        refetchUser?.(),
+        historyRef.current?.refetch?.(),
+      ]);
+    } catch (e) {
+      console.error("Error refreshing withdraw section:", e);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
     <View className="w-full flex-1">
-      <ScrollView
+      <Animated.ScrollView
+        ref={scrollViewRef}
         showsVerticalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
+        scrollEventThrottle={16}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor="#baffd8"
+            colors={["#baffd8"]}
+            progressBackgroundColor="#181e25"
+            progressViewOffset={paddingTop + 10}
+          />
+        }
         contentContainerStyle={{ paddingBottom }}
         className="w-full"
       >
@@ -37,15 +72,18 @@ export default function WithdrawSection() {
         <WithdrawBalanceCard
           walletBalance={walletBalance}
           walletHold={walletHold}
-          loading={userLoading}
+          loading={userLoading || refreshing}
           onWithdrawPress={handleOpenWithdrawForm}
         />
 
         {/* Recent Withdrawal History */}
         <WithdrawRecentHistory
+          ref={historyRef}
+          refreshing={refreshing}
           onMakeWithdrawalPress={handleOpenWithdrawForm}
         />
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 }
+

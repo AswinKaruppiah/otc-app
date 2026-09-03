@@ -45,7 +45,7 @@ export default function WithdrawBalanceCard({
         {/* 2. Main Balance Display */}
         <Show>
           <Show.If isTrue={loading}>
-            <Skeleton className="h-12 w-48 rounded-xl bg-white/10 mb-2 self-center" />
+            <Skeleton className="h-[43px] w-48 rounded-xl bg-white/10 mb-1 self-center" />
           </Show.If>
           <Show.Else>
             <View className="flex-row items-baseline justify-center gap-2 mb-1">
@@ -56,11 +56,12 @@ export default function WithdrawBalanceCard({
                 USDT
               </Text>
             </View>
-            <Text className="text-xs font-noir font-normal text-gray-400 text-center mb-2">
-              Instant TRC-20 Transfer
-            </Text>
           </Show.Else>
         </Show>
+
+        <Text className="text-xs font-noir font-normal text-gray-400 text-center mb-2">
+          Instant TRC-20 Transfer
+        </Text>
 
         {/* 3. Bottom Section: Available & On-Hold Stats + Withdraw CTA */}
         <View className="w-full mt-6 gap-4">
