@@ -6,7 +6,6 @@ import { useRouter } from "expo-router";
 import Show from "../../../components/Show";
 import EmptyState from "../../../components/EmptyState";
 import { REMOVE_WHITELISTED_ADDRESS } from "../../../apollo/mutation";
-import { GET_USER_WHITELISTED_ADDRESSES } from "../../../apollo/query";
 import { copyToClipboard } from "../../../utils/helper";
 import WalletCard from "./WalletCard";
 import DeleteWalletDialog from "../../../components/dialog/DeleteWalletDialog";
@@ -106,8 +105,6 @@ export default function LinkedWalletsList({
             icon="shield"
             title="No Whitelisted Wallets"
             description="You haven't added any whitelisted crypto payout addresses yet. Tap the button below or plus icon above to add one."
-            actionLabel="Add Wallet Address"
-            onAction={() => router.push("/accounts/add-wallet")}
           />
         </Show.ElseIf>
 

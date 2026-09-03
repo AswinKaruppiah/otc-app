@@ -79,14 +79,7 @@ export default function WithdrawSendSection() {
   const handleAddressCardPress = () => {
     Keyboard.dismiss();
     haptic.light();
-    if (whitelistedAddresses.length === 0) {
-      router.push({
-        pathname: "/accounts",
-        params: { tab: "wallets" },
-      });
-    } else {
-      setIsAddressPickerOpen(true);
-    }
+    setIsAddressPickerOpen(true);
   };
 
   const handleContinue = () => {

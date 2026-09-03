@@ -136,8 +136,6 @@ const WithdrawRecentHistory = forwardRef(function WithdrawRecentHistory(
                 ? "Try selecting a different filter status option."
                 : "When you withdraw USDT, your transactions will appear here."
             }
-            actionLabel={!activeTab && onMakeWithdrawalPress ? "Make your first withdrawal" : null}
-            onAction={!activeTab && onMakeWithdrawalPress ? onMakeWithdrawalPress : null}
           />
         </Show.If>
 

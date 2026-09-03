@@ -15,7 +15,7 @@ export default function WithdrawAddressCard({
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={onPress}
-      className="w-full bg-[#111417] border border-white/10 rounded-2xl p-4 flex-row items-center justify-between active:bg-white/10"
+      className="w-full bg-[#111417] border border-white/10 rounded-3xl p-4 flex-row items-center justify-between active:bg-white/10"
     >
       <View className="flex-row items-center gap-3 flex-1">
         <View className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 items-center justify-center">
@@ -44,7 +44,7 @@ export default function WithdrawAddressCard({
             </Show.If>
             <Show.ElseIf isTrue={whitelistedAddresses.length === 0}>
               <Text className="font-noir text-xs text-gray-400">
-                + Add Whitelisted TRON Address
+                Add Wallet Address
               </Text>
             </Show.ElseIf>
             <Show.Else>
