@@ -80,8 +80,8 @@ export default function SuccessScreen({ onFinish }) {
           </View>
 
           {/* Profile Summary Card */}
-          <View className="flex-row items-start w-full bg-noirBg border border-white/10 rounded-lg px-5 py-5">
-            <Avatar className="w-20 h-20 rounded-full bg-white/5 border border-white/10">
+          <View className="flex-row items-center w-full bg-noirBg border border-white/10 rounded-full px-4 py-4">
+            <Avatar className="w-24 aspect-square rounded-full bg-white/5 border border-white/10">
               {user?.profileImage ? (
                 <Avatar.Image source={{ uri: user.profileImage }} />
               ) : null}

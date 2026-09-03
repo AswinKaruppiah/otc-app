@@ -20,9 +20,10 @@ export default function OnboardingOverview({ step, setStep, onAllowLeave }) {
     const { user, loading: userLoading } = useUser();
     const apolloClient = useApolloClient();
 
-    const [profileType, setProfileType] = useState("corporate");
+    const [profileType, setProfileType] = useState("individual");
     const [formData, setFormData] = useState({
         fullName: "",
+        phone: "",
         companyName: "",
         annualTurnover: "",
         referralCode: "",
@@ -35,8 +36,10 @@ export default function OnboardingOverview({ step, setStep, onAllowLeave }) {
         if (user && !hasPreFilled) {
             setFormData({
                 fullName: user.fullName || "",
+                phone: user.phone || "",
                 companyName: user.companyName || "",
                 annualTurnover: user.salaryVolume || "",
+                referralCode: "",
             });
             setHasPreFilled(true);
         }
@@ -89,6 +92,7 @@ export default function OnboardingOverview({ step, setStep, onAllowLeave }) {
             userId,
             input: {
                 fullName: formData.fullName,
+                phone: formData.phone,
                 profileType,
                 referralCode: formData.referralCode || "",
                 salaryVolume: formData.annualTurnover,

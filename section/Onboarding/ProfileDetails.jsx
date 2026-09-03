@@ -21,15 +21,25 @@ export default function ProfileDetailsStep({
   onBack,
 }) {
   const [errors, setErrors] = useState({});
+  const [focusedInput, setFocusedInput] = useState(null);
 
   const handleNext = () => {
     const newErrors = {};
     if (!formData.fullName || !formData.fullName.trim()) {
       newErrors.fullName = "Full name is required";
     }
+
+    const cleanPhone = (formData.phone || "").replace(/\D/g, "");
+    if (!cleanPhone) {
+      newErrors.phone = "Phone number is required";
+    } else if (cleanPhone.length < 10) {
+      newErrors.phone = "Enter a valid 10-digit phone number";
+    }
+
     if (profileType === "corporate" && (!formData.companyName || !formData.companyName.trim())) {
       newErrors.companyName = "Company name is required";
     }
+
     if (!formData.annualTurnover) {
       newErrors.annualTurnover = "Annual turnover range is required";
     }
@@ -56,10 +66,17 @@ export default function ProfileDetailsStep({
         {/* Step Badge & Header */}
         <View className="flex-row items-center justify-between mb-6">
           {onBack && (
-            <TouchableOpacity onPress={onBack} className="flex-row items-center bg-white/5 pl-1.5 pr-3 py-1.5 rounded-full">
-              <MaterialIcons name="keyboard-arrow-left" size={20} color="rgba(255,255,255,0.4)" />
+            <TouchableOpacity
+              onPress={onBack}
+              className="flex-row items-center bg-white/5 pl-1.5 pr-3 py-1.5 rounded-full"
+            >
+              <MaterialIcons
+                name="keyboard-arrow-left"
+                size={20}
+                color="rgba(255,255,255,0.4)"
+              />
               <Text className="text-white/40 font-noir text-[12px] -mt-0.5 tracking-[0.5px]">
-                Step 2 of 3
+                Back
               </Text>
             </TouchableOpacity>
           )}
@@ -85,13 +102,20 @@ export default function ProfileDetailsStep({
               Full Name
             </Text>
             <View
-              className={`w-full rounded-md border bg-noirBg flex-row items-center px-4 py-[14px] ${errors.fullName ? "border-red-500/50" : "border-white/[0.06]"
-                }`}
+              className={`w-full rounded-md border bg-noirBg flex-row items-center px-4 py-[14px] ${
+                errors.fullName
+                  ? "border-red-500/50"
+                  : focusedInput === "fullName"
+                  ? "border-noirMint"
+                  : "border-white/[0.06]"
+              }`}
             >
               <TextInput
                 placeholder="Your full name"
                 placeholderTextColor="rgba(255,255,255,0.18)"
                 value={formData.fullName}
+                onFocus={() => setFocusedInput("fullName")}
+                onBlur={() => setFocusedInput(null)}
                 onChangeText={(text) => {
                   setFormData({ ...formData, fullName: text });
                   if (errors.fullName) {
@@ -110,6 +134,47 @@ export default function ProfileDetailsStep({
             )}
           </View>
 
+          {/* Phone Number */}
+          <View className="gap-1.5">
+            <Text className="text-white/35 font-noir text-[11px] tracking-[0.6px] uppercase">
+              Phone Number
+            </Text>
+            <View
+              className={`w-full rounded-md border bg-noirBg flex-row items-center px-4 py-[14px] ${
+                errors.phone
+                  ? "border-red-500/50"
+                  : focusedInput === "phone"
+                  ? "border-noirMint"
+                  : "border-white/[0.06]"
+              }`}
+            >
+              <TextInput
+                placeholder="Your phone number"
+                placeholderTextColor="rgba(255,255,255,0.18)"
+                keyboardType="phone-pad"
+                maxLength={10}
+                value={formData.phone}
+                onFocus={() => setFocusedInput("phone")}
+                onBlur={() => setFocusedInput(null)}
+                onChangeText={(text) => {
+                  const numericOnly = text.replace(/[^0-9]/g, "");
+                  setFormData({ ...formData, phone: numericOnly });
+                  if (errors.phone) {
+                    setErrors((prev) => ({ ...prev, phone: null }));
+                  }
+                }}
+                className="text-noirText font-noir text-[15px] flex-1"
+                style={{ paddingVertical: 0 }}
+              />
+            </View>
+            {errors.phone && (
+              <View className="flex-row items-center gap-1.5 pl-0.5">
+                <Feather name="alert-circle" size={11} color="rgba(248,113,113,0.75)" />
+                <Text className="text-red-400/75 font-noir text-[11px]">{errors.phone}</Text>
+              </View>
+            )}
+          </View>
+
           {/* Company Name */}
           {profileType === "corporate" && (
             <View className="gap-1.5">
@@ -117,13 +182,20 @@ export default function ProfileDetailsStep({
                 Company Name
               </Text>
               <View
-                className={`w-full rounded-md border bg-noirBg flex-row items-center px-4 py-[14px] ${errors.companyName ? "border-red-500/50" : "border-white/[0.06]"
-                  }`}
+                className={`w-full rounded-md border bg-noirBg flex-row items-center px-4 py-[14px] ${
+                  errors.companyName
+                    ? "border-red-500/50"
+                    : focusedInput === "companyName"
+                    ? "border-noirMint"
+                    : "border-white/[0.06]"
+                }`}
               >
                 <TextInput
                   placeholder="Your company name"
                   placeholderTextColor="rgba(255,255,255,0.18)"
                   value={formData.companyName}
+                  onFocus={() => setFocusedInput("companyName")}
+                  onBlur={() => setFocusedInput(null)}
                   onChangeText={(text) => {
                     setFormData({ ...formData, companyName: text });
                     if (errors.companyName) {
@@ -164,12 +236,14 @@ export default function ProfileDetailsStep({
                 <TouchableOpacity
                   activeOpacity={0.8}
                   onPress={() => Keyboard.dismiss()}
-                  className={`w-full rounded-md border bg-noirBg flex-row items-center justify-between px-4 py-[14px] ${errors.annualTurnover ? "border-red-500/50" : "border-white/[0.06]"
-                    }`}
+                  className={`w-full rounded-md border bg-noirBg flex-row items-center justify-between px-4 py-[14px] ${
+                    errors.annualTurnover ? "border-red-500/50" : "border-white/[0.06]"
+                  }`}
                 >
                   <Text
-                    className={`font-noir text-[15px] ${formData.annualTurnover ? "text-noirText" : "text-white/20"
-                      }`}
+                    className={`font-noir text-[15px] ${
+                      formData.annualTurnover ? "text-noirText" : "text-white/20"
+                    }`}
                   >
                     {selectedTurnover?.label || "Select a range"}
                   </Text>
@@ -195,8 +269,9 @@ export default function ProfileDetailsStep({
                       {({ isSelected }) => (
                         <View className="flex-row items-center justify-between w-full">
                           <Text
-                            className={`font-noir text-[15px] ${isSelected ? "text-noirMint" : "text-noirText"
-                              }`}
+                            className={`font-noir text-[15px] ${
+                              isSelected ? "text-noirMint" : "text-noirText"
+                            }`}
                           >
                             {opt.label}
                           </Text>

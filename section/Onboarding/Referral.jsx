@@ -23,7 +23,7 @@ export default function ReferralStep({
             <TouchableOpacity onPress={onBack} className="flex-row items-center bg-white/5 pl-1.5 pr-3 py-1.5 rounded-full">
               <MaterialIcons name="keyboard-arrow-left" size={20} color="rgba(255,255,255,0.4)" />
               <Text className="text-white/40 font-noir text-[12px] -mt-0.5 tracking-[0.5px]">
-                Step 3 of 3
+                Back
               </Text>
             </TouchableOpacity>
           )}
