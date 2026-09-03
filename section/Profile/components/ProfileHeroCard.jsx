@@ -1,0 +1,114 @@
+import { View, Text, Image } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { Skeleton } from "heroui-native";
+import { getInitials } from "../../../utils/helper";
+import Show from "../../../components/Show";
+
+/**
+ * ProfileHeroCard — Editorial portrait hero header matching the reference design:
+ * 1. Large portrait rounded card (image or gradient monogram avatar)
+ * 2. Bold Display Name with Verified checkmark badge
+ * 3. Editorial bio / status description
+ * 4. Horizontal stats row (Trades, Accounts, KYC)
+ * 5. Full-width pill action button (+ Manage / Link Account)
+ */
+export default function ProfileHeroCard({
+  user,
+  loading,
+  onActionPress,
+  actionLabel = "+ Link New Account",
+}) {
+  const displayName = user?.fullName || "Quotex Trader";
+  const displayEmail = user?.email || "trader@quotex.io";
+  const initials = getInitials(displayName);
+  const isVerified = user?.kycStatus?.toUpperCase() === "APPROVED" || user?.kycStatus?.toUpperCase() === "VERIFIED";
+
+  return (
+    <View className="w-full mb-6">
+      <Show>
+        <Show.If isTrue={loading}>
+          {/* 1. Skeleton Hero State */}
+          <Skeleton className="w-full h-[340px] rounded-[36px] bg-white/10 mb-5" />
+
+          {/* 2. Name & Badge Skeleton */}
+          <View className="flex-row items-center gap-2 mb-2">
+            <Skeleton className="w-48 h-8 rounded-xl bg-white/10" />
+            <Skeleton className="w-5 h-5 rounded-full bg-white/10" />
+          </View>
+
+          {/* 3. Bio / Subtitle 2-line Skeleton matching leading-5 (40px) + mb-4 */}
+          <View className="h-[40px] justify-between mb-4">
+            <Skeleton className="w-full h-[15px] rounded-md bg-white/10" />
+            <Skeleton className="w-3/4 h-[15px] rounded-md bg-white/10" />
+          </View>
+        </Show.If>
+
+        <Show.Else>
+          {/* 1. Large Portrait Photo / Stylized Hero Banner */}
+          <View className="w-full h-[340px] rounded-[36px] overflow-hidden bg-noirCard border border-white/10 relative mb-5 shadow-2xl">
+            <Show>
+              <Show.If isTrue={user?.profileImage}>
+                <Image
+                  source={{ uri: user.profileImage }}
+                  className="w-full h-full"
+                  resizeMode="cover"
+                />
+              </Show.If>
+              <Show.Else>
+                <LinearGradient
+                  colors={["#0a1118", "#121e24", "#0c3624"]}
+                  start={{ x: 0.1, y: 0.1 }}
+                  end={{ x: 0.9, y: 0.9 }}
+                  className="w-full h-full items-center justify-center relative"
+                >
+                  {/* Monogram / Silhouette Illustration */}
+                  <View className="w-32 h-32 rounded-full bg-white/[0.04] border border-white/10 items-center justify-center shadow-inner">
+                    <Text className="text-white font-noir-medium text-4xl tracking-widest">
+                      {initials}
+                    </Text>
+                  </View>
+                </LinearGradient>
+              </Show.Else>
+            </Show>
+
+            {/* Bottom Gradient Vignette for soft transition */}
+            <LinearGradient
+              colors={["transparent", "rgba(17, 20, 24, 0.7)", "rgba(17, 20, 24, 0.95)"]}
+              className="absolute bottom-0 left-0 right-0 h-28 justify-end p-5"
+            >
+              <View className="flex-row items-center justify-between">
+                <Text className="text-xs font-noir text-white/60" numberOfLines={1}>
+                  {displayEmail}
+                </Text>
+              </View>
+            </LinearGradient>
+          </View>
+
+          {/* 2. Name & Verified Checkmark Badge */}
+          <View className="flex-row items-center gap-1.5 mb-2">
+            <Text
+              style={{
+                includeFontPadding: false,
+                transform: [{ translateY: 1.5 }],
+              }}
+              className="text-2xl font-noir-medium text-white tracking-tight"
+            >
+              {displayName}
+            </Text>
+            <Show>
+              <Show.If isTrue={isVerified}>
+                <MaterialCommunityIcons name="check-decagram" size={20} color="#baffd8" />
+              </Show.If>
+            </Show>
+          </View>
+
+          {/* 3. Bio / Tagline */}
+          <Text className="text-gray-400 font-noir text-[13px] leading-5 mb-4">
+            Quotex OTC Trader
+          </Text>
+        </Show.Else>
+      </Show>
+    </View>
+  );
+}
