@@ -2,7 +2,7 @@ import { View, Text, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Skeleton } from "heroui-native";
-import { getInitials } from "../../../utils/helper";
+import { getInitials, getHighResProfileImage } from "../../../utils/helper";
 import Show from "../../../components/Show";
 
 /**
@@ -23,6 +23,7 @@ export default function ProfileHeroCard({
   const displayEmail = user?.email || "trader@quotex.io";
   const initials = getInitials(displayName);
   const isVerified = user?.kycStatus?.toUpperCase() === "APPROVED" || user?.kycStatus?.toUpperCase() === "VERIFIED";
+  const profileImageUrl = getHighResProfileImage(user?.profileImage, 512);
 
   return (
     <View className="w-full mb-6">
@@ -46,11 +47,11 @@ export default function ProfileHeroCard({
 
         <Show.Else>
           {/* 1. Large Portrait Photo / Stylized Hero Banner */}
-          <View className="w-full h-[340px] rounded-[36px] overflow-hidden bg-noirCard border border-white/10 relative mb-5 shadow-2xl">
+          <View className="w-full h-[340px] rounded-[36px] overflow-hidden bg-noirCard border border-white/10 relative mb-5">
             <Show>
-              <Show.If isTrue={user?.profileImage}>
+              <Show.If isTrue={profileImageUrl}>
                 <Image
-                  source={{ uri: user.profileImage }}
+                  source={{ uri: profileImageUrl }}
                   className="w-full h-full"
                   resizeMode="cover"
                 />

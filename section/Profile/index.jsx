@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { View, RefreshControl } from "react-native";
 import { useRouter } from "expo-router";
 import { useApolloClient } from "@apollo/client/react";
@@ -96,15 +96,10 @@ export default function ProfileSection() {
           onOrdersPress={() => router.push("/transactions")}
         />
 
-        {/* 3. Support & Destructive Actions */}
+        {/* 3. KYC Guide, Support & Destructive Actions */}
         <ProfileActions
-          onSupportPress={() => {
-            toast.show({
-              label: "Help Center",
-              description: "Customer support is available 24/7.",
-              variant: "primary",
-            });
-          }}
+          onKycGuidePress={() => router.push("/kyc-guide")}
+          onSupportPress={() => router.push("/support")}
           onLogoutPress={() => setLogoutDialogOpen(true)}
         />
       </View>

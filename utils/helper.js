@@ -81,6 +81,14 @@ export const getInitials = (name) => {
 };
 
 /**
+ * Converts low-res Google profile photo URLs (e.g. =s96-c) to high-res (e.g. =s512-c).
+ */
+export const getHighResProfileImage = (url, size = 512) => {
+  if (!url || typeof url !== "string") return url;
+  return url.replace(/=s\d+(-c)?/g, `=s${size}-c`);
+};
+
+/**
  * Checks if a given error or its sub-errors indicate an authentication failure.
  */
 export const isUnauthenticatedError = (error) => {
