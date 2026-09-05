@@ -110,10 +110,14 @@ export default function ProfileSection() {
               >
                 <View className="flex-1 pr-3">
                   <Text className="text-white font-noir-medium text-base font-semibold">
-                    Complete KYC Verification
+                    {user?.kycStatus === "pending"
+                      ? "KYC Under Review"
+                      : "Complete KYC Verification"}
                   </Text>
                   <Text className="text-emerald-300/70 font-noir text-xs mt-0.5" numberOfLines={1}>
-                    Unlock unlimited limits & fast settlements
+                    {user?.kycStatus === "pending"
+                      ? "Review takes 1–2 days • Tap for details"
+                      : "Unlock unlimited limits & fast settlements"}
                   </Text>
                 </View>
                 <Feather name="chevron-right" size={24} color="#baffd8" />

@@ -32,7 +32,7 @@ export default function ProfileQuickGrid({
     {
       id: "withdraw",
       title: "Withdraw Hub",
-      subtitle: "Instant USDT Settlement",
+      subtitle: "USDT Settlement (1–2 Days)",
       icon: "upload",
       color: "#baffd8",
       onPress: onWithdrawPress,

@@ -2,19 +2,11 @@ import React from "react";
 import { View, Text, TouchableOpacity, Linking } from "react-native";
 import PageContainer from "../../components/PageContainer";
 import { haptic } from "../../utils/haptics";
-import { copyToClipboard } from "../../utils/helper";
-import { useToast } from "heroui-native";
 
 export default function SupportSection() {
-  const { toast } = useToast();
-
   const handleOpenLink = (url) => {
     haptic.light();
     Linking.openURL(url).catch(() => {});
-  };
-
-  const handleCopyEmail = () => {
-    copyToClipboard("support@quotex.io", toast, "Email Copied", "support@quotex.io copied to clipboard.");
   };
 
   return (
@@ -68,50 +60,17 @@ export default function SupportSection() {
         {/* Section 3 */}
         <View className="mb-7">
           <Text className="text-lg font-noir-medium text-white tracking-tight mb-2">
-            3. Instant TRC-20 Settlements
+            3. TRC-20 Settlements & Withdrawals
           </Text>
           <Text className="text-sm font-noir text-gray-300 leading-6">
-            USDT withdrawals are broadcast automatically across the TRON network once fiat confirmation completes. Transfers typically confirm in 2 to 5 minutes depending on blockchain network traffic.
+            USDT withdrawals and settlements are reviewed and processed within 1 to 2 business days. Once broadcasted, blockchain transfers confirm quickly on the TRON network.
           </Text>
         </View>
 
         {/* Section 4 */}
         <View className="mb-7">
           <Text className="text-lg font-noir-medium text-white tracking-tight mb-2">
-            4. Direct Contact Channels
-          </Text>
-          <Text className="text-sm font-noir text-gray-300 leading-6 mb-3">
-            For urgent trade disputes or live assistance:
-          </Text>
-          <View className="gap-2">
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => handleOpenLink("https://t.me/quotex_support")}
-              className="self-start py-1"
-            >
-              <Text className="text-sm font-noir text-white font-medium">
-                • Telegram OTC Desk:{" "}
-                <Text className="text-noirMint underline">@quotex_support</Text>
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={handleCopyEmail}
-              className="self-start py-1"
-            >
-              <Text className="text-sm font-noir text-white font-medium">
-                • Compliance & Email:{" "}
-                <Text className="text-noirCyan underline">support@quotex.io</Text>
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Section 5 */}
-        <View className="mb-7">
-          <Text className="text-lg font-noir-medium text-white tracking-tight mb-2">
-            5. Security & 2FA Inquiries
+            4. Security & 2FA Inquiries
           </Text>
           <Text className="text-sm font-noir text-gray-300 leading-6">
             Quotex representatives will never ask for your private keys, seed phrases, or Google account passwords. Always ensure you access official portal links under the verified bloqex.com domain.

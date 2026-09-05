@@ -9,7 +9,7 @@ export const ACCOUNT_TYPE_OPTIONS = [
   {
     key: "individual",
     label: "Individual Account",
-    description: "Personal trading, instant DigiLocker KYC, and fast bank withdrawals.",
+    description: "Personal trading, DigiLocker KYC, and fast bank withdrawals.",
     icon: "user",
     disabled: false,
     badge: "Personal",

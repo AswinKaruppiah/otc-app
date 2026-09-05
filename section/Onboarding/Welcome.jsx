@@ -27,7 +27,7 @@ export default function WelcomeScreen({ onNext }) {
 
                 {/* Short Onboarding Paragraph */}
                 <Text className="text-sm text-gray-400 font-noir text-center max-w-[300px] leading-[22px] mb-8">
-                    Fast and secure OTC platform. Exchange INR to USDT with instant verification, automated payouts, and real-time rates.
+                    Fast and secure OTC platform. Exchange INR to USDT with seamless verification, reliable payouts, and real-time rates.
                 </Text>
             </ScrollView>
 

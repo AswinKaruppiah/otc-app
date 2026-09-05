@@ -22,7 +22,7 @@ export default function KycGuideSection() {
 
         {/* Introduction Paragraph */}
         <Text className="text-sm font-noir text-gray-300 leading-6 mb-8">
-          Identity verification (KYC) is required under FIU-IND regulations and AML standards to protect your account, unlock unlimited daily OTC trading volumes, and enable instant fiat INR settlements and TRC-20 payouts.
+          Identity verification (KYC) is required under FIU-IND regulations and AML standards to protect your account, unlock unlimited daily OTC trading volumes, and enable fiat INR settlements and TRC-20 payouts.
         </Text>
 
         {/* Section 1 */}
@@ -50,50 +50,30 @@ export default function KycGuideSection() {
         {/* Section 2 */}
         <View className="mb-7">
           <Text className="text-lg font-noir-medium text-white tracking-tight mb-2">
-            2. Aadhaar e-KYC via DigiLocker
+            2. Submit Requested Documents
           </Text>
           <Text className="text-sm font-noir text-gray-300 leading-6">
-            Connect your government DigiLocker account using your 12-digit Aadhaar number. A one-time password (OTP) will be sent to your Aadhaar-linked mobile phone to securely verify your legal name, date of birth, and registered address.
+            Follow the simple on-screen instructions on the portal and provide the identity documents requested by the application to complete your submission.
           </Text>
         </View>
 
         {/* Section 3 */}
         <View className="mb-7">
           <Text className="text-lg font-noir-medium text-white tracking-tight mb-2">
-            3. PAN Card Verification
+            3. Verification Timeline & Approval
           </Text>
           <Text className="text-sm font-noir text-gray-300 leading-6">
-            Enter your 10-digit alphanumeric Permanent Account Number (PAN). Our system queries the NSDL tax registry in real-time to validate the Tax ID and ensure the name matches your Aadhaar record.
+            Once submitted, your verification and compliance review typically takes 1 to 2 business days. Once approved, your account will automatically display the Verified checkmark badge with withdrawal limits enabled.
           </Text>
         </View>
 
         {/* Section 4 */}
         <View className="mb-7">
           <Text className="text-lg font-noir-medium text-white tracking-tight mb-2">
-            4. Live Face Match Biometrics
+            4. Need Assistance or Facing Delays?
           </Text>
           <Text className="text-sm font-noir text-gray-300 leading-6">
-            Take a quick, well-lit live selfie using your device camera. Our automated AI biometric engine checks 3D depth and matches your facial features against official document records.
-          </Text>
-        </View>
-
-        {/* Section 5 */}
-        <View className="mb-7">
-          <Text className="text-lg font-noir-medium text-white tracking-tight mb-2">
-            5. Automatic Mobile App Synchronization
-          </Text>
-          <Text className="text-sm font-noir text-gray-300 leading-6">
-            Once submitted and approved, no further action is required. Return to this app and pull down to refresh on the Profile screen — your account will automatically display the Verified checkmark badge with instant withdrawal limits enabled.
-          </Text>
-        </View>
-
-        {/* Section 6 */}
-        <View className="mb-7">
-          <Text className="text-lg font-noir-medium text-white tracking-tight mb-2">
-            6. Security & Data Privacy
-          </Text>
-          <Text className="text-sm font-noir text-gray-300 leading-6">
-            All verification requests use end-to-end 256-bit encryption. Your documents and biometric metadata are processed in strict compliance with government data protection standards and are never shared with unauthorized third parties.
+            If your verification takes longer than 2 business days or if you experience any issues, please reach out directly to our dedicated support team via the Support tab in your profile.
           </Text>
         </View>
       </View>

@@ -60,7 +60,7 @@ export default function WithdrawBalanceCard({
         </Show>
 
         <Text className="text-xs font-noir font-normal text-gray-400 text-center mb-2">
-          Instant TRC-20 Transfer
+          TRC-20 Transfer
         </Text>
 
         {/* 3. Bottom Section: Available & On-Hold Stats + Withdraw CTA */}
