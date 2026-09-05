@@ -5,7 +5,7 @@
     "scheme": "quotex",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo/quotex-logo.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
@@ -19,8 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logo/quotex-logo.png",
-        "backgroundColor": "#111418"
+        "foregroundImage": "./assets/icon.png"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.aswinth.quotex",
