@@ -1,7 +1,6 @@
 import { View, Text, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import Feather from "@expo/vector-icons/Feather";
 import { Skeleton } from "heroui-native";
 import { getInitials, getHighResProfileImage } from "../../../utils/helper";
 import Show from "../../../components/Show";
@@ -31,7 +30,7 @@ export default function ProfileHeroCard({
   const accountColor = isCorporate ? "#96dded" : "#baffd8";
 
   return (
-    <View className="w-full mb-6">
+    <View className="w-full">
       <Show>
         <Show.If isTrue={loading}>
           {/* 1. Skeleton Hero State */}

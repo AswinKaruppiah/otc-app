@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { View, RefreshControl } from "react-native";
+import { View, Text, RefreshControl } from "react-native";
 import { useRouter } from "expo-router";
 import { useApolloClient } from "@apollo/client/react";
 import { useToast } from "heroui-native";
+import { LinearGradient } from "expo-linear-gradient";
+import Feather from "@expo/vector-icons/Feather";
 import { useUser } from "../../hooks/useUser";
 import { useScreenPadding } from "../../context/ScrollContext";
 import PageContainer from "../../components/PageContainer";
 import LogoutDialog from "../../components/dialog/LogoutDialog";
+import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
 import { clearAuthSession, isUnauthenticatedError } from "../../utils/helper";
 
 import ProfileHeroCard from "./components/ProfileHeroCard";
@@ -26,6 +29,8 @@ export default function ProfileSection() {
   const { user, loading, refetch } = useUser();
   const [refreshing, setRefreshing] = useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+
+  const isKycVerified = user?.kycStatus === "verified";
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -87,6 +92,35 @@ export default function ProfileSection() {
           loading={loading || refreshing}
           onActionPress={() => router.push({ pathname: "/accounts", params: { tab: "banks" } })}
         />
+
+        {/* KYC Verification Call-to-Action (shown if user KYC is not completed) */}
+        {!loading && !refreshing && user && !isKycVerified && (
+          <View className="w-full mb-6">
+            <HapticTouchableOpacity
+              activeOpacity={0.85}
+              hapticType="medium"
+              onPress={() => router.push("/kyc-guide")}
+              className="w-full rounded-full overflow-hidden"
+            >
+              <LinearGradient
+                colors={["#0c2b1e", "#103c2a", "#072015"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                className="px-6 py-4 flex-row items-center justify-between"
+              >
+                <View className="flex-1 pr-3">
+                  <Text className="text-white font-noir-medium text-base font-semibold">
+                    Complete KYC Verification
+                  </Text>
+                  <Text className="text-emerald-300/70 font-noir text-xs mt-0.5" numberOfLines={1}>
+                    Unlock unlimited limits & fast settlements
+                  </Text>
+                </View>
+                <Feather name="chevron-right" size={24} color="#baffd8" />
+              </LinearGradient>
+            </HapticTouchableOpacity>
+          </View>
+        )}
 
         {/* 2. Quick Access & Vault Grid (Mirroring "My Work" Grid) */}
         <ProfileQuickGrid

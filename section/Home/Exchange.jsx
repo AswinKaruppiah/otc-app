@@ -32,6 +32,8 @@ export const ExchangeCard = () => {
   const { isAuth, loading, error, user } = useUser();
   const [isBankSheetOpen, setIsBankSheetOpen] = useState(false);
 
+  const isKycVerified = user?.kycStatus === "verified";
+
   // Compute inrAmount using useMemo
   const inrAmount = useMemo(() => {
     if (isBaseInr) return inputValue;
@@ -53,6 +55,10 @@ export const ExchangeCard = () => {
   }, [inputValue, isBaseInr, exchangeRate]);
 
   const handleBuyPress = () => {
+    if (!isKycVerified) {
+      router.push("/profile");
+      return;
+    }
     const numInr = parseFloat(inrAmount) || 0;
     if (numInr < 100) {
       toast?.show({
@@ -219,6 +225,11 @@ export const ExchangeCard = () => {
         <Show.ElseIf isTrue={isAuth && !isLoggingIn && user && !user.onboarding}>
           <Button onPress={() => router.replace("/onboarding")}>
             Get Started
+          </Button>
+        </Show.ElseIf>
+        <Show.ElseIf isTrue={isAuth && !isLoggingIn && user && !isKycVerified}>
+          <Button onPress={() => router.push("/profile")}>
+            Verify KYC
           </Button>
         </Show.ElseIf>
         <Show.ElseIf isTrue={isAuth && !isLoggingIn && user}>
