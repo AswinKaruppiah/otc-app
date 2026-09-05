@@ -128,7 +128,7 @@ export default function GoogleAuth({ isLoggingIn, setIsLoggingIn }) {
           disabled={isLoggingIn || loading}
           hapticType="medium"
           activeOpacity={0.85}
-          className={`w-full py-5 rounded-full bg-white/10 border border-white/15 flex-row items-center justify-center gap-3 ${isLoggingIn || loading ? "opacity-50" : ""
+          className={`w-full py-5 rounded-full bg-black/15 border border-white/15 flex-row items-center justify-center gap-3 ${isLoggingIn || loading ? "opacity-50" : ""
             }`}
         >
           {isLoggingIn || loading ? (
@@ -136,7 +136,13 @@ export default function GoogleAuth({ isLoggingIn, setIsLoggingIn }) {
           ) : (
             <>
               <Ionicons name="logo-google" size={20} color="#ffffff" />
-              <Text className="text-white font-noir-medium text-lg tracking-wide">
+              <Text
+                style={{
+                  includeFontPadding: false,
+                  transform: [{ translateY: 1.5 }],
+                }}
+                className="text-white font-noir-medium text-lg tracking-wide"
+              >
                 Continue with Google
               </Text>
             </>
