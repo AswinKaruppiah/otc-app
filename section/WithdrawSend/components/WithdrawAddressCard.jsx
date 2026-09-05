@@ -18,7 +18,7 @@ export default function WithdrawAddressCard({
       className="w-full bg-[#111417] border border-white/10 rounded-3xl p-4 flex-row items-center justify-between active:bg-white/10"
     >
       <View className="flex-row items-center gap-3 flex-1">
-        <View className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 items-center justify-center">
+        <View className="w-10 h-10 rounded-xl bg-white/5 items-center justify-center">
           <Image
             source={require("../../../assets/images/tether-usdt-logo.png")}
             style={{ width: 22, height: 22, borderRadius: 11 }}
