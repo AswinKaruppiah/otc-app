@@ -21,7 +21,7 @@ export default function ProfileHeroCard({
   const displayName = user?.fullName || "Quotex Trader";
   const displayEmail = user?.email || "trader@quotex.io";
   const initials = getInitials(displayName);
-  const isVerified = user?.kycStatus?.toUpperCase() === "APPROVED" || user?.kycStatus?.toUpperCase() === "VERIFIED";
+  const isVerified = user?.kycStatus === "verified";
   const profileImageUrl = getHighResProfileImage(user?.profileImage, 512);
 
   const isCorporate = user?.profileType === "corporate";
@@ -30,7 +30,7 @@ export default function ProfileHeroCard({
   const accountColor = isCorporate ? "#96dded" : "#baffd8";
 
   return (
-    <View className="w-full">
+    <View className={`w-full ${isVerified && 'mb-6'}`}>
       <Show>
         <Show.If isTrue={loading}>
           {/* 1. Skeleton Hero State */}
