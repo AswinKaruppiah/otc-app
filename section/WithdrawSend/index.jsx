@@ -7,10 +7,11 @@ import { useUser } from "../../hooks/useUser";
 import { useScreenPadding } from "../../context/ScrollContext";
 import { useWithdraw } from "../../context/WithdrawContext";
 import { haptic } from "../../utils/haptics";
+import { truncateDecimal } from "../../utils/helper";
 import WithdrawSendHeader from "./components/WithdrawSendHeader";
 import WithdrawAmountHero from "./components/WithdrawAmountHero";
 import WithdrawAddressCard from "./components/WithdrawAddressCard";
-import WithdrawQuickPresets from "./components/WithdrawQuickPresets";
+import WithdrawQuickPresets, { PRESET_OPTIONS } from "./components/WithdrawQuickPresets";
 import WithdrawSendFooter from "./components/WithdrawSendFooter";
 import SelectAddressSheet from "./components/SelectAddressSheet";
 
@@ -51,14 +52,19 @@ export default function WithdrawSendSection() {
 
   // Default select 25% ONCE on initial mount if amount is empty
   useEffect(() => {
-    if (walletBalance > 0 && !initialSetRef.current && !amount) {
+    if (amount) {
       initialSetRef.current = true;
-      const defaultVal = (walletBalance * 0.25).toFixed(2);
+      return;
+    }
+    if (walletBalance > 0 && !initialSetRef.current) {
+      initialSetRef.current = true;
+      const defaultPercent = PRESET_OPTIONS[0]?.value ?? 0.25;
+      const defaultVal = truncateDecimal(walletBalance * defaultPercent, 2).replace(/,/g, "");
       if (parseFloat(defaultVal) > 0) {
         setAmount(defaultVal);
       }
     }
-  }, [walletBalance]);
+  }, [walletBalance, amount]);
 
   const handleAmountChange = (val) => {
     const cleaned = val.replace(/[^0-9.]/g, "");
@@ -72,8 +78,8 @@ export default function WithdrawSendSection() {
 
   const handleQuickPercent = (percent) => {
     haptic.light();
-    const calc = (walletBalance * percent).toFixed(2);
-    setAmount(parseFloat(calc) > 0 ? calc.toString() : "");
+    const calc = truncateDecimal(walletBalance * percent, 2).replace(/,/g, "");
+    setAmount(parseFloat(calc) > 0 ? calc : "");
   };
 
   const handleAddressCardPress = () => {

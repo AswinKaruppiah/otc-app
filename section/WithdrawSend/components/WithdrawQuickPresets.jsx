@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity } from "react-native";
 
-const PRESET_OPTIONS = [
+export const PRESET_OPTIONS = [
   { label: "25%", value: 0.25 },
   { label: "50%", value: 0.5 },
   { label: "75%", value: 0.75 },
