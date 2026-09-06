@@ -10,7 +10,7 @@
       "env": {
         "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "290463701365-f300r07lqqbnjp287unbh2p1e6hnb6hn.apps.googleusercontent.com",
         "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "290463701365-h8g1tahmi1sh6ghplufj5ch9mcq15pdo.apps.googleusercontent.com",
-        "EXPO_PUBLIC_GRAPHQL_API_URL": "https://staging.server.currensea.in/graphql",
+        "EXPO_PUBLIC_GRAPHQL_API_URL": "https://staging.api.bloqex.com/graphql",
         "EXPO_PUBLIC_LOG_API": "false"
       }
     },
@@ -22,7 +22,7 @@
       "env": {
         "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "290463701365-f300r07lqqbnjp287unbh2p1e6hnb6hn.apps.googleusercontent.com",
         "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "290463701365-h8g1tahmi1sh6ghplufj5ch9mcq15pdo.apps.googleusercontent.com",
-        "EXPO_PUBLIC_GRAPHQL_API_URL": "https://staging.server.currensea.in/graphql",
+        "EXPO_PUBLIC_GRAPHQL_API_URL": "https://staging.api.bloqex.com/graphql",
         "EXPO_PUBLIC_LOG_API": "false"
       }
     },
@@ -31,7 +31,7 @@
       "env": {
         "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "290463701365-f300r07lqqbnjp287unbh2p1e6hnb6hn.apps.googleusercontent.com",
         "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "290463701365-h8g1tahmi1sh6ghplufj5ch9mcq15pdo.apps.googleusercontent.com",
-        "EXPO_PUBLIC_GRAPHQL_API_URL": "https://staging.server.currensea.in/graphql",
+        "EXPO_PUBLIC_GRAPHQL_API_URL": "https://staging.api.bloqex.com/graphql",
         "EXPO_PUBLIC_LOG_API": "false"
       }
     }
