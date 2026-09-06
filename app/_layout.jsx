@@ -1,6 +1,5 @@
 import "../styles/global.css";
 import { useEffect } from "react";
-import { Image } from "react-native";
 import { Slot } from "expo-router";
 import { useFonts } from "expo-font";
 import { StatusBar } from "expo-status-bar";
@@ -39,13 +38,8 @@ export default function RootLayout() {
 
   if (!loaded && !error) {
     return (
-      <ScreenBackground style={{ justifyContent: "center", alignItems: "center" }}>
+      <ScreenBackground>
         <StatusBar style="light" />
-        <Image
-          source={require("../assets/logo/quotex-logo.png")}
-          style={{ width: 240, height: 240 }}
-          resizeMode="contain"
-        />
       </ScreenBackground>
     );
   }
