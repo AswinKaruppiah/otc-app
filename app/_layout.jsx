@@ -1,14 +1,16 @@
 import "../styles/global.css";
 import { useEffect } from "react";
-import { Slot } from "expo-router";
-import { useFonts } from "expo-font";
+import { Slot, SplashScreen } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import ScreenBackground from "../components/ScreenBackground";
+import { useFonts } from "expo-font";
 import ApolloProviderWrapper from "../components/provider/ApolloProvider";
 import { HeroUINativeProvider } from "heroui-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Uniwind } from "uniwind";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
+
+// Prevent native splash screen from auto-hiding before asset loading is complete
+SplashScreen.preventAutoHideAsync();
 
 // Configure Google Sign-In globally on app load
 GoogleSignin.configure({
@@ -25,23 +27,19 @@ Uniwind.setTheme("dark");
  * Import global CSS here once so every route gets it.
  */
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     "Noir-Regular": require("../assets/NOIR_Font/NoirPro-Regular.ttf"),
     "Noir-Medium": require("../assets/NOIR_Font/NoirPro-Medium.ttf"),
   });
 
   useEffect(() => {
-    if (error) {
-      console.warn("Error loading Noir fonts:", error);
+    if (fontsLoaded || fontError) {
+      SplashScreen.hideAsync();
     }
-  }, [error]);
+  }, [fontsLoaded, fontError]);
 
-  if (!loaded && !error) {
-    return (
-      <ScreenBackground>
-        <StatusBar style="light" />
-      </ScreenBackground>
-    );
+  if (!fontsLoaded && !fontError) {
+    return null;
   }
 
   return (
