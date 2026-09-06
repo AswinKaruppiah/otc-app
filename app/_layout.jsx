@@ -1,7 +1,10 @@
 import "../styles/global.css";
 import { useEffect } from "react";
+import { Image } from "react-native";
 import { Slot } from "expo-router";
 import { useFonts } from "expo-font";
+import { StatusBar } from "expo-status-bar";
+import ScreenBackground from "../components/ScreenBackground";
 import ApolloProviderWrapper from "../components/provider/ApolloProvider";
 import { HeroUINativeProvider } from "heroui-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -35,11 +38,21 @@ export default function RootLayout() {
   }, [error]);
 
   if (!loaded && !error) {
-    return null;
+    return (
+      <ScreenBackground style={{ justifyContent: "center", alignItems: "center" }}>
+        <StatusBar style="light" />
+        <Image
+          source={require("../assets/logo/quotex-logo.png")}
+          style={{ width: 240, height: 240 }}
+          resizeMode="contain"
+        />
+      </ScreenBackground>
+    );
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#111418" }}>
+      <StatusBar style="light" />
       <HeroUINativeProvider
         config={{
           devInfo: { stylingPrinciples: false },

@@ -7,6 +7,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
+    "backgroundColor": "#111418",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/logo/quotex-logo.png",
@@ -15,12 +16,15 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.aswinth.quotex"
+      "bundleIdentifier": "com.aswinth.quotex",
+      "backgroundColor": "#111418"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png"
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#111418"
       },
+      "backgroundColor": "#111418",
       "edgeToEdgeEnabled": true,
       "package": "com.aswinth.quotex",
       "launchMode": "singleTask"
