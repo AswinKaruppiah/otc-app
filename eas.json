@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 19.0.0"
+    "version": ">= 19.0.0",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
@@ -15,6 +16,9 @@
     },
     "preview": {
       "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
       "env": {
         "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "290463701365-f300r07lqqbnjp287unbh2p1e6hnb6hn.apps.googleusercontent.com",
         "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "290463701365-h8g1tahmi1sh6ghplufj5ch9mcq15pdo.apps.googleusercontent.com",
