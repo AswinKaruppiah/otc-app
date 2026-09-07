@@ -27,7 +27,10 @@
       "backgroundColor": "#111418",
       "edgeToEdgeEnabled": true,
       "package": "com.aswinth.quotex",
-      "launchMode": "singleTask"
+      "launchMode": "singleTask",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/logo/quotex-logo.png",
@@ -57,8 +60,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "a4f99258-7352-4028-8f45-f1751208ec7a"
+        "projectId": "a9478763-394a-4fc9-8c57-dab828a17b90"
       }
-    }
+    },
+    "owner": "aswinths-team"
   }
 }
