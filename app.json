@@ -34,11 +34,11 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#111418",
-          "image": "./assets/logo/quotex-logo.png",
+          "image": "./assets/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "dark": {
-            "image": "./assets/logo/quotex-logo.png",
+            "image": "./assets/splash-icon.png",
             "backgroundColor": "#111418"
           }
         }
