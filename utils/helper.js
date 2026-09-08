@@ -65,18 +65,13 @@ export const truncateDecimal = (val, decimals = 2) => {
 };
 
 /**
- * Returns the initials of a name, up to two letters.
+ * Returns the first letter of a name capitalized.
  * Defaults to "U" if name is falsy.
  */
 export const getInitials = (name) => {
-  if (!name) return "U";
-  return String(name)
-    .split(" ")
-    .filter(Boolean)
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
+  if (!name || typeof name !== "string") return "U";
+  const trimmed = name.trim();
+  return trimmed.length > 0 ? trimmed[0].toUpperCase() : "U";
 };
 
 /**

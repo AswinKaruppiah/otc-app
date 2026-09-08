@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useMutation, useApolloClient } from "@apollo/client/react";
 import { REQUEST_EMAIL_OTP, RESEND_OTP, VERIFY_EMAIL_OTP } from "../apollo/mutation";
-import { GET_USER } from "../apollo/query";
 import * as SecureStore from "../utils/secureStore";
 import { useToast } from "heroui-native";
 import { useRouter } from "expo-router";
@@ -14,10 +13,11 @@ export function useEmailAuth() {
   const client = useApolloClient();
   const { toast } = useToast();
   const router = useRouter();
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const [requestOtpMutation, { loading: sendLoading }] = useMutation(REQUEST_EMAIL_OTP);
   const [resendOtpMutation, { loading: resendLoading }] = useMutation(RESEND_OTP);
-  const [verifyOtpMutation, { loading: verifyLoading }] = useMutation(VERIFY_EMAIL_OTP);
+  const [verifyOtpMutation, { loading: verifyMutationLoading }] = useMutation(VERIFY_EMAIL_OTP);
 
   /**
    * Request OTP code for a given email address.
@@ -87,6 +87,7 @@ export function useEmailAuth() {
    * Verify the 6-digit OTP code, store token, and handle session initialization.
    */
   const verifyOtp = async (email, otp) => {
+    setIsVerifying(true);
     try {
       const response = await verifyOtpMutation({
         variables: {
@@ -110,7 +111,7 @@ export function useEmailAuth() {
         // Refetch all active queries (including GET_USER) in Apollo cache
         await client.refetchQueries({
           include: "active",
-        }).catch(() => {});
+        }).catch(() => { });
 
         if (isNewUser || !onboarding) {
           toast.show({
@@ -141,8 +142,12 @@ export function useEmailAuth() {
         variant: "danger",
       });
       return { success: false, error: err?.message };
+    } finally {
+      setIsVerifying(false);
     }
   };
+
+  const activeVerifyLoading = verifyMutationLoading || isVerifying;
 
   return {
     sendOtp,
@@ -150,7 +155,7 @@ export function useEmailAuth() {
     verifyOtp,
     sendLoading,
     resendLoading,
-    verifyLoading,
-    loading: sendLoading || resendLoading || verifyLoading,
+    verifyLoading: activeVerifyLoading,
+    loading: sendLoading || resendLoading || activeVerifyLoading,
   };
 }

@@ -364,7 +364,7 @@ function EmailAuthForm({
                     textAlign: "center",
                     textAlignVertical: "center",
                   }}
-                  className={`w-12 h-14 rounded-2xl bg-noirBg border p-0 text-center font-noir-medium text-2xl ${otpError
+                  className={`w-12 h-14 rounded-2xl bg-noirBg border p-0 text-center font-bold text-2xl ${otpError
                     ? "border-red-400 bg-red-400/5 text-red-400"
                     : digit
                       ? "border-noirMint/60 text-noirMint"
