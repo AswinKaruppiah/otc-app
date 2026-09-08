@@ -26,7 +26,17 @@ export const ExchangeCard = () => {
   const exchangeRate = assignedSellPrice > 0 ? assignedSellPrice : marketSellPrice;
 
   const { data: ordersData, loading: ordersLoading, error: ordersError, networkStatus } = useQuery(LIST_ORDERS, {
-    variables: { status: ["PENDING"] },
+    variables: {
+      status: [
+        "pending_payment",
+        "partial_paid",
+        "payment_submitted",
+        "payment_verified",
+        "approved",
+        "processing_payout",
+      ],
+    },
+    skip: !isAuth,
   });
   const pendingOrdersCount = ordersData?.listOrders?.total ?? 0;
 
