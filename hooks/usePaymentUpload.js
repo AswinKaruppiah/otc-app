@@ -98,7 +98,6 @@ export function usePaymentUpload() {
       if (!newOrder) return;
 
       const orderToWrite = {
-        status: "PENDING",
         ...newOrder,
       };
       
@@ -106,7 +105,16 @@ export function usePaymentUpload() {
       try {
         const pendingQueryOptions = {
           query: LIST_ORDERS,
-          variables: { status: ["PENDING"] },
+          variables: {
+            status: [
+              "pending_payment",
+              "partial_paid",
+              "payment_submitted",
+              "payment_verified",
+              "approved",
+              "processing_payout",
+            ],
+          },
         };
         const pendingData = cache.readQuery(pendingQueryOptions);
         if (pendingData && pendingData.listOrders) {
