@@ -1,4 +1,3 @@
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import * as SecureStore from "./secureStore";
 import * as Clipboard from "expo-clipboard";
 import { haptic } from "./haptics";
@@ -108,17 +107,9 @@ export const isUnauthenticatedError = (error) => {
 };
 
 /**
- * Clear user session: Google sign out, delete SecureStore tokens, clear and reset Apollo store.
+ * Clear user session: delete SecureStore tokens, run middleware, clear and reset Apollo store.
  */
 export const clearAuthSession = async (client, middleware) => {
-  try {
-    await GoogleSignin.signOut().catch((e) => {
-      console.log("GoogleSignin.signOut non-fatal or user not logged in:", e);
-    });
-  } catch (e) {
-    console.warn("Failed Google SignOut:", e);
-  }
-
   try {
     await SecureStore.deleteItemAsync("accessToken");
     await SecureStore.deleteItemAsync("accessTokenExpiration");
@@ -286,4 +277,30 @@ export const copyToClipboard = async (
     console.warn("copyToClipboard error:", err);
     return false;
   }
+};
+
+/**
+ * Validates an email address format.
+ * Returns an error string if invalid, or null if valid.
+ */
+export const validateEmail = (val) => {
+  const trimmed = (val || "").trim();
+  if (!trimmed) return "Email address is required";
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(trimmed)) return "Please enter a valid email address";
+  return null;
+};
+
+/**
+ * Formats a duration in seconds to a human-readable timer string:
+ * e.g. 125 -> "2:05", 45 -> "45s"
+ */
+export const formatTimer = (seconds) => {
+  if (typeof seconds !== "number" || seconds < 0) return "0s";
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  if (mins > 0) {
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  }
+  return `${secs}s`;
 };

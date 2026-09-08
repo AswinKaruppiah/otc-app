@@ -22,7 +22,7 @@ export default function LogoutDialog({ isOpen, onOpenChange, onConfirm }) {
               Sign Out?
             </Dialog.Title>
             <Dialog.Description className="text-white/50 font-noir text-sm text-center leading-relaxed px-3">
-              You'll need to sign back in with Google to access your wallets.
+              You'll need to sign back in with your email to access your account.
             </Dialog.Description>
           </View>
 

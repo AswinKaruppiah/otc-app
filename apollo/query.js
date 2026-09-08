@@ -4,7 +4,6 @@ export const GET_USER = gql`
   query UserMe {
     userMe {
       id
-      googleId
       userId
       email
       walletAddress
@@ -23,6 +22,18 @@ export const GET_USER = gql`
       referralCode
       createdAt
       updatedAt
+      adminAssignedPrice {
+        id
+        baseCurrency
+        quoteCurrency
+        commissionPercentage
+        buyPrice
+        sellPrice
+        provider
+        market
+        fetchedAt
+        updatedAt
+      }
       assignedAdminBank {
       id
       accountHolderName

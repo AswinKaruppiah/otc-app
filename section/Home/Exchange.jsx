@@ -6,7 +6,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Button from "../../components/Button";
 import HapticTouchableOpacity from "../../components/HapticTouchableOpacity";
 import { sanitizeAmount, formatNumber } from "../../utils/helper";
-import GoogleAuth from "./GoogleAuth";
+import EmailAuthSheet from "./EmailAuthSheet";
 import { useUser } from "../../hooks/useUser";
 import { useLatestPrice } from "../../hooks/useLatestPrice";
 import Show from "../../components/Show";
@@ -18,8 +18,12 @@ import { useRouter } from "expo-router";
 export const ExchangeCard = () => {
   const router = useRouter();
   const { toast } = useToast();
+  const { isAuth, loading, error, user } = useUser();
   const { latestPrice, loading: latestPriceLoading, error: latestPriceError, networkStatus: latestPriceNetworkStatus } = useLatestPrice();
-  const exchangeRate = latestPrice?.sellPrice ? parseFloat(latestPrice.sellPrice) : 0;
+
+  const assignedSellPrice = Number(user?.adminAssignedPrice?.sellPrice);
+  const marketSellPrice = latestPrice?.sellPrice ? parseFloat(latestPrice.sellPrice) : 0;
+  const exchangeRate = assignedSellPrice > 0 ? assignedSellPrice : marketSellPrice;
 
   const { data: ordersData, loading: ordersLoading, error: ordersError, networkStatus } = useQuery(LIST_ORDERS, {
     variables: { status: ["PENDING"] },
@@ -28,9 +32,8 @@ export const ExchangeCard = () => {
 
   const [inputValue, setInputValue] = useState("10000");
   const [isBaseInr, setIsBaseInr] = useState(true);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const { isAuth, loading, error, user } = useUser();
   const [isBankSheetOpen, setIsBankSheetOpen] = useState(false);
+  const [isAuthSheetOpen, setIsAuthSheetOpen] = useState(false);
 
   const isKycVerified = user?.kycStatus === "verified";
 
@@ -203,7 +206,7 @@ export const ExchangeCard = () => {
           <View className="flex-row justify-between items-end">
             <Text className="text-gray-400 font-noir text-[13px]">Exchange Rate</Text>
             <Show>
-              <Show.If isTrue={latestPriceNetworkStatus === 1 || !!latestPriceError}>
+              <Show.If isTrue={!exchangeRate && (latestPriceNetworkStatus === 1 || !!latestPriceError)}>
                 <Skeleton className="w-24 h-3.5 rounded-sm" />
               </Show.If>
               <Show.Else>
@@ -219,26 +222,28 @@ export const ExchangeCard = () => {
       {/* Action Button */}
 
       <Show>
-        <Show.If isTrue={(loading || (isAuth && !user) || !!error) && !isLoggingIn}>
+        <Show.If isTrue={loading || (isAuth && !user) || !!error}>
           <Skeleton className="w-full h-20 rounded-full" />
         </Show.If>
-        <Show.ElseIf isTrue={isAuth && !isLoggingIn && user && !user.onboarding}>
+        <Show.ElseIf isTrue={isAuth && user && !user.onboarding}>
           <Button onPress={() => router.replace("/onboarding")}>
             Get Started
           </Button>
         </Show.ElseIf>
-        <Show.ElseIf isTrue={isAuth && !isLoggingIn && user && !isKycVerified}>
+        <Show.ElseIf isTrue={isAuth && user && !isKycVerified}>
           <Button onPress={() => router.push("/profile")}>
             Verify KYC
           </Button>
         </Show.ElseIf>
-        <Show.ElseIf isTrue={isAuth && !isLoggingIn && user}>
+        <Show.ElseIf isTrue={isAuth && user}>
           <Button onPress={handleBuyPress}>
             Buy USDT
           </Button>
         </Show.ElseIf>
         <Show.Else>
-          <GoogleAuth isLoggingIn={isLoggingIn} setIsLoggingIn={setIsLoggingIn} />
+          <Button onPress={() => setIsAuthSheetOpen(true)}>
+            Log in or Sign up
+          </Button>
         </Show.Else>
       </Show>
 
@@ -249,6 +254,12 @@ export const ExchangeCard = () => {
         inrAmount={inrAmount}
         usdtAmount={usdtAmount}
         exchangeRate={exchangeRate}
+      />
+
+      {/* Email OTP Auth Bottom Sheet */}
+      <EmailAuthSheet
+        isOpen={isAuthSheetOpen}
+        onOpenChange={setIsAuthSheetOpen}
       />
     </View>
   );

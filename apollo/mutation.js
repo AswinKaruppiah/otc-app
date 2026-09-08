@@ -1,9 +1,28 @@
 import { gql } from "@apollo/client";
 
-export const SYNC_GOOGLE_USER = gql`
-  mutation SyncGoogleUser($googleId: String!, $email: String!, $name: String, $image: String) {
-    syncGoogleUser(googleId: $googleId, email: $email, name: $name, image: $image) {
+export const REQUEST_EMAIL_OTP = gql`
+  mutation RequestEmailOtp($email: String!) {
+    requestEmailOtp(email: $email) {
+      message
+      expiresInSeconds
+    }
+  }
+`;
+
+export const RESEND_OTP = gql`
+  mutation ResendOtp($email: String!) {
+    resendOtp(email: $email) {
+      message
+      expiresInSeconds
+    }
+  }
+`;
+
+export const VERIFY_EMAIL_OTP = gql`
+  mutation VerifyEmailOtp($email: String!, $otp: String!) {
+    verifyEmailOtp(email: $email, otp: $otp) {
       accessToken
+      isNewUser
       onboarding
     }
   }
