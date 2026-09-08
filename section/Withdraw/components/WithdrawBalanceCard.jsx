@@ -1,22 +1,39 @@
+import { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Feather from "@expo/vector-icons/Feather";
-import { Skeleton } from "heroui-native";
+import { Skeleton, useToast } from "heroui-native";
 import Show from "../../../components/Show";
 import { useScreenPadding } from "../../../context/ScrollContext";
-import { truncateDecimal } from "../../../utils/helper";
+import { truncateDecimal, maskText, copyToClipboard } from "../../../utils/helper";
 
 /**
- * WithdrawBalanceCard — Hero card displaying total balance, available/on-hold stats, and Withdraw USDT CTA button.
+ * WithdrawBalanceCard — Hero card displaying wallet balance, wallet address, and Withdraw CTA button.
  */
 export default function WithdrawBalanceCard({
   walletBalance = 0,
-  walletHold = 0,
+  walletAddress = "",
   loading = false,
+  symbol = "USDT",
   onWithdrawPress,
 }) {
-  const totalBalance = walletBalance + walletHold;
   const { paddingTop, paddingHorizontal } = useScreenPadding();
+  const { toast } = useToast();
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyAddress = async () => {
+    if (!walletAddress) return;
+    const success = await copyToClipboard(
+      walletAddress,
+      toast,
+      "Address Copied",
+      "Wallet address copied to clipboard."
+    );
+    if (success) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   return (
     <View
@@ -37,9 +54,9 @@ export default function WithdrawBalanceCard({
         }}
         className="w-full relative"
       >
-        {/* 1. TOTAL BALANCE Label */}
+        {/* 1. WALLET BALANCE Label */}
         <Text className="text-xs font-noir font-light uppercase text-white/40 mb-2 text-center tracking-wider">
-          Total Balance
+          Wallet Balance
         </Text>
 
         {/* 2. Main Balance Display */}
@@ -50,78 +67,77 @@ export default function WithdrawBalanceCard({
           <Show.Else>
             <View className="flex-row items-baseline justify-center gap-2 mb-1">
               <Text className="text-4xl sm:text-5xl font-noir font-normal text-white tracking-tight">
-                {truncateDecimal(totalBalance, 2)}
+                {truncateDecimal(walletBalance, 2)}
               </Text>
               <Text className="text-4xl sm:text-5xl font-noir font-normal text-white/50">
-                USDT
+                {symbol}
               </Text>
             </View>
           </Show.Else>
         </Show>
 
-        <Text className="text-xs font-noir font-normal text-gray-400 text-center mb-2">
-          TRC-20 Transfer
+        <Text className="text-xs font-noir font-normal text-gray-400 text-center mb-4">
+          {symbol === "USDT" ? "TRC-20 Transfer" : "Tron Network"}
         </Text>
 
-        {/* 3. Bottom Section: Available & On-Hold Stats + Withdraw CTA */}
-        <View className="w-full mt-6 gap-4">
-          {/* Split Stats Row */}
-          <Show>
-            <Show.If isTrue={loading}>
-              <View className="flex-row gap-3">
-                <Skeleton className="flex-1 h-[68px] rounded-2xl bg-white/10" />
-                <Skeleton className="flex-1 h-[68px] rounded-2xl bg-white/10" />
-              </View>
-            </Show.If>
-            <Show.Else>
-              <View className="flex-row gap-3">
-                {/* Available Box */}
-                <View className="flex-1 bg-white/[0.05] border border-white/10 rounded-2xl p-3.5 flex-row items-center gap-3">
-                  <Feather name="arrow-up-right" size={24} color="#baffd8" />
-                  <View className="flex-1 min-w-0">
-                    <Text className="text-[10px] font-noir font-medium text-gray-400 uppercase tracking-wider">Available</Text>
-                    <View className="flex-row items-baseline gap-1 mt-0.5">
-                      <Text className="text-base font-noir font-bold text-white tracking-tight">
-                        {truncateDecimal(walletBalance, 2)}
-                      </Text>
-                      <Text className="text-[10px] font-noir font-medium text-noirMint">
-                        USDT
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-
-                {/* On Hold Box */}
-                <View className="flex-1 bg-white/[0.05] border border-white/10 rounded-2xl p-3.5 flex-row items-center gap-3">
-                  <Feather name="clock" size={24} color="#fbbf24" />
-                  <View className="flex-1 min-w-0">
-                    <Text className="text-[10px] font-noir font-medium text-gray-400 uppercase tracking-wider">On Hold</Text>
-                    <View className="flex-row items-baseline gap-1 mt-0.5">
-                      <Text className="text-base font-noir font-bold text-white tracking-tight">
-                        {truncateDecimal(walletHold, 2)}
-                      </Text>
-                      <Text className="text-[10px] font-noir font-medium text-amber-400">
-                        USDT
-                      </Text>
-                    </View>
-                  </View>
+        {/* 3. Wallet Address Box */}
+        <Show>
+          <Show.If isTrue={Boolean(walletAddress)}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={handleCopyAddress}
+              className="w-full bg-black/25 border border-white/10 rounded-3xl pl-5 pr-3 py-3 flex-row items-center justify-between mb-4 active:bg-black/40"
+            >
+              <View className="flex-row items-center gap-3 flex-1 min-w-0 mr-3">
+                <View className="flex-1 min-w-0">
+                  <Text className="text-[10px] font-noir font-medium text-gray-400 uppercase tracking-wider">
+                    App Wallet • {symbol === "USDT" ? "TRC-20" : "TRON"}
+                  </Text>
+                  <Text
+                    numberOfLines={1}
+                    className="text-[13px] font-mono font-bold text-white tracking-wide mt-0.5"
+                  >
+                    {maskText(walletAddress, 6)}
+                  </Text>
                 </View>
               </View>
-            </Show.Else>
-          </Show>
+              <View
+                className={`px-3 py-1.5 rounded-full flex-row items-center gap-1.5 border ${
+                  copied
+                    ? "bg-noirMint/20 border-noirMint/40"
+                    : "bg-white/10 border-white/15"
+                }`}
+              >
+                <Feather
+                  name={copied ? "check" : "copy"}
+                  size={12}
+                  color={copied ? "#baffd8" : "rgba(255, 255, 255, 0.7)"}
+                />
+                <Text
+                  className={`text-[11px] font-noir font-medium ${
+                    copied ? "text-noirMint font-bold" : "text-white/80"
+                  }`}
+                >
+                  {copied ? "Copied" : "Copy"}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </Show.If>
+        </Show>
 
-          {/* Withdraw USDT CTA Button */}
+        {/* 4. Bottom Section: Withdraw CTA */}
+        <View className="w-full">
           <View style={{ marginHorizontal: -paddingHorizontal + 12 }}>
             <TouchableOpacity
               onPress={onWithdrawPress}
               disabled={loading}
               activeOpacity={0.85}
-              className={`w-full py-5 rounded-full flex-row items-center justify-center gap-2 ${loading ? "bg-noirMint/50" : "bg-noirMint"
+              className={`w-full py-5 rounded-full flex-row items-center justify-center gap-2 ${loading ? "bg-noirMint/40 opacity-50" : "bg-noirMint"
                 }`}
             >
-              <Feather name="upload" size={20} color="#111418" />
-              <Text className="font-noir font-bold text-sm text-noirBg">
-                Withdraw USDT
+              <Feather name="upload" size={20} color={loading ? "#11141880" : "#111418"} />
+              <Text className={`font-noir font-bold text-sm ${loading ? "text-noirBg/60" : "text-noirBg"}`}>
+                Withdraw {symbol}
               </Text>
             </TouchableOpacity>
           </View>

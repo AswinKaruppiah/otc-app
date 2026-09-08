@@ -3,7 +3,6 @@ import { View, Keyboard } from "react-native";
 import { useRouter } from "expo-router";
 import { useQuery } from "@apollo/client/react";
 import { GET_USER_WHITELISTED_ADDRESSES } from "../../apollo/query";
-import { useUser } from "../../hooks/useUser";
 import { useScreenPadding } from "../../context/ScrollContext";
 import { useWithdraw } from "../../context/WithdrawContext";
 import { haptic } from "../../utils/haptics";
@@ -22,19 +21,19 @@ import SelectAddressSheet from "./components/SelectAddressSheet";
 export default function WithdrawSendSection() {
   const router = useRouter();
   const { paddingBottom, paddingTop } = useScreenPadding();
-  const { user } = useUser();
   const {
     amount,
     setAmount,
     selectedAddress,
     setSelectedAddress,
+    walletBalance,
+    balanceSymbol,
+    balanceLoading,
   } = useWithdraw();
   const inputRef = useRef(null);
   const initialSetRef = useRef(false);
 
   const [isAddressPickerOpen, setIsAddressPickerOpen] = useState(false);
-
-  const walletBalance = user?.wallet?.walletBalance ?? 0;
 
   // Whitelisted addresses query
   const { data: walletData } = useQuery(GET_USER_WHITELISTED_ADDRESSES);
@@ -127,6 +126,7 @@ export default function WithdrawSendSection() {
         amount={amount}
         onChangeAmount={handleAmountChange}
         walletBalance={walletBalance}
+        symbol={balanceSymbol}
         isExceeding={isExceeding}
         onQuickPercent={handleQuickPercent}
       />

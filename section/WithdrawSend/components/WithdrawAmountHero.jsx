@@ -6,7 +6,7 @@ import { truncateDecimal } from "../../../utils/helper";
  * WithdrawAmountHero — Hero amount input display with available balance helper and validation.
  */
 const WithdrawAmountHero = forwardRef(function WithdrawAmountHero(
-  { amount, onChangeAmount, walletBalance, isExceeding, onQuickPercent },
+  { amount, onChangeAmount, walletBalance, isExceeding, onQuickPercent, symbol = "USDT" },
   ref
 ) {
 
@@ -46,7 +46,7 @@ const WithdrawAmountHero = forwardRef(function WithdrawAmountHero(
           style={{ includeFontPadding: false }}
           className="text-[13px] font-noir text-gray-400 text-center"
         >
-          Available for withdraw: {truncateDecimal(walletBalance, 2)} USDT
+          Available for withdraw: {truncateDecimal(walletBalance, 2)} {symbol}
         </Text>
       </TouchableOpacity>
 
@@ -57,7 +57,7 @@ const WithdrawAmountHero = forwardRef(function WithdrawAmountHero(
             style={{ includeFontPadding: false }}
             className="text-xs font-noir text-red-400 text-center"
           >
-            Exceeds available balance ({truncateDecimal(walletBalance, 2)} USDT)
+            Exceeds available balance ({truncateDecimal(walletBalance, 2)} {symbol})
           </Text>
         )}
       </View>
