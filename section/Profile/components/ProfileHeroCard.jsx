@@ -52,30 +52,15 @@ export default function ProfileHeroCard({
         <Show.Else>
           {/* 1. Large Portrait Photo / Stylized Hero Banner */}
           <View className="w-full h-[340px] rounded-[36px] overflow-hidden bg-noirCard border border-white/10 relative mb-5">
-            <Show>
-              <Show.If isTrue={profileImageUrl}>
-                <Image
-                  source={{ uri: profileImageUrl }}
-                  className="w-full h-full"
-                  resizeMode="cover"
-                />
-              </Show.If>
-              <Show.Else>
-                <LinearGradient
-                  colors={["#0a1118", "#121e24", "#0c3624"]}
-                  start={{ x: 0.1, y: 0.1 }}
-                  end={{ x: 0.9, y: 0.9 }}
-                  className="w-full h-full items-center justify-center relative"
-                >
-                  {/* Monogram / Silhouette Illustration */}
-                  <View className="w-32 h-32 rounded-full bg-white/[0.04] border border-white/10 items-center justify-center shadow-inner">
-                    <Text className="text-white font-noir-medium text-4xl tracking-widest">
-                      {initials}
-                    </Text>
-                  </View>
-                </LinearGradient>
-              </Show.Else>
-            </Show>
+            <Image
+              source={
+                profileImageUrl
+                  ? { uri: profileImageUrl }
+                  : require("../../../assets/images/profile.png")
+              }
+              className="w-full h-full object-bottom"
+              resizeMode="cover"
+            />
 
             {/* Bottom Gradient Vignette for soft transition */}
             <LinearGradient
