@@ -108,6 +108,7 @@ export const GET_ORDER = gql`
       }
       blockchainTx {
         hash
+        from
         to
         amount
         confirmedAt
