@@ -44,7 +44,13 @@ The application follows a layered architecture to keep the codebase organized, m
 
 ## 🎥 Demo
 
-🎬 **[Watch Demo Video on Google Drive](https://drive.google.com/file/d/1_QVALVTj_rwD476poPEXMOio2OFxVYNA/view?usp=sharing)**
+<p align="center">
+  <a href="https://drive.google.com/file/d/1_QVALVTj_rwD476poPEXMOio2OFxVYNA/view?usp=sharing">
+    <img src="https://lh3.googleusercontent.com/d/1_QVALVTj_rwD476poPEXMOio2OFxVYNA" width="350" alt="Watch Demo Video" />
+    <br/>
+    <sub>▶️ <b>Click to Watch Demo Video on Google Drive</b></sub>
+  </a>
+</p>
 
 ## 📚 What I Explored
 
