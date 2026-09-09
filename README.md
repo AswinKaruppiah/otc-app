@@ -1,4 +1,4 @@
-# Quotex Mobile 📱
+# Quotex 📱
 
 A mobile application built with React Native for an OTC platform that allows users to manage INR and USDT transactions through a simple mobile experience.
 
