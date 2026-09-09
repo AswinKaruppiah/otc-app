@@ -42,9 +42,10 @@ The application follows a layered architecture to keep the codebase organized, m
 - **Business Logic** - Application logic and state handling
 - **Data** - API communication, Apollo Client, caching, and external services
 
-## 🎥 Demo
+## 🎥 Demo & Download
 
-🎬 **[Watch Demo Video on Google Drive](https://drive.google.com/file/d/1_QVALVTj_rwD476poPEXMOio2OFxVYNA/view?usp=sharing)**
+🎬 **[Watch Demo Video on Google Drive](https://drive.google.com/file/d/1_QVALVTj_rwD476poPEXMOio2OFxVYNA/view?usp=sharing)**  
+📦 **[Download Android APK](https://drive.google.com/file/d/1BbQ2QfLceqiAZkZc3bkO_dZMgNuhLxdK/view?usp=sharing)**
 
 ## 📚 What I Explored
 
